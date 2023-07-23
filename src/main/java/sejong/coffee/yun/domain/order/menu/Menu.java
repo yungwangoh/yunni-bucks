@@ -1,0 +1,32 @@
+package sejong.coffee.yun.domain.order.menu;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import sejong.coffee.yun.domain.DateTimeEntity;
+import sejong.coffee.yun.domain.user.Money;
+
+import javax.persistence.*;
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public abstract class Menu extends DateTimeEntity {
+
+    @Id @GeneratedValue
+    private Long id;
+    private String title;
+    private String description;
+    private Money price;
+    private Nutrients nutrients;
+
+    @Builder
+    public Menu(String title, String description, Money price, Nutrients nutrients) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.nutrients = nutrients;
+    }
+}
