@@ -4,7 +4,7 @@ import sejong.coffee.yun.domain.user.Money;
 
 public final class Bread extends Menu {
 
-    public Bread(String title, String description, Money price, Nutrients nutrients) {
-        super(title, description, price, nutrients);
+    public Bread(String title, String description, Money price, Nutrients nutrients, MenuSize menuSize) {
+        super(title, description, price, nutrients, menuSize);
     }
 }
