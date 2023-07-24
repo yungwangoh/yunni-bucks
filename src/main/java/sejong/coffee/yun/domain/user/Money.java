@@ -1,9 +1,15 @@
 package sejong.coffee.yun.domain.user;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
 @Embeddable
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Money {
 
     public static Money ZERO = Money.initialPrice(new BigDecimal(0));
@@ -32,7 +38,7 @@ public class Money {
 
         BigDecimal mul = this.totalPrice.multiply(discount);
 
-        this.totalPrice = this.totalPrice.add(mul);
+        this.totalPrice = this.totalPrice.subtract(mul);
     }
 
     public static Money initialPrice(BigDecimal totalPrice) {

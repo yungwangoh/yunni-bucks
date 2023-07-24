@@ -1,7 +1,5 @@
 package sejong.coffee.yun.domain.user;
 
-import static java.lang.Long.MAX_VALUE;
-
 public enum UserRank {
 
     BRONZE, SILVER, GOLD, PLATINUM, DIAMOND;
@@ -17,15 +15,15 @@ public enum UserRank {
             return UserRank.GOLD;
         } else if (checkCondition(orderCount,11, 15)) {
             return UserRank.PLATINUM;
-        } else if (checkCondition(orderCount, 16, MAX_VALUE)) {
+        } else if (checkCondition(orderCount, 16)) {
             return UserRank.DIAMOND;
         }
 
         return UserRank.BRONZE;
     }
 
-    private static boolean checkCondition(long totalMonths, long start, long end) {
-        return (totalMonths >= start && totalMonths <= end);
+    private static boolean checkCondition(long totalMonths, long start) {
+        return totalMonths >= start;
     }
 
     private static boolean checkCondition(int orderCount, int start, int end) {
