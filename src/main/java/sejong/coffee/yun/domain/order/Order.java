@@ -3,10 +3,9 @@ package sejong.coffee.yun.domain.order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import sejong.coffee.yun.domain.DateTimeEntity;
-import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.User;
 
@@ -34,6 +33,8 @@ public class Order extends DateTimeEntity {
     private OrderStatus status;
     private Money orderPrice;
 
+    @OneToOne(mappedBy = "order")
+    private CardPayment pay;
     private Order(String name, MenuList menuList, User user, OrderStatus status, Money orderPrice) {
         this.name = name;
         this.menuList = menuList;
