@@ -5,11 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.aspectj.weaver.ast.Or;
 import sejong.coffee.yun.domain.DateTimeEntity;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.User;
 
 import javax.persistence.*;
 import java.util.List;
+
+import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+import static sejong.coffee.yun.domain.order.OrderStatus.*;
 
 @Entity
 @Getter
@@ -25,26 +30,35 @@ public class Order extends DateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus status;
+    private Money orderPrice;
 
-    private Order(String name, MenuList menuList, User user) {
+    private Order(String name, MenuList menuList, User user, OrderStatus status, Money orderPrice) {
         this.name = name;
         this.menuList = menuList;
         this.user = user;
+        this.status = status;
+        this.orderPrice = orderPrice;
     }
 
-    public static Order createOrder(User user, MenuList menuList) {
+    public static Order createOrder(User user, MenuList menuList, Money orderPrice) {
         String orderName = makeOrderName(menuList.getMenus());
 
-        return new Order(orderName, menuList, user);
+        return new Order(orderName, menuList, user, ORDER, orderPrice);
+    }
+
+    public void cancel() {
+        this.status = CANCEL;
     }
 
     private static String makeOrderName(List<Menu> menus) {
         if(menus.size() == 0) {
-            throw new IllegalArgumentException("장바구니가 비었습니다.");
+            throw EMPTY_MENUS.throwException();
         } else {
             String title = menus.get(0).getTitle();
 
-            return title + " ...외" + " " + menus.size() + "개";
+            return title + " 외" + " " + menus.size() + "개";
         }
     }
 }

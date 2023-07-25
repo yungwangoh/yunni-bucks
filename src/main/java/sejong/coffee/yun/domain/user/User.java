@@ -8,6 +8,7 @@ import sejong.coffee.yun.domain.DateTimeEntity;
 import sejong.coffee.yun.domain.coupon.Coupon;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends DateTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name")
     private String name;
@@ -31,7 +32,7 @@ public class User extends DateTimeEntity {
     private Address address;
     private Money money;
     @OneToMany
-    private List<Coupon> coupons;
+    private List<Coupon> coupons = new ArrayList<>();
 
     @Builder
     public User(String email, String name, String password, Long orderId,
@@ -45,5 +46,17 @@ public class User extends DateTimeEntity {
         this.address = address;
         this.money = money;
         this.coupons = coupons;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
     }
 }

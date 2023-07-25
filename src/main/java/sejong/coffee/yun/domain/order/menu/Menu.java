@@ -1,11 +1,9 @@
 package sejong.coffee.yun.domain.order.menu;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
-import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.user.Money;
 
 import javax.persistence.*;
@@ -26,7 +24,6 @@ public abstract class Menu extends DateTimeEntity {
     private MenuSize menuSize;
 
     public Menu(String title, String description, Money price, Nutrients nutrients, MenuSize menuSize) {
-        assert title != null && description != null && price != null && nutrients != null && menuSize != null;
         this.title = title;
         this.description = description;
         this.price = price;

@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +20,7 @@ public class MenuList {
     @Id @GeneratedValue
     private Long id;
     @OneToMany
-    private List<Menu> menus;
+    private List<Menu> menus = new ArrayList<>();
 
     public MenuList(List<Menu> menus) {
         this.menus = menus;

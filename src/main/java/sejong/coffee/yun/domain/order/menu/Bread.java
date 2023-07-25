@@ -2,9 +2,9 @@ package sejong.coffee.yun.domain.order.menu;
 
 import sejong.coffee.yun.domain.user.Money;
 
-public final class Bread extends Menu {
+public class Bread extends Menu {
 
-    public Bread(String title, String description, Money price, Nutrients nutrients, MenuSize menuSize) {
+    public Bread(final String title, final String description, final Money price, final Nutrients nutrients, final MenuSize menuSize) {
         super(title, description, price, nutrients, menuSize);
     }
 }

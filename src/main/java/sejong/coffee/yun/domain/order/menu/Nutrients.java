@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public final class Nutrients {
+public class Nutrients {
 
     private int kcal;
     private int carbohydrates;
