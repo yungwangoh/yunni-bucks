@@ -4,6 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum ExceptionControl {
+
+    NOT_FOUND_USER("유저가 존재하지 않습니다."),
     EMPTY_MENUS("메뉴리스트가 비어 있습니다.");
 
     private final String message;
@@ -14,5 +16,8 @@ public enum ExceptionControl {
 
     public MenuException throwException() {
         return new MenuException(this.message);
+    }
+    public NotFoundUserException notFoundUserException() {
+        return new NotFoundUserException(this.message);
     }
 }
