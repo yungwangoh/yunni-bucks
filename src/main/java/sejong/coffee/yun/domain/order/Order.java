@@ -33,8 +33,8 @@ public class Order extends DateTimeEntity {
     private OrderStatus status;
     private Money orderPrice;
 
-    @OneToOne(mappedBy = "order")
-    private CardPayment pay;
+//    @OneToOne(mappedBy = "order")
+//    private CardPayment pay;
     private Order(String name, MenuList menuList, User user, OrderStatus status, Money orderPrice) {
         this.name = name;
         this.menuList = menuList;
