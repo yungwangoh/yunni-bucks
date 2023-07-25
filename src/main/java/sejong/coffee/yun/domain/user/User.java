@@ -34,6 +34,9 @@ public class User extends DateTimeEntity {
     @OneToMany
     private List<Coupon> coupons = new ArrayList<>();
 
+    @OneToOne
+    private Card card;
+
     @Builder
     public User(String email, String name, String password, Long orderId,
                 UserRank userRank, Address address, Money money, List<Coupon> coupons) {
