@@ -1,13 +1,11 @@
 package sejong.coffee.yun.domain.order;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
-import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.User;
@@ -17,9 +15,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
 
 class CalculatorTest {
