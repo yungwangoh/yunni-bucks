@@ -5,15 +5,13 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Getter
-public abstract class Payment implements Pay {
+public abstract class PaymentBaseEntity {
 
     /**
      * <결제 발생, 결제 승인>
@@ -25,14 +23,4 @@ public abstract class Payment implements Pay {
 
     @Column(updatable = false)
     private LocalDateTime approvedAt; // 결제 승인이 일어난 날짜와 시간 정보
-
-    @Override
-    public void payment() {
-
-    }
-
-    @Override
-    public void cancelPayment() {
-
-    }
 }
