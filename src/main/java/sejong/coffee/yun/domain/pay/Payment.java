@@ -21,7 +21,7 @@ public abstract class Payment implements Pay {
      */
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime requestedAt; // 결제가 일어난 날짜와 시간 정보
+    private LocalDateTime requestedAt; // 결제가 일어난 날짜와 시간 정보, 자동 생성 및 저장
 
     @Column(updatable = false)
     private LocalDateTime approvedAt; // 결제 승인이 일어난 날짜와 시간 정보
