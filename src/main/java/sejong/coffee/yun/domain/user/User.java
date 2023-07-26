@@ -48,6 +48,15 @@ public class User extends DateTimeEntity {
         this.coupons = coupons;
     }
 
+    private User(Long id, User user) {
+        this(user.email, user.name, user.password, user.orderId, user.userRank, user.address, user.money, user.coupons);
+        this.id = id;
+    }
+
+    public static User from(Long id, User user) {
+        return new User(id, user);
+    }
+
     public void updateName(String name) {
         this.name = name;
     }

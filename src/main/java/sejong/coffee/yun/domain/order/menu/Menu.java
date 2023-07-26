@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Getter
 public abstract class Menu extends DateTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;

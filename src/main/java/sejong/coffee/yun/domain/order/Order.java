@@ -3,9 +3,7 @@ package sejong.coffee.yun.domain.order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import sejong.coffee.yun.domain.DateTimeEntity;
-import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.User;
@@ -13,15 +11,16 @@ import sejong.coffee.yun.domain.user.User;
 import javax.persistence.*;
 import java.util.List;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
-import static sejong.coffee.yun.domain.order.OrderStatus.*;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
+import static sejong.coffee.yun.domain.order.OrderStatus.CANCEL;
+import static sejong.coffee.yun.domain.order.OrderStatus.ORDER;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends DateTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "order_name")
     private String name;

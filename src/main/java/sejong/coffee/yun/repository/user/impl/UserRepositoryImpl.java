@@ -1,6 +1,7 @@
 package sejong.coffee.yun.repository.user.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.user.User;
 import sejong.coffee.yun.repository.user.JpaUserRepository;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
 
+@Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
