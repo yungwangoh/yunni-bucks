@@ -5,15 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
 import sejong.coffee.yun.domain.order.menu.Menu;
-import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.User;
+import sejong.coffee.yun.domain.user.Member;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
-import static sejong.coffee.yun.domain.order.OrderStatus.*;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
+import static sejong.coffee.yun.domain.order.OrderStatus.CANCEL;
+import static sejong.coffee.yun.domain.order.OrderStatus.ORDER;
 
 @Entity
 @Getter
@@ -27,30 +28,41 @@ public class Order extends DateTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private MenuList menuList;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus status;
     private Money orderPrice;
 
-//    @OneToOne(mappedBy = "order")
-//    private CardPayment pay;
-    private Order(String name, MenuList menuList, User user, OrderStatus status, Money orderPrice) {
+    private Order(String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice) {
         this.name = name;
         this.menuList = menuList;
-        this.user = user;
+        this.member = member;
         this.status = status;
         this.orderPrice = orderPrice;
     }
 
-    public static Order createOrder(User user, MenuList menuList, Money orderPrice) {
+    private Order(Long id, String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice) {
+        this(name, menuList, member, status, orderPrice);
+        this.id = id;
+    }
+
+    public static Order order(Long id, Order order) {
+        return new Order(id, order.getName(), order.getMenuList(), order.getMember(), order.getStatus(), order.getOrderPrice());
+    }
+
+    public static Order createOrder(Member member, MenuList menuList, Money orderPrice) {
         String orderName = makeOrderName(menuList.getMenus());
 
-        return new Order(orderName, menuList, user, ORDER, orderPrice);
+        return new Order(orderName, menuList, member, ORDER, orderPrice);
     }
 
     public void cancel() {
         this.status = CANCEL;
+    }
+
+    public BigDecimal fetchTotalOrderPrice() {
+        return this.orderPrice.getTotalPrice();
     }
 
     private static String makeOrderName(List<Menu> menus) {

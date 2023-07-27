@@ -7,8 +7,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.order.menu.*;
+import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.User;
 import sejong.coffee.yun.domain.user.UserRank;
 
 import java.math.BigDecimal;
@@ -47,7 +47,7 @@ class CalculatorTest {
     @CsvSource({"BRONZE, 3000.0", "SILVER, 2700.0", "GOLD, 2550.00", "PLATINUM, 2400.0", "DIAMOND, 2100.0"})
     void 메뉴리스트를_계산_한다(UserRank userRank, BigDecimal bigDecimal) {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .address(null)
                 .email("qwer1234@naver.com")
                 .money(Money.ZERO)
@@ -59,7 +59,7 @@ class CalculatorTest {
         MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
 
         // when
-        Money money = calculator.calculateMenus(user, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList.getMenus());
 
         // then
         assertThat(money.getTotalPrice()).isEqualTo(bigDecimal);
@@ -68,7 +68,7 @@ class CalculatorTest {
     @Test
     void 메뉴_리스트가_비어있으면_계산을_수행할_수_없다() {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .address(null)
                 .email("qwer1234@naver.com")
                 .money(Money.ZERO)
@@ -79,7 +79,7 @@ class CalculatorTest {
         MenuList menuList = new MenuList(new ArrayList<>());
 
         // then
-        assertThatThrownBy(() -> calculator.calculateMenus(user, menuList.getMenus()))
+        assertThatThrownBy(() -> calculator.calculateMenus(member, menuList.getMenus()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }

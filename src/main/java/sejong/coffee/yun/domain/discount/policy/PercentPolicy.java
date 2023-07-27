@@ -2,7 +2,7 @@ package sejong.coffee.yun.domain.discount.policy;
 
 import lombok.RequiredArgsConstructor;
 import sejong.coffee.yun.domain.discount.condition.DiscountCondition;
-import sejong.coffee.yun.domain.user.User;
+import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.UserRank;
 
 import java.util.Objects;
@@ -13,9 +13,9 @@ public class PercentPolicy implements DiscountPolicy {
     private final DiscountCondition condition;
 
     @Override
-    public double calculateDiscount(User user) {
-        if(condition.isSatisfiedBy(user)) {
-            return calculateDiscountByUserRank(user.getUserRank());
+    public double calculateDiscount(Member member) {
+        if(condition.isSatisfiedBy(member)) {
+            return calculateDiscountByUserRank(member.getUserRank());
         }
         return 0;
     }

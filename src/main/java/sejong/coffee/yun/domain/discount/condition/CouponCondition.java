@@ -1,12 +1,13 @@
 package sejong.coffee.yun.domain.discount.condition;
 
-import sejong.coffee.yun.domain.coupon.Coupon;
-import sejong.coffee.yun.domain.user.User;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import sejong.coffee.yun.domain.user.Member;
 
 public class CouponCondition implements DiscountCondition {
 
     @Override
-    public boolean isSatisfiedBy(User user) {
-        return user.getCoupons().size() > 0;
+    public boolean isSatisfiedBy(Member member) {
+        return false;
     }
 }

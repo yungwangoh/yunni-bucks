@@ -1,8 +1,8 @@
 package sejong.coffee.yun.domain.discount.condition;
 
-import sejong.coffee.yun.domain.user.User;
+import sejong.coffee.yun.domain.user.Member;
 
 public interface DiscountCondition {
 
-    boolean isSatisfiedBy(User user);
+    boolean isSatisfiedBy(Member member);
 }

@@ -1,7 +1,7 @@
 # local environment (로컬)
 spring:
   datasource:
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:tcp://localhost/~/food
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -13,9 +13,17 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+        auto_quote_keyword: true
     database-platform:
 
 logging:
   level: #띄어쓰기 없음
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace
+
+jwt:
+  key: applicationKey
+  blackList: blackList
+  expireTime:
+    access: 3600000
+    refresh: 1296000000
