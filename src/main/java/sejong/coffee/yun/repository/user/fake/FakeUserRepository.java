@@ -7,6 +7,7 @@ import sejong.coffee.yun.repository.user.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
 
@@ -70,5 +71,23 @@ public class FakeUserRepository implements UserRepository {
     public void updateEmail(Long id, String email) {
         Member member = findById(id);
         member.updateEmail(email);
+    }
+
+    @Override
+    public boolean duplicateEmail(String email) {
+        Optional<Member> findMember = members.stream()
+                .filter(member -> Objects.equals(member.getEmail(), email))
+                .findAny();
+
+        return findMember.isPresent();
+    }
+
+    @Override
+    public boolean duplicateName(String name) {
+        Optional<Member> findMember = members.stream()
+                .filter(member -> Objects.equals(member.getName(), name))
+                .findAny();
+
+        return findMember.isPresent();
     }
 }
