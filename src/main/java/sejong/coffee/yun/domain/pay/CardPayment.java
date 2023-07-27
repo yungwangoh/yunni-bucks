@@ -20,16 +20,20 @@ public class CardPayment extends PaymentBaseEntity implements Pay {
     private String cardNumber;
     private String cardPassword;
 
-    // 카드번호, 카드 유효연월은 Member에서 끌고오는지?
-    // Member랑 연관관계 맺나?
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
+    public CardPayment(String cardNumber, String cardPassword, Order order) {
+        this.cardNumber = cardNumber;
+        this.cardPassword = cardPassword;
+        this.order = order;
+    }
+
     @Override
     public void payment() {
-
+        Pay pay = new CardPayment();
     }
 
     @Override
