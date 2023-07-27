@@ -31,9 +31,6 @@ public class Member extends DateTimeEntity {
     private Address address;
     private Money money;
 
-    @OneToOne
-    private Card card;
-
     @Builder
     public Member(String email, String name, String password, Long orderId,
                   UserRank userRank, Address address, Money money) {
