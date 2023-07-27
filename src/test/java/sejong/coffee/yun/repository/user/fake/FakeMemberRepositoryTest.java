@@ -76,4 +76,28 @@ class FakeMemberRepositoryTest {
         // then
         assertTrue(exist);
     }
+
+    @Test
+    void 유저_이메일이_중복_되는지_확인() {
+        // given
+        Member save = userRepository.save(member);
+
+        // when
+        boolean duplicateEmail = userRepository.duplicateEmail(save.getEmail());
+
+        // then
+        assertTrue(duplicateEmail);
+    }
+
+    @Test
+    void 유저_이름이_중복_되는지_확인() {
+        // given
+        Member save = userRepository.save(member);
+
+        // when
+        boolean duplicateName = userRepository.duplicateName(save.getName());
+
+        // then
+        assertTrue(duplicateName);
+    }
 }
