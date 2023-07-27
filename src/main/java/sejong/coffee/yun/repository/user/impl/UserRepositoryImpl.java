@@ -68,6 +68,16 @@ public class UserRepositoryImpl implements UserRepository {
         member.updateEmail(email);
     }
 
+    @Override
+    public boolean duplicateEmail(String email) {
+        return jpaUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean duplicateName(String name) {
+        return jpaUserRepository.existsByName(name);
+    }
+
     private Member getUser(Long id) {
         return jpaUserRepository.findById(id)
                 .orElseThrow(NOT_FOUND_USER::notFoundUserException);
