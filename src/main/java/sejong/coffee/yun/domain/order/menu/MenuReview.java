@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
-import sejong.coffee.yun.domain.user.User;
+import sejong.coffee.yun.domain.user.Member;
 
 import javax.persistence.*;
 
@@ -13,17 +13,20 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MenuReview extends DateTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
-    private String comment;
+    @Column(name = "comments")
+    private String comments;
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    public MenuReview(String comment, User user, Menu menu) {
-        this.comment = comment;
-        this.user = user;
+    public MenuReview(String comments, Member member, Menu menu) {
+        this.comments = comments;
+        this.member = member;
         this.menu = menu;
     }
 

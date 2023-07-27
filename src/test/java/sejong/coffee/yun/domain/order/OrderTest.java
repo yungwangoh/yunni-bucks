@@ -6,8 +6,8 @@ import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.exception.MenuException;
 import sejong.coffee.yun.domain.order.menu.*;
+import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.User;
 import sejong.coffee.yun.domain.user.UserRank;
 
 import java.math.BigDecimal;
@@ -44,7 +44,7 @@ class OrderTest {
     @Test
     void 주문_총_금액() {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .name("윤광오")
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
@@ -55,10 +55,10 @@ class OrderTest {
 
         MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
 
-        Money money = calculator.calculateMenus(user, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList.getMenus());
 
         // when
-        Order order = Order.createOrder(user, menuList, money);
+        Order order = Order.createOrder(member, menuList, money);
 
         // then
         assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("3000.0");
@@ -68,7 +68,7 @@ class OrderTest {
     @Test
     void 주문명_확인() {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .name("윤광오")
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
@@ -79,10 +79,10 @@ class OrderTest {
 
         MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
 
-        Money money = calculator.calculateMenus(user, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList.getMenus());
 
         // when
-        Order order = Order.createOrder(user, menuList, money);
+        Order order = Order.createOrder(member, menuList, money);
         String orderName = menuList.getMenus().get(0).getTitle() + " 외 " + menuList.getMenus().size() + "개";
 
         // then
@@ -93,7 +93,7 @@ class OrderTest {
     @Test
     void 메뉴가_비어있을_때_주문명을_만들지_못함() {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .name("윤광오")
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
@@ -106,7 +106,7 @@ class OrderTest {
         MenuList menuList = new MenuList(List.of());
 
         // then
-        assertThatThrownBy(() -> Order.createOrder(user, menuList, Money.ZERO))
+        assertThatThrownBy(() -> Order.createOrder(member, menuList, Money.ZERO))
                 .isInstanceOf(MenuException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }
@@ -114,7 +114,7 @@ class OrderTest {
     @Test
     void 주문_취소_했을때_상태_주문취소로_변경() {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .name("윤광오")
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
@@ -125,8 +125,8 @@ class OrderTest {
 
         MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
 
-        Money money = calculator.calculateMenus(user, menuList.getMenus());
-        Order order = Order.createOrder(user, menuList, money);
+        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Order order = Order.createOrder(member, menuList, money);
 
         // when
         order.cancel();

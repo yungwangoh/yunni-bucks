@@ -1,6 +1,5 @@
 package sejong.coffee.yun.domain.user;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -8,9 +7,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-class UserTest {
+class MemberTest {
 
     @Test
     void 유저의_주소() {
@@ -22,7 +20,7 @@ class UserTest {
 
         Address address = new Address(city, district, detail, zipcode);
 
-        User user = User.builder()
+        Member member = Member.builder()
                 .address(address)
                 .email("qwer1234@naver.com")
                 .money(Money.ZERO)
@@ -32,7 +30,7 @@ class UserTest {
                 .build();
 
         // when
-        Address userAddress = user.getAddress();
+        Address userAddress = member.getAddress();
 
         // then
         assertThat(userAddress).isEqualTo(address);
@@ -41,7 +39,7 @@ class UserTest {
     @Test
     void 유저의_처음_잔액은_0이다() {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .address(null)
                 .email("qwer1234@naver.com")
                 .money(Money.ZERO)
@@ -51,7 +49,7 @@ class UserTest {
                 .build();
 
         // when
-        Money userMoney = user.getMoney();
+        Money userMoney = member.getMoney();
 
         // then
         assertThat(userMoney.getTotalPrice()).isEqualTo(Money.ZERO.getTotalPrice());
@@ -61,7 +59,7 @@ class UserTest {
     @ValueSource(strings = {"0", "100", "1000", "10000", "100000"})
     void 유저의_잔액_확인(String money) {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .address(null)
                 .email("qwer1234@naver.com")
                 .money(Money.initialPrice(new BigDecimal(money)))
@@ -71,17 +69,17 @@ class UserTest {
                 .build();
 
         // when
-        Money userMoney = user.getMoney();
+        BigDecimal totalPrice = member.fetchTotalPrice();
 
         // then
-        assertThat(userMoney.getTotalPrice()).isEqualTo(Money.initialPrice(new BigDecimal(money)).getTotalPrice());
+        assertThat(totalPrice).isEqualTo(Money.initialPrice(new BigDecimal(money)).getTotalPrice());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"BRONZE", "SILVER", "GOLD", "PLATINUM", "DIAMOND"})
     void 유저의_랭크(UserRank userRank) {
         // given
-        User user = User.builder()
+        Member member = Member.builder()
                 .address(null)
                 .email("qwer1234@naver.com")
                 .money(Money.ZERO)
@@ -91,7 +89,7 @@ class UserTest {
                 .build();
 
         // when
-        UserRank rank = user.getUserRank();
+        UserRank rank = member.getUserRank();
 
         // then
         assertThat(rank).isEqualTo(userRank);

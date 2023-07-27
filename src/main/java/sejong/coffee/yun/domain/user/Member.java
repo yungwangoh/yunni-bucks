@@ -5,23 +5,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
-import sejong.coffee.yun.domain.coupon.Coupon;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends DateTimeEntity {
+public class Member extends DateTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     private Long id;
-    @Column(name = "name")
+    @Column(name = "user_name")
     private String name;
-    @Column(name = "password")
+    @Column(name = "pwd")
     private String password;
     @Column(name = "email")
     private String email;
@@ -31,12 +30,10 @@ public class User extends DateTimeEntity {
     private UserRank userRank;
     private Address address;
     private Money money;
-    @OneToMany
-    private List<Coupon> coupons = new ArrayList<>();
 
     @Builder
-    public User(String email, String name, String password, Long orderId,
-                UserRank userRank, Address address, Money money, List<Coupon> coupons) {
+    public Member(String email, String name, String password, Long orderId,
+                  UserRank userRank, Address address, Money money) {
 
         this.name = name;
         this.password = password;
@@ -45,16 +42,15 @@ public class User extends DateTimeEntity {
         this.userRank = userRank;
         this.address = address;
         this.money = money;
-        this.coupons = coupons;
     }
 
-    private User(Long id, User user) {
-        this(user.email, user.name, user.password, user.orderId, user.userRank, user.address, user.money, user.coupons);
+    private Member(Long id, Member member) {
+        this(member.email, member.name, member.password, member.orderId, member.userRank, member.address, member.money);
         this.id = id;
     }
 
-    public static User from(Long id, User user) {
-        return new User(id, user);
+    public static Member from(Long id, Member member) {
+        return new Member(id, member);
     }
 
     public void updateName(String name) {
@@ -67,5 +63,9 @@ public class User extends DateTimeEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public BigDecimal fetchTotalPrice() {
+        return this.money.getTotalPrice();
     }
 }

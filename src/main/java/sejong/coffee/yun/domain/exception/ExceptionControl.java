@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ExceptionControl {
 
+    NOT_FOUND_ORDER("주문 내역이 존재하지 않습니다."),
     NOT_FOUND_USER("유저가 존재하지 않습니다."),
     EMPTY_MENUS("메뉴리스트가 비어 있습니다.");
 
@@ -19,5 +20,9 @@ public enum ExceptionControl {
     }
     public NotFoundUserException notFoundUserException() {
         return new NotFoundUserException(this.message);
+    }
+
+    public NotFoundOrderException notFoundOrderException() {
+        return new NotFoundOrderException(this.message);
     }
 }

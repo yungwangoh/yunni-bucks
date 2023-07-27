@@ -1,30 +1,26 @@
-package sejong.coffee.yun.repository.user;
+package sejong.coffee.yun.repository.user.fake;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import sejong.coffee.yun.domain.user.Address;
+import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.User;
 import sejong.coffee.yun.domain.user.UserRank;
-import sejong.coffee.yun.repository.user.impl.UserRepositoryImpl;
+import sejong.coffee.yun.repository.user.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
-class UserRepositoryTest {
+class FakeMemberRepositoryTest {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-//    public UserRepositoryTest() {
-//        this.userRepository = new UserRepositoryImpl();
-//    }
+    public FakeMemberRepositoryTest() {
+        this.userRepository = new FakeUserRepository();
+    }
 
-    private User user;
+    private Member member;
+
 
     @BeforeEach
     void init() {
@@ -35,7 +31,7 @@ class UserRepositoryTest {
 
         Address address = new Address(city, district, detail, zipcode);
 
-        user = User.builder()
+        member = Member.builder()
                 .address(address)
                 .email("qwer1234@naver.com")
                 .money(Money.ZERO)
@@ -50,7 +46,7 @@ class UserRepositoryTest {
         // given
 
         // when
-        User save = userRepository.save(user);
+        Member save = userRepository.save(member);
 
         // then
         assertThat(save.getId()).isEqualTo(1);
@@ -60,7 +56,7 @@ class UserRepositoryTest {
     void 유저_이름_변경() {
         // given
         String updateName = "하윤";
-        User save = userRepository.save(user);
+        Member save = userRepository.save(member);
 
         // when
         userRepository.updateName(save.getId(), updateName);
@@ -72,7 +68,7 @@ class UserRepositoryTest {
     @Test
     void 유저가_존재하는지_확인() {
         // given
-        User save = userRepository.save(user);
+        Member save = userRepository.save(member);
 
         // when
         boolean exist = userRepository.exist(save.getId());

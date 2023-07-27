@@ -1,14 +1,15 @@
 package sejong.coffee.yun.repository.user;
 
-import sejong.coffee.yun.domain.user.User;
+import org.springframework.stereotype.Repository;
+import sejong.coffee.yun.domain.user.Member;
 
 import java.util.List;
 
 public interface UserRepository {
 
-    User save(User user);
-    User findById(Long id);
-    List<User> findAll();
+    Member save(Member member);
+    Member findById(Long id);
+    List<Member> findAll();
     boolean exist(Long id);
     void delete(Long id);
     void updateName(Long id, String name);

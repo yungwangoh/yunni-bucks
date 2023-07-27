@@ -1,7 +1,13 @@
 package sejong.coffee.yun.repository.order;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import sejong.coffee.yun.domain.order.Order;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+import java.util.List;
+
+public interface OrderRepository {
+
+    Order save(Order order);
+    Order findById(Long id);
+    List<Order> findAll();
+
 }
