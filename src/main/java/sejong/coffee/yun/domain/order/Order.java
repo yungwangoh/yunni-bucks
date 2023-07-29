@@ -53,6 +53,7 @@ public class Order extends DateTimeEntity {
 
     public static Order createOrder(Member member, MenuList menuList, Money orderPrice) {
         String orderName = makeOrderName(menuList.getMenus());
+        member.getCoupon().convertStatusUsedCoupon();
 
         return new Order(orderName, menuList, member, ORDER, orderPrice);
     }

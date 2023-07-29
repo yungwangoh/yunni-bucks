@@ -75,6 +75,6 @@ public class Member extends DateTimeEntity {
         return this.money.getTotalPrice();
     }
     public boolean hasCoupon() {
-        return this.coupon != null;
+        return this.coupon != null && this.coupon.hasAvailableCoupon();
     }
 }
