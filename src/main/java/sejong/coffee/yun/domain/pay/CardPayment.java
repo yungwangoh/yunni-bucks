@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of ={"id", "cardNumber", "cardPassword"})
-public class CardPayment extends PaymentBaseEntity implements Pay {
+public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
     @Id @GeneratedValue
     @Column(name = "card_payment_id")
