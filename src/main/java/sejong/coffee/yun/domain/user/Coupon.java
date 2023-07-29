@@ -9,6 +9,8 @@ import sejong.coffee.yun.domain.discount.type.DiscountType;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static sejong.coffee.yun.domain.user.CouponUse.*;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,18 +28,37 @@ public class Coupon implements DiscountType {
     private LocalDateTime expireAt;
     @Column(name = "discount_rate")
     private double discountRate;
+    @Enumerated(EnumType.STRING)
+    private CouponUse couponUse;
 
     @Builder
-    public Coupon(String name, String identityNumber, LocalDateTime createAt, LocalDateTime expireAt, double discountRate) {
+    public Coupon(String name, String identityNumber, LocalDateTime createAt,
+                  LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
+
         this.name = name;
         this.identityNumber = identityNumber;
         this.createAt = createAt;
         this.expireAt = expireAt;
         this.discountRate = discountRate;
+        this.couponUse = couponUse;
     }
 
     @Override
     public double getDiscountRate() {
         return this.discountRate;
+    }
+
+    public void convertStatusUsedCoupon() {
+        this.couponUse = YES;
+    }
+
+    public void checkExpireTime() {
+        if(LocalDateTime.now().compareTo(this.expireAt) > 0) {
+            this.couponUse = YES;
+        }
+    }
+
+    public boolean hasAvailableCoupon() {
+        return this.getCouponUse() == NO;
     }
 }
