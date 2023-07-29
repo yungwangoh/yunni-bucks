@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 @Getter
-public abstract class PaymentBaseEntity {
+public abstract class PaymentDateTimeEntity {
 
     /**
      * <결제 발생, 결제 승인>
