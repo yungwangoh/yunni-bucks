@@ -13,9 +13,8 @@ public enum PaymentType {
             return PaymentType.CARD;
         } else if (type.equals("계좌")) {
             return PaymentType.ACCOUNT;
-        } else if (type.equals("상품권")) {
-            return PaymentType.COUPON;
+        } else {
+            throw new NotFoundPaymentTypeException();
         }
-        throw new NotFoundPaymentTypeException();
     }
 }
