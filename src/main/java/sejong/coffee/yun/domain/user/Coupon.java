@@ -8,6 +8,8 @@ import sejong.coffee.yun.domain.discount.type.DiscountType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static sejong.coffee.yun.domain.user.CouponUse.*;
 
@@ -36,7 +38,7 @@ public class Coupon implements DiscountType {
                   LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
 
         this.name = name;
-        this.identityNumber = identityNumber;
+        this.identityNumber = checkValidatedCouponIdentityNumber(identityNumber);
         this.createAt = createAt;
         this.expireAt = expireAt;
         this.discountRate = discountRate;
@@ -52,13 +54,23 @@ public class Coupon implements DiscountType {
         this.couponUse = YES;
     }
 
-    public void checkExpireTime() {
-        if(LocalDateTime.now().compareTo(this.expireAt) > 0) {
+    public void checkExpireTime(LocalDateTime localDateTime) {
+        if(localDateTime.compareTo(this.expireAt) > 0) {
             this.couponUse = YES;
         }
     }
 
     public boolean hasAvailableCoupon() {
         return this.getCouponUse() == NO;
+    }
+
+    private String checkValidatedCouponIdentityNumber(String identityNumber) {
+        boolean matches = identityNumber.matches("^\\d{4}-\\d{4}-\\d{4}-\\d{4}$");
+
+        if(matches) {
+            return identityNumber;
+        } else {
+            throw new IllegalArgumentException("쿠폰 식별번호 형식에 맞지 않습니다.");
+        }
     }
 }
