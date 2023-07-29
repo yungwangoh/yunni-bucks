@@ -42,7 +42,7 @@ class PercentPolicyTest {
                 .createAt(LocalDateTime.of(2023, 7, 29, 10, 10))
                 .discountRate(0.1)
                 .name("신규가입 쿠폰")
-                .identityNumber("12345-12345-12345")
+                .identityNumber("1234-1234-1234-1234")
                 .couponUse(CouponUse.NO)
                 .expireAt(LocalDateTime.of(2024, 7, 29, 10, 10))
                 .build();
