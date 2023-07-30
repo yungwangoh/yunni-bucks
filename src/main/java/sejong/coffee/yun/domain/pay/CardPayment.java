@@ -9,6 +9,8 @@ import sejong.coffee.yun.domain.user.Card;
 
 import javax.persistence.*;
 
+import static sejong.coffee.yun.util.parse.ParsingDateUtil.parsingCardValidDate;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,13 +34,9 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         this.cardNumber = card.getCardNumber();
         this.cardPassword = card.getCardPassword();
         this.customerName = order.getMember().getName();
-        this.cardExpirationYear = parsingCardDate(card.getValidThru())[0];
-        this.cardExpirationMonth = parsingCardDate(card.getValidThru())[1];
+        this.cardExpirationYear = parsingCardValidDate(card.getValidThru())[0];
+        this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[1];
         this.order = order;
-    }
-
-    private String[] parsingCardDate(String validThru) {
-        return validThru.split("/");
     }
 
     @Override
