@@ -90,4 +90,13 @@ public class FakeUserRepository implements UserRepository {
 
         return findMember.isPresent();
     }
+
+    @Override
+    public Member findByEmail(String email) {
+        return members.stream()
+                .filter(member -> Objects.equals(member.getEmail(), email))
+                .findAny()
+                .orElseThrow(NOT_FOUND_USER::notFoundUserException);
+    }
+
 }
