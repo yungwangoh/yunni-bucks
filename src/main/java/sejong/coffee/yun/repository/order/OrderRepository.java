@@ -9,5 +9,5 @@ public interface OrderRepository {
     Order save(Order order);
     Order findById(Long id);
     List<Order> findAll();
-
+    List<Order> findAllByMemberId(Long memberId);
 }
