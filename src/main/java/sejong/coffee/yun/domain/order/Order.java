@@ -78,4 +78,8 @@ public class Order extends DateTimeEntity {
             return title + " 외" + " " + menus.size() + "개";
         }
     }
+
+    public String mapOrderName() {
+        return this.id + "00000";
+    }
 }
