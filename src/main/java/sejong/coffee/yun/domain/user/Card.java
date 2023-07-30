@@ -8,10 +8,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of ={"id", "cardNumber", "validThru"})
+@ToString(of = {"id", "cardNumber", "validThru"})
 public class Card {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "card_id")
     private Long id;
     @Column(length = 20)
@@ -26,9 +27,10 @@ public class Card {
     private Member member;
 
     @Builder
-    public Card(String cardNumber, String validThru, String cardPassword) {
+    public Card(String cardNumber, String validThru, String cardPassword, Member member) {
         this.cardNumber = cardNumber;
         this.validThru = validThru;
         this.cardPassword = cardPassword;
+        this.member = member;
     }
 }
