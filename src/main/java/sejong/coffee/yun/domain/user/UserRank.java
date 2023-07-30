@@ -1,10 +1,46 @@
 package sejong.coffee.yun.domain.user;
 
-public enum UserRank {
+import lombok.Getter;
+import sejong.coffee.yun.domain.discount.type.DiscountType;
 
-    BRONZE, SILVER, GOLD, PLATINUM, DIAMOND;
+@Getter
+public enum UserRank implements DiscountType {
 
-    UserRank() {
+    BRONZE(0.0) {
+        @Override
+        public double getDiscountRate() {
+            return super.getDiscountRate();
+        }
+    },
+    SILVER(0.1) {
+        @Override
+        public double getDiscountRate() {
+            return super.getDiscountRate();
+        }
+    },
+    GOLD(0.15) {
+        @Override
+        public double getDiscountRate() {
+            return super.getDiscountRate();
+        }
+    },
+    PLATINUM(0.2) {
+        @Override
+        public double getDiscountRate() {
+            return super.getDiscountRate();
+        }
+    },
+    DIAMOND(0.3) {
+        @Override
+        public double getDiscountRate() {
+            return super.getDiscountRate();
+        }
+    };
+
+    private final double discountRate;
+
+    UserRank(double discountRate) {
+        this.discountRate = discountRate;
     }
 
     public static UserRank calculateUserRank(int orderCount) {

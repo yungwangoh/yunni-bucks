@@ -30,10 +30,13 @@ public class Member extends DateTimeEntity {
     private UserRank userRank;
     private Address address;
     private Money money;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
 
     @Builder
     public Member(String email, String name, String password, Long orderId,
-                  UserRank userRank, Address address, Money money) {
+                  UserRank userRank, Address address, Money money, Coupon coupon) {
 
         this.name = name;
         this.password = password;
@@ -42,10 +45,13 @@ public class Member extends DateTimeEntity {
         this.userRank = userRank;
         this.address = address;
         this.money = money;
+        this.coupon = coupon;
     }
 
     private Member(Long id, Member member) {
-        this(member.email, member.name, member.password, member.orderId, member.userRank, member.address, member.money);
+        this(member.email, member.name, member.password, member.orderId,
+                member.userRank, member.address, member.money, member.coupon);
+
         this.id = id;
     }
 
@@ -67,5 +73,8 @@ public class Member extends DateTimeEntity {
 
     public BigDecimal fetchTotalPrice() {
         return this.money.getTotalPrice();
+    }
+    public boolean hasCoupon() {
+        return this.coupon != null && this.coupon.hasAvailableCoupon();
     }
 }

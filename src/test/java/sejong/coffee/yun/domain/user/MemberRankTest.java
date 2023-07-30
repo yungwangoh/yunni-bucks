@@ -2,6 +2,7 @@ package sejong.coffee.yun.domain.user;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,5 +21,12 @@ class MemberRankTest {
 
         // then
         assertThat(userRank).isEqualTo(rank);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"BRONZE, 0.0", "SILVER, 0.1", "GOLD, 0.15", "PLATINUM, 0.2", "DIAMOND, 0.3"})
+    void 유저_등급에_따른_할인률(UserRank userRank, double discountRate) {
+
+        assertThat(userRank.getDiscountRate()).isEqualTo(discountRate);
     }
 }

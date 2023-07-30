@@ -1,37 +1,52 @@
 package sejong.coffee.yun.domain.discount.policy;
 
-import lombok.RequiredArgsConstructor;
+import sejong.coffee.yun.domain.discount.condition.CouponCondition;
 import sejong.coffee.yun.domain.discount.condition.DiscountCondition;
+import sejong.coffee.yun.domain.discount.condition.RankCondition;
+import sejong.coffee.yun.domain.discount.type.DiscountType;
 import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.UserRank;
 
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 
-@RequiredArgsConstructor
 public class PercentPolicy implements DiscountPolicy {
 
-    private final DiscountCondition condition;
+    private final List<DiscountCondition> conditions;
+
+    public PercentPolicy(DiscountCondition... conditions) {
+        this.conditions = Arrays.asList(conditions);
+    }
 
     @Override
     public double calculateDiscount(Member member) {
-        if(condition.isSatisfiedBy(member)) {
-            return calculateDiscountByUserRank(member.getUserRank());
+
+        double totalRate = 0d;
+
+        if(isDiscountable(RankCondition.class, member)) {
+            totalRate += provideDiscountRate(RankCondition.class, member.getUserRank());
         }
-        return 0;
+
+        if(isDiscountable(CouponCondition.class, member)) {
+            totalRate += provideDiscountRate(CouponCondition.class, member.getCoupon());
+        }
+
+        return totalRate;
     }
 
-    private double calculateDiscountByUserRank(UserRank userRank) {
+    private boolean isDiscountable(Class<? extends DiscountCondition> conditionType, Member member) {
+        return conditions.stream()
+                .filter(conditionType::isInstance)
+                .anyMatch(condition -> condition.isSatisfiedBy(member));
+    }
 
-        if(Objects.equals(userRank, UserRank.SILVER)) {
-            return 0.1;
-        } else if(Objects.equals(userRank, UserRank.GOLD)) {
-            return 0.15;
-        } else if(Objects.equals(userRank, UserRank.PLATINUM)) {
-            return 0.2;
-        } else if(Objects.equals(userRank, UserRank.DIAMOND)) {
-            return 0.3;
-        } else {
-            throw new IllegalArgumentException("유저 랭크가 만족하지 않습니다.");
-        }
+    private double provideDiscountRate(Class<? extends DiscountCondition> conditionType, DiscountType discountType) {
+        return conditions.stream()
+                .filter(conditionType::isInstance)
+                .mapToDouble(condition -> provideDiscountRateBy(discountType))
+                .sum();
+    }
+
+    private double provideDiscountRateBy(DiscountType discountType) {
+        return discountType.getDiscountRate();
     }
 }
