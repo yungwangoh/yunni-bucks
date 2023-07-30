@@ -1,9 +1,9 @@
 package sejong.coffee.yun.domain.pay;
 
-import sejong.coffee.yun.domain.exception.NotFoundPaymentTypeException;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 
 public enum PaymentType {
-    CARD, ACCOUNT, COUPON;
+    CARD, ACCOUNT;
 
     PaymentType() {
     }
@@ -14,7 +14,7 @@ public enum PaymentType {
         } else if (type.equals("계좌")) {
             return PaymentType.ACCOUNT;
         } else {
-            throw new NotFoundPaymentTypeException();
+            throw ExceptionControl.NOT_FOUND_PAYMENT_TYPE.paymentException();
         }
     }
 }
