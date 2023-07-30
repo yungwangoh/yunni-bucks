@@ -8,8 +8,6 @@ import sejong.coffee.yun.domain.DateTimeEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +18,6 @@ public class Member extends DateTimeEntity {
     private Long id;
     @Column(name = "user_name")
     private String name;
-    @Column(name = "pwd")
     private String password;
     @Column(name = "email")
     private String email;

@@ -1,14 +1,14 @@
 package sejong.coffee.yun.repository.order.fake;
 
-import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_ORDER;
 
 public class FakeOrderRepository implements OrderRepository {
 
@@ -35,5 +35,12 @@ public class FakeOrderRepository implements OrderRepository {
     @Override
     public List<Order> findAll() {
         return orders;
+    }
+
+    @Override
+    public List<Order> findAllByMemberId(Long memberId) {
+        return orders.stream()
+                .filter(order -> Objects.equals(order.getMember().getId(), memberId))
+                .collect(Collectors.toList());
     }
 }

@@ -68,6 +68,14 @@ public class JwtProvider {
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().get("id").toString();
     }
 
+    public Long fetchRefreshTokenExpireTime() {
+        return this.refreshExpireTime;
+    }
+
+    public Long fetchAccessTokenExpireTime() {
+        return this.accessExpireTime;
+    }
+
     /**
      * 토큰 유효성, 만료 체크
      * @param jwt 토큰

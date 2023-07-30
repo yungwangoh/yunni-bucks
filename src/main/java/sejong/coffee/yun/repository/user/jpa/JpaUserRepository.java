@@ -6,4 +6,6 @@ import sejong.coffee.yun.domain.user.Member;
 public interface JpaUserRepository extends JpaRepository<Member, Long> {
     boolean existsByEmail(String email);
     boolean existsByName(String name);
+    Member findByEmail(String email);
+    boolean existsByEmailAndPassword(String email, String password);
 }

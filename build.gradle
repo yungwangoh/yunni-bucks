@@ -57,6 +57,13 @@ dependencies {
 
 	// jwt
 	implementation "io.jsonwebtoken:jjwt:0.9.1";
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// mock
+	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.6.1'
 }
 
 tasks.named('test') {

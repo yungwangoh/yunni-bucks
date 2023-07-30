@@ -1,6 +1,5 @@
 package sejong.coffee.yun.repository.order.fake;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sejong.coffee.yun.domain.discount.condition.CouponCondition;
@@ -17,8 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FakeOrderRepositoryTest {
 
@@ -112,5 +110,22 @@ class FakeOrderRepositoryTest {
 
         // then
         assertThat(orderList.size()).isEqualTo(1);
+    }
+
+    @Test
+    void 회원의_주문리스트() {
+        // given
+        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
+        Money money = calculator.calculateMenus(member, menuList.getMenus());
+
+        Order order = Order.createOrder(member, menuList, money);
+        orderRepository.save(order);
+        orderRepository.save(order);
+
+        // when
+        List<Order> orderLists = orderRepository.findAllByMemberId(member.getId());
+
+        // then
+        assertThat(orderLists.size()).isEqualTo(2);
     }
 }

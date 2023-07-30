@@ -29,6 +29,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Member findByEmail(String email) {
+        return jpaUserRepository.findByEmail(email);
+    }
+
+    @Override
     public List<Member> findAll() {
         return jpaUserRepository.findAll();
     }
@@ -82,4 +87,6 @@ public class UserRepositoryImpl implements UserRepository {
         return jpaUserRepository.findById(id)
                 .orElseThrow(NOT_FOUND_USER::notFoundUserException);
     }
+
+
 }

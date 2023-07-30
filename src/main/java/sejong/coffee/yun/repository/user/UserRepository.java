@@ -1,6 +1,5 @@
 package sejong.coffee.yun.repository.user;
 
-import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.user.Member;
 
 import java.util.List;
@@ -17,4 +16,5 @@ public interface UserRepository {
     void updateEmail(Long id, String email);
     boolean duplicateEmail(String email);
     boolean duplicateName(String name);
+    Member findByEmail(String email);
 }
