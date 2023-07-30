@@ -7,7 +7,7 @@ import sejong.coffee.yun.domain.exception.ExceptionControl;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static sejong.coffee.yun.util.parse.ParsingDateUtil.parsingCardValidDate;
+import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
 
 @Entity
 @Getter

@@ -9,7 +9,7 @@ import sejong.coffee.yun.domain.user.Card;
 
 import javax.persistence.*;
 
-import static sejong.coffee.yun.util.parse.ParsingDateUtil.parsingCardValidDate;
+import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
 
 @Entity
 @Getter
