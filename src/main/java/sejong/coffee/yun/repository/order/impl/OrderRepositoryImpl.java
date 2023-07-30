@@ -3,14 +3,13 @@ package sejong.coffee.yun.repository.order.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.order.jpa.JpaOrderRepository;
 
 import java.util.List;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_ORDER;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,5 +32,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public List<Order> findAll() {
         return jpaOrderRepository.findAll();
+    }
+
+    @Override
+    public List<Order> findAllByMemberId(Long memberId) {
+        return jpaOrderRepository.findAllByMemberId(memberId);
     }
 }
