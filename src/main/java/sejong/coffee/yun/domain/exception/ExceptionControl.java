@@ -11,12 +11,12 @@ public enum ExceptionControl {
     EMPTY_MENUS("메뉴리스트가 비어 있습니다."),
 
     // Card
+    INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
     NOT_FOUND_REGISTER_CARD("등록된 카드가 존재하지 않습니다."),
     INVALID_CARD_NUMBER_LENGTH("카드번호가 유효하지 않습니다.(숫자로 20자 내외)"),
     INVALID_CARD_PASSWORD("카드 비밀번호가 유효하지 않습니다.(4자리 입력)"),
 
     // Pay
-    INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
     NOT_FOUND_PAYMENT_TYPE("올바르지 않은 결제 수단입니다."),
 
     // PayDetails
