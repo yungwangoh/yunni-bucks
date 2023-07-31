@@ -33,22 +33,26 @@ public class Order extends DateTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus status;
     private Money orderPrice;
+    @Enumerated(value = EnumType.STRING)
+    private OrderPayStatus payStatus;
 
-    private Order(String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice) {
+    private Order(String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
         this.name = name;
         this.menuList = menuList;
         this.member = member;
         this.status = status;
         this.orderPrice = orderPrice;
+        this.payStatus = payStatus;
     }
 
-    private Order(Long id, String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice) {
-        this(name, menuList, member, status, orderPrice);
+    private Order(Long id, String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
+        this(name, menuList, member, status, orderPrice, payStatus);
         this.id = id;
     }
 
     public static Order order(Long id, Order order) {
-        return new Order(id, order.getName(), order.getMenuList(), order.getMember(), order.getStatus(), order.getOrderPrice());
+        return new Order(id, order.getName(), order.getMenuList(), order.getMember(),
+                order.getStatus(), order.getOrderPrice(), order.getPayStatus());
     }
 
     public static Order createOrder(Member member, MenuList menuList, Money orderPrice) {
@@ -58,7 +62,7 @@ public class Order extends DateTimeEntity {
             member.getCoupon().convertStatusUsedCoupon();
         }
 
-        return new Order(orderName, menuList, member, ORDER, orderPrice);
+        return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO);
     }
 
     public void cancel() {
