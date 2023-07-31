@@ -83,9 +83,6 @@ public class JwtProvider {
      */
     public boolean tokenExpiredCheck(String jwt) {
 
-        if(jwt == null || jwt.equals(""))
-            return false;
-
         try {
             Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
             log.info("[expireTime] = {}", claims.getExpiration());
@@ -96,6 +93,20 @@ public class JwtProvider {
         }
 
         return true;
+    }
+
+    public Long getTokenExpireTime(String jwt) {
+
+        try {
+            Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(jwt).getBody();
+            log.info("[expireTime] = {}", claims.getExpiration());
+            log.info("[subject] = {}", claims.getSubject());
+
+            return claims.getExpiration().getTime();
+        } catch (JwtException | NullPointerException e) {
+            log.error("token error!!");
+            throw new JwtException("token error!!");
+        }
     }
 
     public Long mapTokenToId(String token) {
