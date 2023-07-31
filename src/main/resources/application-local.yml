@@ -1,4 +1,12 @@
 # local environment (로컬)
+secrets:
+  clova:
+    authorizeUri: https://zfusrxrk3k.apigw.ntruss.com/custom/v1/23890/2453eb775e796913aca6d68e93eb5c9d0eda8b9e8f224fe7413ac067ae57fc7b/document/credit-card
+    secret-key: bHdFSFJGTklOVVJzUFBNeEx3UmhFU3dZdXVtakxUY3U=
+  toss:
+    apiUri: https://api.tosspayments.com/v1/payments/key-in
+    secret-key: Basic dGVzdF9za183WFpZa0tMNE1yakFsYUJ5MGExVjB6SndsRVdSOg==
+
 spring:
   datasource:
     url: jdbc:h2:tcp://localhost/~/food
