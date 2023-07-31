@@ -1,6 +1,5 @@
 package sejong.coffee.yun.jwt;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sejong.coffee.yun.domain.user.Member;
@@ -8,7 +7,7 @@ import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.util.jwt.JwtUtil;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,5 +71,19 @@ class JwtProviderTest {
 
         // then
         assertThat(extractMemberId).isEqualTo(memberId);
+    }
+
+    @Test
+    void 토큰_남은_기간_반환() {
+        // given
+        JwtProvider jwtProvider = new JwtProvider("key", 100000L, 1000000L);
+
+        String accessToken = jwtProvider.createAccessToken(member);
+
+        // when
+        Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
+
+        // then
+
     }
 }
