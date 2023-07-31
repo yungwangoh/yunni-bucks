@@ -25,4 +25,20 @@ public class MenuList {
     public MenuList(List<Menu> menus) {
         this.menus = menus;
     }
+
+    public void addMenu(Menu menu) {
+        this.menus.add(menu);
+    }
+
+    public void removeMenuBy(Menu menu) {
+        this.menus.remove(menu);
+    }
+
+    public void removeMenuBy(int index) {
+        this.menus.remove(index);
+    }
+
+    public Menu getMenuBy(int index) {
+        return this.menus.get(index);
+    }
 }
