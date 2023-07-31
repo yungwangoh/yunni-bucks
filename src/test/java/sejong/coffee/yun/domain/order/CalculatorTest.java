@@ -12,8 +12,6 @@ import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -56,7 +54,10 @@ class CalculatorTest {
                 .name("윤광오")
                 .build();
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
+        MenuList menuList = new MenuList();
+        menuList.addMenu(menu1);
+        menuList.addMenu(menu2);
+        menuList.addMenu(menu3);
 
         // when
         Money money = calculator.calculateMenus(member, menuList.getMenus());
@@ -76,7 +77,7 @@ class CalculatorTest {
                 .name("윤광오")
                 .build();
 
-        MenuList menuList = new MenuList(new ArrayList<>());
+        MenuList menuList = new MenuList();
 
         // then
         assertThatThrownBy(() -> calculator.calculateMenus(member, menuList.getMenus()))

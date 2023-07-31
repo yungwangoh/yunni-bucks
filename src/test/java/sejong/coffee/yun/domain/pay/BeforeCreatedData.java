@@ -10,7 +10,7 @@ import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.ArrayList;
 
 public class BeforeCreatedData {
 
@@ -44,7 +44,10 @@ public class BeforeCreatedData {
         menu3 = new Bread("소라빵", "소라빵",
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
+        MenuList menuList = new MenuList(new ArrayList<>());
+        menuList.addMenu(menu1);
+        menuList.addMenu(menu2);
+        menuList.addMenu(menu3);
 
         this.member = Member.builder()
                 .address(address)

@@ -1,5 +1,6 @@
 package sejong.coffee.yun.service;
 
+import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +31,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mockStatic;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
@@ -133,9 +134,20 @@ class UserServiceTest {
     }
 
     @Test
+    void 로그아웃_만료된_토큰() {
+        // given
+        given(jwtProvider.tokenExpiredCheck(anyString())).willThrow(new JwtException("토큰이 만료되었습니다."));
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> userService.signOut("token", any()))
+                .isInstanceOf(JwtException.class)
+                .hasMessageContaining("토큰이 만료되었습니다.");
+    }
+
+    @Test
     void 로그인_입력정보와_가입정보와_다른_경우() {
-        String accessToken = "1234";
-        String refreshToken = "1234";
 
         try(MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
 
@@ -201,5 +213,29 @@ class UserServiceTest {
 
         // then
         assertThat(orders.size()).isEqualTo(1);
+    }
+
+    @Test
+    void 로그아웃_할_때_엑세스_토큰이_만료된_경우() {
+        // given
+        given(jwtProvider.tokenExpiredCheck(anyString())).willThrow(new JwtException("토큰이 만료되었습니다."));
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> userService.signOut("token", any()))
+                .isInstanceOf(JwtException.class)
+                .hasMessageContaining("토큰이 만료되었습니다.");
+    }
+
+    @Test
+    void 회원_삭제() {
+        // given
+
+        // when
+        userService.deleteMember(1L);
+
+        // then
+        then(userRepository).should().delete(1L);
     }
 }
