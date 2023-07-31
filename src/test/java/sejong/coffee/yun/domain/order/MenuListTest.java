@@ -6,7 +6,7 @@ import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.Money;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,12 +31,51 @@ class MenuListTest {
     @Test
     void 메뉴들이_메뉴리스트에_담긴다() {
         // given
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
+        MenuList menuList = new MenuList(new ArrayList<>());
 
         // when
-        List<Menu> menus = menuList.getMenus();
+        menuList.addMenu(menu1);
 
         // then
-        assertThat(menus.size()).isEqualTo(3);
+        assertThat(menuList.getMenus().size()).isEqualTo(1);
+    }
+
+    @Test
+    void 메뉴리스트에_담긴_메뉴를_삭제한다_오브젝트_파라미터() {
+        // given
+        MenuList menuList = new MenuList(new ArrayList<>());
+        menuList.addMenu(menu1);
+
+        // when
+        menuList.removeMenuBy(menu1);
+
+        // then
+        assertThat(menuList.getMenus().size()).isEqualTo(0);
+    }
+
+    @Test
+    void 메뉴리스트에_담긴_메뉴를_삭제한다_인덱스() {
+        // given
+        MenuList menuList = new MenuList(new ArrayList<>());
+        menuList.addMenu(menu1);
+
+        // when
+        menuList.removeMenuBy(0);
+
+        // then
+        assertThat(menuList.getMenus().size()).isEqualTo(0);
+    }
+
+    @Test
+    void 메뉴리스트에_담긴_메뉴를_조회한다() {
+        // given
+        MenuList menuList = new MenuList(new ArrayList<>());
+        menuList.addMenu(menu1);
+
+        // when
+        Menu findMenu = menuList.getMenuBy(0);
+
+        // then
+        assertThat(findMenu).isEqualTo(menu1);
     }
 }
