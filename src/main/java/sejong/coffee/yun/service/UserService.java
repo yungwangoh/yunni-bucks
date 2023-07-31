@@ -1,5 +1,6 @@
 package sejong.coffee.yun.service;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,14 +81,14 @@ public class UserService {
     public String signIn(String email, String password) {
         Member member = userRepository.findByEmail(email);
 
-        String accessToken = "";
+        String accessToken;
 
         if(PasswordUtil.match(member.getPassword(), password)) {
 
             accessToken = jwtProvider.createAccessToken(member);
             String refreshToken = jwtProvider.createRefreshToken(member);
 
-            redisRepository.setValues(email, refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
+            redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
         } else {
             throw NOT_MATCH_USER.notMatchUserException();
         }
@@ -96,8 +97,16 @@ public class UserService {
     }
 
     @Transactional
-    public void signOut(String email) {
-        redisRepository.deleteValues(email);
+    public void signOut(String accessToken, Long memberId) {
+
+        if(!jwtProvider.tokenExpiredCheck(accessToken))
+            throw new JwtException("토큰이 만료되었습니다.");
+
+        redisRepository.deleteValues(String.valueOf(memberId));
+
+        Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
+
+        redisRepository.setValues(accessToken, "blackList", Duration.ofMillis(tokenExpireTime));
     }
 
     public List<Order> findAllByMemberId(Long memberId) {
