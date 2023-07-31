@@ -32,7 +32,7 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
     public CardPayment(Order order, Card card) {
         this.cardNumber = card.getCardNumber();
-        this.cardPassword = card.getCardPassword();
+        this.cardPassword = displayTwoDigits(card.getCardPassword());
         this.customerName = order.getMember().getName();
         this.cardExpirationYear = parsingCardValidDate(card.getValidThru())[0];
         this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[1];
@@ -47,5 +47,9 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     @Override
     public void cancelPayment() {
 
+    }
+
+    public String displayTwoDigits(String carPassword) {
+        return carPassword.substring(0, 2);
     }
 }
