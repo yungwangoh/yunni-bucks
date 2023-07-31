@@ -12,6 +12,7 @@ import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
+@Component
 @RequiredArgsConstructor
 public class Calculator {
 
