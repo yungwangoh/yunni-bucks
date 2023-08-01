@@ -76,7 +76,7 @@ class JwtProviderTest {
     @Test
     void 토큰_남은_기간_반환() {
         // given
-        JwtProvider jwtProvider = new JwtProvider("key", 100000L, 1000000L);
+        JwtProvider jwtProvider = new JwtProvider("key", 1000L, 1000L);
 
         String accessToken = jwtProvider.createAccessToken(member);
 
