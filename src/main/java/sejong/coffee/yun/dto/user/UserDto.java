@@ -1,6 +1,7 @@
 package sejong.coffee.yun.dto.user;
 
 import sejong.coffee.yun.domain.user.Address;
+import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.dto.order.OrderDto;
@@ -23,8 +24,19 @@ public class UserDto {
                     String password,
                     @NotNull
                     Address address
-            ) {}
-            public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {}
+            ){}
+            public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {
+                public Response(Member member) {
+                    this(
+                            member.getId(),
+                            member.getName(),
+                            member.getEmail(),
+                            member.getAddress(),
+                            member.getUserRank(),
+                            member.getMoney()
+                    );
+                }
+            }
         }
 
         public static class In {
@@ -48,7 +60,18 @@ public class UserDto {
     }
 
     public static class Find {
-        public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {}
+        public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {
+            public Response(Member member) {
+                this(
+                        member.getId(),
+                        member.getName(),
+                        member.getEmail(),
+                        member.getAddress(),
+                        member.getUserRank(),
+                        member.getMoney()
+                );
+            }
+        }
     }
 
     public static class Order {
