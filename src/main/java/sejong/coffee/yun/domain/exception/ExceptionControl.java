@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ExceptionControl {
 
-    // Order,
+    // Order, member
     NOT_MATCH_USER("아이디 혹은 비밀번호가 다릅니다."),
     NOT_FOUND_ORDER("주문 내역이 존재하지 않습니다."),
     NOT_FOUND_USER("유저가 존재하지 않습니다."),
