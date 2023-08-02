@@ -21,8 +21,6 @@ public class Member extends DateTimeEntity {
     private String password;
     @Column(name = "email")
     private String email;
-    @Column(name = "order_id")
-    private Long orderId;
     @Enumerated(value = EnumType.STRING)
     private UserRank userRank;
     private Address address;
@@ -32,13 +30,11 @@ public class Member extends DateTimeEntity {
     private Coupon coupon;
 
     @Builder
-    public Member(String email, String name, String password, Long orderId,
-                  UserRank userRank, Address address, Money money, Coupon coupon) {
+    public Member(String email, String name, String password, UserRank userRank, Address address, Money money, Coupon coupon) {
 
         this.name = name;
         this.password = password;
         this.email = email;
-        this.orderId = orderId;
         this.userRank = userRank;
         this.address = address;
         this.money = money;
@@ -46,9 +42,7 @@ public class Member extends DateTimeEntity {
     }
 
     private Member(Long id, Member member) {
-        this(member.email, member.name, member.password, member.orderId,
-                member.userRank, member.address, member.money, member.coupon);
-
+        this(member.email, member.name, member.password, member.userRank, member.address, member.money, member.coupon);
         this.id = id;
     }
 
