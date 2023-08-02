@@ -21,6 +21,9 @@ logging:
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace
 
+origin:
+  address: http://localhost:8080
+
 jwt:
   key: applicationKey
   blackList: blackList
