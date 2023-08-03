@@ -6,6 +6,9 @@ import lombok.Getter;
 public enum ExceptionControl {
 
     // Order, member
+    DUPLICATE_USER("중복되었습니다."),
+    DUPLICATE_USER_NAME("이름이 중복되었습니다."),
+    DUPLICATE_USER_EMAIL("이메일이 중복되었습니다."),
     NOT_MATCH_USER("아이디 혹은 비밀번호가 다릅니다."),
     NOT_FOUND_ORDER("주문 내역이 존재하지 않습니다."),
     NOT_FOUND_USER("유저가 존재하지 않습니다."),
@@ -51,5 +54,14 @@ public enum ExceptionControl {
     }
     public CardException cardException() {
         return new CardException(this.message);
+    }
+    public DuplicatedException duplicatedException() {
+        return new DuplicatedEmailException(this.message);
+    }
+    public DuplicatedEmailException duplicatedEmailException() {
+        return new DuplicatedEmailException(this.message);
+    }
+    public DuplicatedNameException duplicatedNameException() {
+        return new DuplicatedNameException(this.message);
     }
 }
