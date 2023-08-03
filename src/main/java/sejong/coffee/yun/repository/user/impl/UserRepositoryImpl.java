@@ -9,7 +9,7 @@ import sejong.coffee.yun.repository.user.jpa.JpaUserRepository;
 
 import java.util.List;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -74,13 +74,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean duplicateEmail(String email) {
-        return jpaUserRepository.existsByEmail(email);
+    public void duplicateEmail(String email) {
+        if(jpaUserRepository.existsByEmail(email)) {
+            throw DUPLICATE_USER_EMAIL.duplicatedEmailException();
+        }
     }
 
     @Override
-    public boolean duplicateName(String name) {
-        return jpaUserRepository.existsByName(name);
+    public void duplicateName(String name) {
+        if(jpaUserRepository.existsByName(name)) {
+            throw DUPLICATE_USER_NAME.duplicatedNameException();
+        }
     }
 
     private Member getUser(Long id) {
