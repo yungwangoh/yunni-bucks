@@ -52,7 +52,30 @@ public class UserDto {
     }
 
     public static class Update {
+        public static class Name {
+            public record Request(@Pattern(regexp = RegexUtil.NAME) String updateName) {}
+        }
 
+        public static class Password {
+           public record Request(@Pattern(regexp = RegexUtil.PASSWORD) String updatePassword) {}
+        }
+
+        public static class Email {
+            public record Request(@javax.validation.constraints.Email String updateEmail) {}
+        }
+
+        public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {
+            public Response(Member member) {
+                this(
+                        member.getId(),
+                        member.getName(),
+                        member.getEmail(),
+                        member.getAddress(),
+                        member.getUserRank(),
+                        member.getMoney()
+                );
+            }
+        }
     }
 
     public static class Delete {
