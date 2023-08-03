@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import sejong.coffee.yun.domain.exception.DuplicatedEmailException;
+import sejong.coffee.yun.domain.exception.DuplicatedNameException;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.Member;
@@ -12,12 +14,15 @@ import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.repository.user.jpa.JpaUserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER_EMAIL;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER_NAME;
 
 @DataJpaTest
 class MemberRepositoryImplTest {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public MemberRepositoryImplTest(JpaUserRepository jpaUserRepository) {
@@ -88,10 +93,11 @@ class MemberRepositoryImplTest {
         Member save = userRepository.save(member);
 
         // when
-        boolean duplicateEmail = userRepository.duplicateEmail(save.getEmail());
 
         // then
-        assertTrue(duplicateEmail);
+        assertThatThrownBy(() -> userRepository.duplicateEmail(save.getEmail()))
+                .isInstanceOf(DuplicatedEmailException.class)
+                .hasMessageContaining(DUPLICATE_USER_EMAIL.getMessage());
     }
 
     @Test
@@ -100,9 +106,10 @@ class MemberRepositoryImplTest {
         Member save = userRepository.save(member);
 
         // when
-        boolean duplicateName = userRepository.duplicateName(save.getName());
 
         // then
-        assertTrue(duplicateName);
+        assertThatThrownBy(() -> userRepository.duplicateName(save.getName()))
+                .isInstanceOf(DuplicatedNameException.class)
+                .hasMessageContaining(DUPLICATE_USER_NAME.getMessage());
     }
 }

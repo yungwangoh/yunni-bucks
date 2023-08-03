@@ -7,9 +7,8 @@ import sejong.coffee.yun.repository.user.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @Repository
 public class FakeUserRepository implements UserRepository {
@@ -74,21 +73,19 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public boolean duplicateEmail(String email) {
-        Optional<Member> findMember = members.stream()
-                .filter(member -> Objects.equals(member.getEmail(), email))
-                .findAny();
+    public void duplicateEmail(String email) {
+        boolean match = members.stream()
+                .anyMatch(member -> Objects.equals(member.getEmail(), email));
 
-        return findMember.isPresent();
+        if(match) throw DUPLICATE_USER_EMAIL.duplicatedEmailException();
     }
 
     @Override
-    public boolean duplicateName(String name) {
-        Optional<Member> findMember = members.stream()
-                .filter(member -> Objects.equals(member.getName(), name))
-                .findAny();
+    public void duplicateName(String name) {
+        boolean match = members.stream()
+                .anyMatch(member -> Objects.equals(member.getName(), name));
 
-        return findMember.isPresent();
+        if(match) throw DUPLICATE_USER_NAME.duplicatedNameException();
     }
 
     @Override
