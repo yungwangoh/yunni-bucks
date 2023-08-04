@@ -23,6 +23,7 @@ java {
 }
 
 configurations {
+	asciidoctorExtentions
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -30,10 +31,6 @@ configurations {
 
 repositories {
 	mavenCentral()
-}
-
-ext {
-	set('snippetsDir', file("build/generated-snippets"))
 }
 
 dependencies {
@@ -47,6 +44,7 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	asciidoctorExtentions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	implementation 'org.modelmapper:modelmapper:3.1.1'
 
@@ -65,22 +63,41 @@ dependencies {
 	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.6.1'
 }
 
-tasks.named('test') {
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
+test {
 	outputs.dir snippetsDir
 	useJUnitPlatform()
 }
 
-tasks.named('asciidoctor') {
+asciidoctor {
 	inputs.dir snippetsDir
+	configurations 'asciidoctorExtentions'
 	dependsOn test
+
+	sources{
+		include("**/index.adoc","**/common/*.adoc")
+	}
+
+	baseDirFollowsSourceFile()
+}
+
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+build {
+	dependsOn copyDocument
 }
 
 bootJar {
 	dependsOn asciidoctor
-
-	copy {
-		from asciidoctor.outputDir
-		into "src/main/resources/static/docs"
+	from ("${asciidoctor.outputDir}/html5") {
+		into 'static/docs'
 	}
 }
 
