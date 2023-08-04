@@ -16,6 +16,10 @@ spring:
         auto_quote_keyword: true
     database-platform:
 
+가  redis:
+    host: localhost
+    port: 6379
+
 logging:
   level: #띄어쓰기 없음
     org.hibernate.SQL: debug
