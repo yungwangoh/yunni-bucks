@@ -37,7 +37,7 @@ class CustomMapperTest {
                 .build();
 
         // when
-        UserDto.Sign.Up.Response response = customMapper.map(member, UserDto.Sign.Up.Response.class);
+        UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
         // then
         assertThat(response.name()).isEqualTo(member.getName());
