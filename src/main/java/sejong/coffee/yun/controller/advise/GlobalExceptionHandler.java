@@ -1,8 +1,10 @@
 package sejong.coffee.yun.controller.advise;
 
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -97,6 +99,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicatedEmailException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> duplicateEmailException(DuplicatedEmailException e) {
+
+        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<ErrorResult> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+
+        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<ErrorResult> jwtException(JwtException e) {
 
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
