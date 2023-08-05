@@ -152,7 +152,7 @@ class UserServiceTest {
         try(MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
 
             // given
-            given(userRepository.findByEmail(any())).willReturn(member);
+            given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
             given(PasswordUtil.match(anyString(), anyString())).willReturn(false);
 
             // when
