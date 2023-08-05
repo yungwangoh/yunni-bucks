@@ -1,5 +1,6 @@
 package sejong.coffee.yun.domain.exception;
 
+import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 
 @Getter
@@ -13,6 +14,8 @@ public enum ExceptionControl {
     NOT_FOUND_ORDER("주문 내역이 존재하지 않습니다."),
     NOT_FOUND_USER("유저가 존재하지 않습니다."),
     EMPTY_MENUS("메뉴리스트가 비어 있습니다."),
+    TOKEN_EXPIRED("토큰이 만료되었습니다."),
+    FAIL_DELETE_MEMBER("회원 탈퇴에 실패하였습니다."),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
@@ -63,5 +66,8 @@ public enum ExceptionControl {
     }
     public DuplicatedNameException duplicatedNameException() {
         return new DuplicatedNameException(this.message);
+    }
+    public JwtException tokenExpiredException() {
+        return new JwtException(this.message);
     }
 }
