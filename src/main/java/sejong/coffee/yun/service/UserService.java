@@ -19,6 +19,8 @@ import java.time.Duration;
 import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
+import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_EMAIL;
+import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_NAME;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,10 @@ public class UserService {
 
     @Transactional
     public Member signUp(String name, String email, String password, Address address) {
+
+        userRepository.duplicateEmail(email);
+        userRepository.duplicateName(name);
+
         Member member = Member.builder()
                 .name(name)
                 .email(email)
@@ -48,24 +54,36 @@ public class UserService {
     }
 
     @Transactional
-    public void updateName(Long memberId, String updateName) {
+    public Member updateName(Long memberId, String updateName) {
+
+        userRepository.duplicateName(updateName);
+
         Member member = userRepository.findById(memberId);
 
         member.updateName(updateName);
+
+        return member;
     }
 
     @Transactional
-    public void updateEmail(Long memberId, String updateEmail) {
+    public Member updateEmail(Long memberId, String updateEmail) {
+
+        userRepository.duplicateEmail(updateEmail);
+
         Member member = userRepository.findById(memberId);
 
         member.updateEmail(updateEmail);
+
+        return member;
     }
 
     @Transactional
-    public void updatePassword(Long memberId, String updatePassword) {
+    public Member updatePassword(Long memberId, String updatePassword) {
         Member member = userRepository.findById(memberId);
 
         member.updatePassword(updatePassword);
+
+        return member;
     }
 
     public List<Member> findAll() {
@@ -111,5 +129,17 @@ public class UserService {
 
     public List<Order> findAllByMemberId(Long memberId) {
         return orderRepository.findAllByMemberId(memberId);
+    }
+
+    public String duplicateName(String name) {
+        userRepository.duplicateName(name);
+
+        return SUCCESS_DUPLICATE_NAME.getMessage();
+    }
+
+    public String duplicateEmail(String email) {
+        userRepository.duplicateEmail(email);
+
+        return SUCCESS_DUPLICATE_EMAIL.getMessage();
     }
 }
