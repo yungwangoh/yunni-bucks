@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sejong.coffee.yun.domain.exception.MenuException;
-import sejong.coffee.yun.domain.exception.NotFoundOrderException;
-import sejong.coffee.yun.domain.exception.NotFoundUserException;
-import sejong.coffee.yun.domain.exception.NotMatchUserException;
+import sejong.coffee.yun.domain.exception.*;
 import sejong.coffee.yun.dto.error.ErrorResult;
 
 @Slf4j
@@ -77,6 +74,33 @@ public class GlobalExceptionHandler {
         ErrorResult errorResult = getErrorResult(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
+    }
+
+    @ExceptionHandler(DuplicatedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<ErrorResult> duplicateException(DuplicatedException e) {
+
+        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
+    }
+
+    @ExceptionHandler(DuplicatedNameException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<ErrorResult> duplicateNameException(DuplicatedNameException e) {
+
+        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
+    }
+
+    @ExceptionHandler(DuplicatedEmailException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<ErrorResult> duplicateEmailException(DuplicatedEmailException e) {
+
+        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
     }
 
     private static ErrorResult getErrorResult(HttpStatus status, String e) {
