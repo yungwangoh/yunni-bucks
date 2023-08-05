@@ -29,7 +29,7 @@ public class UserController {
     private final CustomMapper customMapper;
 
     @PostMapping("")
-    ResponseEntity<UserDto.Sign.Up.Response> signUp(@RequestBody @Valid UserDto.Sign.Up.Request request) {
+    ResponseEntity<UserDto.Response> signUp(@RequestBody @Valid UserDto.Sign.Up.Request request) {
 
         log.info("request = {}", request.email());
 
@@ -40,7 +40,7 @@ public class UserController {
                 request.address()
         );
 
-        UserDto.Sign.Up.Response response = customMapper.map(member, UserDto.Sign.Up.Response.class);
+        UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
 
         log.info("response = {}", response);
@@ -58,10 +58,10 @@ public class UserController {
     }
 
     @GetMapping("/sign-out")
-    ResponseEntity<Void> signOut(@RequestHeader(AUTHORIZATION) String accessToken, @MemberId Long memberId) {
-        userService.signOut(accessToken, memberId);
+    ResponseEntity<String> signOut(@RequestHeader(AUTHORIZATION) String accessToken, @MemberId Long memberId) {
+        String s = userService.signOut(accessToken, memberId);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(s);
     }
 
     @GetMapping("/order-list")
@@ -74,20 +74,20 @@ public class UserController {
     }
 
     @GetMapping("")
-    ResponseEntity<UserDto.Find.Response> findById(@MemberId Long memberId) {
+    ResponseEntity<UserDto.Response> findById(@MemberId Long memberId) {
         Member member = userService.findMember(memberId);
 
-        UserDto.Find.Response response = customMapper.map(member, UserDto.Find.Response.class);
+        UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list")
-    ResponseEntity<List<UserDto.Find.Response>> findAll() {
+    ResponseEntity<List<UserDto.Response>> findAll() {
         List<Member> members = userService.findAll();
 
-        List<UserDto.Find.Response> collect = members.stream()
-                .map(UserDto.Find.Response::new)
+        List<UserDto.Response> collect = members.stream()
+                .map(UserDto.Response::new)
                 .toList();
 
         return ResponseEntity.ok(collect);
@@ -101,34 +101,34 @@ public class UserController {
     }
 
     @PatchMapping("/email")
-    ResponseEntity<UserDto.Update.Response> updateEmail(@MemberId Long memberId,
+    ResponseEntity<UserDto.Response> updateEmail(@MemberId Long memberId,
                                                         @RequestBody @Valid UserDto.Update.Email.Request request) {
 
         Member member = userService.updateEmail(memberId, request.updateEmail());
 
-        UserDto.Update.Response response = customMapper.map(member, UserDto.Update.Response.class);
+        UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/name")
-    ResponseEntity<UserDto.Update.Response> updateName(@MemberId Long memberId,
+    ResponseEntity<UserDto.Response> updateName(@MemberId Long memberId,
                                                        @RequestBody @Valid UserDto.Update.Name.Request request) {
 
         Member member = userService.updateName(memberId, request.updateName());
 
-        UserDto.Update.Response response = customMapper.map(member, UserDto.Update.Response.class);
+        UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/password")
-    ResponseEntity<UserDto.Update.Response> updatePassword(@MemberId Long memberId,
+    ResponseEntity<UserDto.Response> updatePassword(@MemberId Long memberId,
                                                            @RequestBody @Valid UserDto.Update.Password.Request request) {
 
         Member member = userService.updatePassword(memberId, request.updatePassword());
 
-        UserDto.Update.Response response = customMapper.map(member, UserDto.Update.Response.class);
+        UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
         return ResponseEntity.ok(response);
     }
