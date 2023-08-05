@@ -10,6 +10,7 @@ import sejong.coffee.yun.util.regex.RegexUtil;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserDto {
@@ -25,18 +26,6 @@ public class UserDto {
                     @NotNull
                     Address address
             ){}
-            public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {
-                public Response(Member member) {
-                    this(
-                            member.getId(),
-                            member.getName(),
-                            member.getEmail(),
-                            member.getAddress(),
-                            member.getUserRank(),
-                            member.getMoney()
-                    );
-                }
-            }
         }
 
         public static class In {
@@ -63,41 +52,26 @@ public class UserDto {
         public static class Email {
             public record Request(@javax.validation.constraints.Email String updateEmail) {}
         }
-
-        public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {
-            public Response(Member member) {
-                this(
-                        member.getId(),
-                        member.getName(),
-                        member.getEmail(),
-                        member.getAddress(),
-                        member.getUserRank(),
-                        member.getMoney()
-                );
-            }
-        }
-    }
-
-    public static class Delete {
-
-    }
-
-    public static class Find {
-        public record Response(Long memberId, String name, String email, Address address, UserRank userRank, Money money) {
-            public Response(Member member) {
-                this(
-                        member.getId(),
-                        member.getName(),
-                        member.getEmail(),
-                        member.getAddress(),
-                        member.getUserRank(),
-                        member.getMoney()
-                );
-            }
-        }
     }
 
     public static class Order {
         public record Response(List<OrderDto.Order.Response> orders) {}
+    }
+
+    public record Response(Long memberId, String name, String email,
+                           Address address, UserRank userRank, Money money,
+                           LocalDateTime createAt, LocalDateTime updateAt) {
+        public Response(Member member) {
+            this(
+                    member.getId(),
+                    member.getName(),
+                    member.getEmail(),
+                    member.getAddress(),
+                    member.getUserRank(),
+                    member.getMoney(),
+                    member.getCreateAt(),
+                    member.getUpdateAt()
+            );
+        }
     }
 }
