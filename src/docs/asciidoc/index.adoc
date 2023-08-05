@@ -1,0 +1,48 @@
+= Yunni-Bucks Rest API Docs
+까페 결제 시스템
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
+:toc: left // toc (Table Of Contents)를 문서의 좌측에 두기
+:toclevels: 2
+:sectlinks:
+
+[[Member-API]]
+== Member API
+
+[[Member-회원-등록]]
+=== 회원 등록
+operation::member-create[snippets='http-request,request-fields,http-response,response-fields']
+=== 회원 등록 실패
+operation::member-create-duplicate-email-fail[snippets='http-request,request-fields,http-response,response-fields']
+
+
+[[Member-회원-단건-조회]]
+=== 회원 단건 조회
+operation::member-find[snippets='http-request,http-response,response-fields']
+
+[[Member-회원-리스트-조회]]
+=== 회원 리스트 조회
+operation::member-list[snippets='http-request,http-response,response-fields']
+
+[[Member-회원-삭제]]
+=== 회원 삭제
+operation::member-delete[snippets='http-request']
+
+[[Member-로그-인]]
+=== 로그인
+operation::sign-in[snippets='http-request,request-fields,http-response,response-fields']
+
+[[Member-로그-아웃]]
+=== 로그아웃
+operation::sign-out[snippets='http-request']
+
+[[Member-회원-중복-이름]]
+=== 회원 중복 이름
+operation::member-duplicate-name[snippets='http-request,request-parameters,response-body']
+
+[[Member-회원-중복-이메일]]
+=== 회원 중복 이메일
+operation::member-duplicate-email[snippets='http-request,request-parameters,response-body']
+
+
