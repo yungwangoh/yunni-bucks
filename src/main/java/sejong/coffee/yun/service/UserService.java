@@ -1,6 +1,5 @@
 package sejong.coffee.yun.service;
 
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +18,8 @@ import java.time.Duration;
 import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
-import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_EMAIL;
-import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_NAME;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.TOKEN_EXPIRED;
+import static sejong.coffee.yun.message.SuccessOrFailMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -97,17 +96,23 @@ public class UserService {
 
     @Transactional
     public String signIn(String email, String password) {
-        Member member = userRepository.findByEmail(email);
 
         String accessToken;
 
-        if(PasswordUtil.match(member.getPassword(), password)) {
+        try {
+            Member member = userRepository.findByEmail(email);
 
-            accessToken = jwtProvider.createAccessToken(member);
-            String refreshToken = jwtProvider.createRefreshToken(member);
+            if (PasswordUtil.match(member.getPassword(), password)) {
 
-            redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
-        } else {
+                accessToken = jwtProvider.createAccessToken(member);
+                String refreshToken = jwtProvider.createRefreshToken(member);
+
+                redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
+            } else {
+                throw NOT_MATCH_USER.notMatchUserException();
+            }
+
+        } catch (Exception e) {
             throw NOT_MATCH_USER.notMatchUserException();
         }
 
@@ -115,16 +120,20 @@ public class UserService {
     }
 
     @Transactional
-    public void signOut(String accessToken, Long memberId) {
+    public String signOut(String accessToken, Long memberId) {
 
-        if(!jwtProvider.tokenExpiredCheck(accessToken))
-            throw new JwtException("토큰이 만료되었습니다.");
+        if(jwtProvider.tokenExpiredCheck(accessToken)) {
 
-        redisRepository.deleteValues(String.valueOf(memberId));
+            redisRepository.deleteValues(String.valueOf(memberId));
 
-        Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
+            Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
 
-        redisRepository.setValues(accessToken, "blackList", Duration.ofMillis(tokenExpireTime));
+            redisRepository.setValues(accessToken, "blackList", Duration.ofMillis(tokenExpireTime));
+
+            return SUCCESS_SIGN_OUT.getMessage();
+        } else {
+            throw TOKEN_EXPIRED.tokenExpiredException();
+        }
     }
 
     public List<Order> findAllByMemberId(Long memberId) {
