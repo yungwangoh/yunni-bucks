@@ -165,6 +165,48 @@ class UserServiceTest {
     }
 
     @Test
+    void 회원_이름_변경() {
+        // given
+        String updateName = "홍길동";
+
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Member updateMember = userService.updateName(1L, updateName);
+
+        // then
+        assertThat(updateMember.getName()).isEqualTo(updateName);
+    }
+
+    @Test
+    void 회원_이메일_변경() {
+        // given
+        String updateEmail = "asdf1234@naver.com";
+
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Member updateMember = userService.updateEmail(1L, updateEmail);
+
+        // then
+        assertThat(updateMember.getEmail()).isEqualTo(updateEmail);
+    }
+
+    @Test
+    void 회원_비밀번호_변경() {
+        // given
+        String updatePassword = "ghfsdjkhgs@A";
+
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Member updateMember = userService.updatePassword(1L, updatePassword);
+
+        // then
+        assertThat(updateMember.getPassword()).isEqualTo(updatePassword);
+    }
+
+    @Test
     void 회원_이름_변경_할때_다른_id를_넣은_경우() {
         // given
         given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
