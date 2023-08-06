@@ -29,7 +29,7 @@ public class FakeUserRepository implements UserRepository {
         return members.stream()
                 .filter(user -> Objects.equals(user.getId(), id))
                 .findAny()
-                .orElseThrow(NOT_FOUND_USER::notFoundUserException);
+                .orElseThrow(NOT_FOUND_USER::notFoundException);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class FakeUserRepository implements UserRepository {
         return members.stream()
                 .filter(member -> Objects.equals(member.getEmail(), email))
                 .findAny()
-                .orElseThrow(NOT_FOUND_USER::notFoundUserException);
+                .orElseThrow(NOT_FOUND_USER::notFoundException);
     }
 
 }
