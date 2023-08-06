@@ -55,7 +55,7 @@ public class UserDto {
     }
 
     public static class Order {
-        public record Response(List<OrderDto.Order.Response> orders) {}
+        public record Response(List<OrderDto.Response> orders) {}
     }
 
     public record Response(Long memberId, String name, String email,
