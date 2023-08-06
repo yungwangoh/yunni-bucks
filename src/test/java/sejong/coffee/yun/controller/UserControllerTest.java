@@ -232,7 +232,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_찾기_실패() throws Exception {
         // given
-        given(userService.findMember(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userService.findMember(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/members")
@@ -274,7 +274,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_식제_실패() throws Exception {
         // given
-        willThrow(NOT_FOUND_USER.notFoundUserException()).given(userService).deleteMember(any());
+        willThrow(NOT_FOUND_USER.notFoundException()).given(userService).deleteMember(any());
 
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/members")
