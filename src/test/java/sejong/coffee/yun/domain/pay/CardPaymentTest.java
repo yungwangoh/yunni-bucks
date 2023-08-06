@@ -31,7 +31,7 @@ class CardPaymentTest extends BeforeCreatedData {
         //given
 
         //when
-        CardPayment cardPayment = new CardPayment(order, card);
+        CardPayment cardPayment = new CardPayment(card, order);
 
         //then
         assertThat(Integer.parseInt(cardPayment.getCardExpirationYear()))
@@ -46,7 +46,7 @@ class CardPaymentTest extends BeforeCreatedData {
     @Test
     void 카드결제_유효기간_검증_예외발생() {
         assertThatThrownBy(() -> Card.builder()
-                .cardNumber("123456789123")
+                .number("123456789123")
                 .validThru("22/13")
                 .cardPassword("1234")
                 .member(member)
