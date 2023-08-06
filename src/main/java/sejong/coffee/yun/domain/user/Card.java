@@ -12,7 +12,7 @@ import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidD
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "cardNumber", "validThru"})
+@ToString(of = {"id", "number", "validThru"})
 public class Card {
 
     @Id
@@ -21,7 +21,7 @@ public class Card {
     private Long id;
     @Column(length = 20)
     @Length(max = 20)
-    private String cardNumber;
+    private String number;
     @Column(length = 4)
     private String cardPassword;
     private String validThru;
@@ -31,8 +31,8 @@ public class Card {
     private Member member;
 
     @Builder
-    public Card(String cardNumber, String validThru, String cardPassword, Member member) {
-        this.cardNumber = cardNumber;
+    public Card(String number, String validThru, String cardPassword, Member member) {
+        this.number = number;
         this.validThru = checkExpirationDate(validThru);
         this.cardPassword = cardPassword;
         this.member = member;
