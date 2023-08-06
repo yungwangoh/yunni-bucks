@@ -15,9 +15,9 @@ import sejong.coffee.yun.dto.error.ErrorResult;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundUserException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    ResponseEntity<ErrorResult> userNotFoundException(NotFoundUserException e) {
+    ResponseEntity<ErrorResult> userNotFoundException(NotFoundException e) {
 
         ErrorResult errorResult = getErrorResult(HttpStatus.NOT_FOUND, e.getMessage());
 
@@ -40,15 +40,6 @@ public class GlobalExceptionHandler {
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
-    }
-
-    @ExceptionHandler(NotFoundOrderException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    ResponseEntity<ErrorResult> notFoundOrderException(NotFoundOrderException e) {
-
-        ErrorResult errorResult = getErrorResult(HttpStatus.NOT_FOUND, e.getMessage());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResult);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

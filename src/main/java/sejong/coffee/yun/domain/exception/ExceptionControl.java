@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public enum ExceptionControl {
 
-    // Order, member
+    // Order, member, menuList, menu
     DUPLICATE_USER("중복되었습니다."),
     DUPLICATE_USER_NAME("이름이 중복되었습니다."),
     DUPLICATE_USER_EMAIL("이메일이 중복되었습니다."),
@@ -16,6 +16,7 @@ public enum ExceptionControl {
     EMPTY_MENUS("메뉴리스트가 비어 있습니다."),
     TOKEN_EXPIRED("토큰이 만료되었습니다."),
     FAIL_DELETE_MEMBER("회원 탈퇴에 실패하였습니다."),
+    NOT_FOUND_MENU_LIST("메뉴 리스트를 찾을 수 없습니다."),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
@@ -38,12 +39,8 @@ public enum ExceptionControl {
     public MenuException throwException() {
         return new MenuException(this.message);
     }
-    public NotFoundUserException notFoundUserException() {
-        return new NotFoundUserException(this.message);
-    }
-
-    public NotFoundOrderException notFoundOrderException() {
-        return new NotFoundOrderException(this.message);
+    public NotFoundException notFoundException() {
+        return new NotFoundException(this.message);
     }
     public NotMatchUserException notMatchUserException() {
         return new NotMatchUserException(this.message);

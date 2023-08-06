@@ -91,7 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private Member getUser(Long id) {
         return jpaUserRepository.findById(id)
-                .orElseThrow(NOT_FOUND_USER::notFoundUserException);
+                .orElseThrow(NOT_FOUND_USER::notFoundException);
     }
 
 
