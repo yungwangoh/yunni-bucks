@@ -25,12 +25,16 @@ public class Member extends DateTimeEntity {
     private UserRank userRank;
     private Address address;
     private Money money;
+    @Column(name = "order_count")
+    private Integer orderCount;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
     @Builder
-    public Member(String email, String name, String password, UserRank userRank, Address address, Money money, Coupon coupon) {
+    public Member(String email, String name, String password,
+                  UserRank userRank, Address address, Money money,
+                  Integer orderCount, Coupon coupon) {
 
         this.name = name;
         this.password = password;
@@ -39,15 +43,24 @@ public class Member extends DateTimeEntity {
         this.address = address;
         this.money = money;
         this.coupon = coupon;
+        this.orderCount = orderCount;
     }
 
     private Member(Long id, Member member) {
-        this(member.email, member.name, member.password, member.userRank, member.address, member.money, member.coupon);
+        this(member.email, member.name, member.password, member.userRank, member.address, member.money, member.orderCount, member.coupon);
         this.id = id;
     }
 
     public static Member from(Long id, Member member) {
         return new Member(id, member);
+    }
+
+    public void upgradeUserRank(int orderCount) {
+        this.userRank = UserRank.calculateUserRank(orderCount);
+    }
+
+    public void addOrderCount() {
+        this.orderCount++;
     }
 
     public void updateName(String name) {
