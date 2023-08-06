@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sejong.coffee.yun.domain.exception.NotFoundUserException;
+import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.exception.NotMatchUserException;
 import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
@@ -152,7 +152,7 @@ class UserServiceTest {
         try(MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
 
             // given
-            given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+            given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundException());
             given(PasswordUtil.match(anyString(), anyString())).willReturn(false);
 
             // when
@@ -209,39 +209,39 @@ class UserServiceTest {
     @Test
     void 회원_이름_변경_할때_다른_id를_넣은_경우() {
         // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> userService.updateName(any(), "gdgd"))
-                .isInstanceOf(NotFoundUserException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
 
     @Test
     void 회원_이메일_변경_할때_다른_id를_넣은_경우() {
         // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> userService.updateEmail(any(), "gdgd"))
-                .isInstanceOf(NotFoundUserException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
 
     @Test
     void 회원_패스워드_변경_할때_다른_id를_넣은_경우() {
         // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> userService.updatePassword(any(), "gdgd"))
-                .isInstanceOf(NotFoundUserException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
 
