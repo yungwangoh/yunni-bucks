@@ -102,15 +102,9 @@ public class UserService {
         try {
             Member member = userRepository.findByEmail(email);
 
-            if (PasswordUtil.match(member.getPassword(), password)) {
+            member.upgradeUserRank(member.getOrderCount());
 
-                accessToken = jwtProvider.createAccessToken(member);
-                String refreshToken = jwtProvider.createRefreshToken(member);
-
-                redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
-            } else {
-                throw NOT_MATCH_USER.notMatchUserException();
-            }
+            accessToken = userCheck(password, member);
 
         } catch (Exception e) {
             throw NOT_MATCH_USER.notMatchUserException();
@@ -150,5 +144,19 @@ public class UserService {
         userRepository.duplicateEmail(email);
 
         return SUCCESS_DUPLICATE_EMAIL.getMessage();
+    }
+
+    private String userCheck(String password, Member member) {
+        String accessToken;
+        if (PasswordUtil.match(member.getPassword(), password)) {
+
+            accessToken = jwtProvider.createAccessToken(member);
+            String refreshToken = jwtProvider.createRefreshToken(member);
+
+            redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
+        } else {
+            throw NOT_MATCH_USER.notMatchUserException();
+        }
+        return accessToken;
     }
 }
