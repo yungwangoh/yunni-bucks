@@ -1,6 +1,5 @@
 package sejong.coffee.yun.service;
 
-import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +18,8 @@ import java.time.Duration;
 import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.TOKEN_EXPIRED;
+import static sejong.coffee.yun.message.SuccessOrFailMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,10 @@ public class UserService {
 
     @Transactional
     public Member signUp(String name, String email, String password, Address address) {
+
+        userRepository.duplicateEmail(email);
+        userRepository.duplicateName(name);
+
         Member member = Member.builder()
                 .name(name)
                 .email(email)
@@ -48,24 +53,36 @@ public class UserService {
     }
 
     @Transactional
-    public void updateName(Long memberId, String updateName) {
+    public Member updateName(Long memberId, String updateName) {
+
+        userRepository.duplicateName(updateName);
+
         Member member = userRepository.findById(memberId);
 
         member.updateName(updateName);
+
+        return member;
     }
 
     @Transactional
-    public void updateEmail(Long memberId, String updateEmail) {
+    public Member updateEmail(Long memberId, String updateEmail) {
+
+        userRepository.duplicateEmail(updateEmail);
+
         Member member = userRepository.findById(memberId);
 
         member.updateEmail(updateEmail);
+
+        return member;
     }
 
     @Transactional
-    public void updatePassword(Long memberId, String updatePassword) {
+    public Member updatePassword(Long memberId, String updatePassword) {
         Member member = userRepository.findById(memberId);
 
         member.updatePassword(updatePassword);
+
+        return member;
     }
 
     public List<Member> findAll() {
@@ -79,11 +96,59 @@ public class UserService {
 
     @Transactional
     public String signIn(String email, String password) {
-        Member member = userRepository.findByEmail(email);
 
         String accessToken;
 
-        if(PasswordUtil.match(member.getPassword(), password)) {
+        try {
+            Member member = userRepository.findByEmail(email);
+
+            member.upgradeUserRank(member.getOrderCount());
+
+            accessToken = userCheck(password, member);
+
+        } catch (Exception e) {
+            throw NOT_MATCH_USER.notMatchUserException();
+        }
+
+        return accessToken;
+    }
+
+    @Transactional
+    public String signOut(String accessToken, Long memberId) {
+
+        if(jwtProvider.tokenExpiredCheck(accessToken)) {
+
+            redisRepository.deleteValues(String.valueOf(memberId));
+
+            Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
+
+            redisRepository.setValues(accessToken, "blackList", Duration.ofMillis(tokenExpireTime));
+
+            return SUCCESS_SIGN_OUT.getMessage();
+        } else {
+            throw TOKEN_EXPIRED.tokenExpiredException();
+        }
+    }
+
+    public List<Order> findAllByMemberId(Long memberId) {
+        return orderRepository.findAllByMemberId(memberId);
+    }
+
+    public String duplicateName(String name) {
+        userRepository.duplicateName(name);
+
+        return SUCCESS_DUPLICATE_NAME.getMessage();
+    }
+
+    public String duplicateEmail(String email) {
+        userRepository.duplicateEmail(email);
+
+        return SUCCESS_DUPLICATE_EMAIL.getMessage();
+    }
+
+    private String userCheck(String password, Member member) {
+        String accessToken;
+        if (PasswordUtil.match(member.getPassword(), password)) {
 
             accessToken = jwtProvider.createAccessToken(member);
             String refreshToken = jwtProvider.createRefreshToken(member);
@@ -92,24 +157,6 @@ public class UserService {
         } else {
             throw NOT_MATCH_USER.notMatchUserException();
         }
-
         return accessToken;
-    }
-
-    @Transactional
-    public void signOut(String accessToken, Long memberId) {
-
-        if(!jwtProvider.tokenExpiredCheck(accessToken))
-            throw new JwtException("토큰이 만료되었습니다.");
-
-        redisRepository.deleteValues(String.valueOf(memberId));
-
-        Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
-
-        redisRepository.setValues(accessToken, "blackList", Duration.ofMillis(tokenExpireTime));
-    }
-
-    public List<Order> findAllByMemberId(Long memberId) {
-        return orderRepository.findAllByMemberId(memberId);
     }
 }

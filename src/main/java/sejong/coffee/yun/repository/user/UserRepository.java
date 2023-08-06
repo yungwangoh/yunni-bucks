@@ -14,7 +14,7 @@ public interface UserRepository {
     void updateName(Long id, String name);
     void updatePassword(Long id, String password);
     void updateEmail(Long id, String email);
-    boolean duplicateEmail(String email);
-    boolean duplicateName(String name);
+    void duplicateEmail(String email);
+    void duplicateName(String name);
     Member findByEmail(String email);
 }

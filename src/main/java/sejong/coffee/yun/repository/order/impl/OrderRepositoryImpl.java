@@ -26,7 +26,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Order findById(Long id) {
        return jpaOrderRepository.findById(id)
-               .orElseThrow(NOT_FOUND_ORDER::notFoundOrderException);
+               .orElseThrow(NOT_FOUND_ORDER::notFoundException);
     }
 
     @Override

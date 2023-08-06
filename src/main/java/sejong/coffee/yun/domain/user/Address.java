@@ -1,6 +1,6 @@
 package sejong.coffee.yun.domain.user;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +11,6 @@ import javax.validation.constraints.Pattern;
 @Embeddable
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Address {
 
     @NotBlank
@@ -21,4 +20,12 @@ public class Address {
     private String detail;
     @Pattern(regexp = "^\\d{3}-\\d{3}")
     private String zipCode;
+
+    @Builder
+    public Address(String city, String district, String detail, String zipCode) {
+        this.city = city;
+        this.district = district;
+        this.detail = detail;
+        this.zipCode = zipCode;
+    }
 }

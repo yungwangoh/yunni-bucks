@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
+import sejong.coffee.yun.util.password.PasswordUtil;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
 
 @Entity
 @Getter
@@ -21,39 +24,46 @@ public class Member extends DateTimeEntity {
     private String password;
     @Column(name = "email")
     private String email;
-    @Column(name = "order_id")
-    private Long orderId;
     @Enumerated(value = EnumType.STRING)
     private UserRank userRank;
     private Address address;
     private Money money;
+    @Column(name = "order_count")
+    private Integer orderCount;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 
     @Builder
-    public Member(String email, String name, String password, Long orderId,
-                  UserRank userRank, Address address, Money money, Coupon coupon) {
+    public Member(String email, String name, String password,
+                  UserRank userRank, Address address, Money money,
+                  Integer orderCount, Coupon coupon) {
 
         this.name = name;
         this.password = password;
         this.email = email;
-        this.orderId = orderId;
         this.userRank = userRank;
         this.address = address;
         this.money = money;
         this.coupon = coupon;
+        this.orderCount = orderCount;
     }
 
     private Member(Long id, Member member) {
-        this(member.email, member.name, member.password, member.orderId,
-                member.userRank, member.address, member.money, member.coupon);
-
+        this(member.email, member.name, member.password, member.userRank, member.address, member.money, member.orderCount, member.coupon);
         this.id = id;
     }
 
     public static Member from(Long id, Member member) {
         return new Member(id, member);
+    }
+
+    public void upgradeUserRank(int orderCount) {
+        this.userRank = UserRank.calculateUserRank(orderCount);
+    }
+
+    public void addOrderCount() {
+        this.orderCount++;
     }
 
     public void updateName(String name) {
@@ -73,5 +83,10 @@ public class Member extends DateTimeEntity {
     }
     public boolean hasCoupon() {
         return this.coupon != null && this.coupon.hasAvailableCoupon();
+    }
+    public void checkPasswordMatch(String checkPassword) {
+        boolean match = PasswordUtil.match(this.password, checkPassword);
+
+        if(!match) throw NOT_MATCH_USER.notMatchUserException();
     }
 }

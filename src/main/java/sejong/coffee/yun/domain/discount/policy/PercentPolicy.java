@@ -1,5 +1,7 @@
 package sejong.coffee.yun.domain.discount.policy;
 
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 import sejong.coffee.yun.domain.discount.condition.CouponCondition;
 import sejong.coffee.yun.domain.discount.condition.DiscountCondition;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
@@ -9,6 +11,8 @@ import sejong.coffee.yun.domain.user.Member;
 import java.util.Arrays;
 import java.util.List;
 
+@Component
+@Primary
 public class PercentPolicy implements DiscountPolicy {
 
     private final List<DiscountCondition> conditions;

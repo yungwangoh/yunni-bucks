@@ -1,15 +1,23 @@
 package sejong.coffee.yun.domain.exception;
 
+import io.jsonwebtoken.JwtException;
 import lombok.Getter;
 
 @Getter
 public enum ExceptionControl {
 
-    // Order,
+    // Order, member, menuList, menu
+    DUPLICATE_USER("중복되었습니다."),
+    DUPLICATE_USER_NAME("이름이 중복되었습니다."),
+    DUPLICATE_USER_EMAIL("이메일이 중복되었습니다."),
     NOT_MATCH_USER("아이디 혹은 비밀번호가 다릅니다."),
     NOT_FOUND_ORDER("주문 내역이 존재하지 않습니다."),
     NOT_FOUND_USER("유저가 존재하지 않습니다."),
     EMPTY_MENUS("메뉴리스트가 비어 있습니다."),
+    TOKEN_EXPIRED("토큰이 만료되었습니다."),
+    FAIL_DELETE_MEMBER("회원 탈퇴에 실패하였습니다."),
+    NOT_FOUND_MENU_LIST("메뉴 리스트를 찾을 수 없습니다."),
+    NOT_FOUND_MENU("메뉴를 찾을 수 없습니다."),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
@@ -32,12 +40,8 @@ public enum ExceptionControl {
     public MenuException throwException() {
         return new MenuException(this.message);
     }
-    public NotFoundUserException notFoundUserException() {
-        return new NotFoundUserException(this.message);
-    }
-
-    public NotFoundOrderException notFoundOrderException() {
-        return new NotFoundOrderException(this.message);
+    public NotFoundException notFoundException() {
+        return new NotFoundException(this.message);
     }
     public NotMatchUserException notMatchUserException() {
         return new NotMatchUserException(this.message);
@@ -51,5 +55,17 @@ public enum ExceptionControl {
     }
     public CardException cardException() {
         return new CardException(this.message);
+    }
+    public DuplicatedException duplicatedException() {
+        return new DuplicatedEmailException(this.message);
+    }
+    public DuplicatedEmailException duplicatedEmailException() {
+        return new DuplicatedEmailException(this.message);
+    }
+    public DuplicatedNameException duplicatedNameException() {
+        return new DuplicatedNameException(this.message);
+    }
+    public JwtException tokenExpiredException() {
+        return new JwtException(this.message);
     }
 }

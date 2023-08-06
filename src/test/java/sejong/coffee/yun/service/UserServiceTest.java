@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sejong.coffee.yun.domain.exception.NotFoundUserException;
+import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.exception.NotMatchUserException;
 import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
@@ -152,7 +152,7 @@ class UserServiceTest {
         try(MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
 
             // given
-            given(userRepository.findByEmail(any())).willReturn(member);
+            given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundException());
             given(PasswordUtil.match(anyString(), anyString())).willReturn(false);
 
             // when
@@ -165,41 +165,83 @@ class UserServiceTest {
     }
 
     @Test
+    void 회원_이름_변경() {
+        // given
+        String updateName = "홍길동";
+
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Member updateMember = userService.updateName(1L, updateName);
+
+        // then
+        assertThat(updateMember.getName()).isEqualTo(updateName);
+    }
+
+    @Test
+    void 회원_이메일_변경() {
+        // given
+        String updateEmail = "asdf1234@naver.com";
+
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Member updateMember = userService.updateEmail(1L, updateEmail);
+
+        // then
+        assertThat(updateMember.getEmail()).isEqualTo(updateEmail);
+    }
+
+    @Test
+    void 회원_비밀번호_변경() {
+        // given
+        String updatePassword = "ghfsdjkhgs@A";
+
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Member updateMember = userService.updatePassword(1L, updatePassword);
+
+        // then
+        assertThat(updateMember.getPassword()).isEqualTo(updatePassword);
+    }
+
+    @Test
     void 회원_이름_변경_할때_다른_id를_넣은_경우() {
         // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> userService.updateName(any(), "gdgd"))
-                .isInstanceOf(NotFoundUserException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
 
     @Test
     void 회원_이메일_변경_할때_다른_id를_넣은_경우() {
         // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> userService.updateEmail(any(), "gdgd"))
-                .isInstanceOf(NotFoundUserException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
 
     @Test
     void 회원_패스워드_변경_할때_다른_id를_넣은_경우() {
         // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundUserException());
+        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> userService.updatePassword(any(), "gdgd"))
-                .isInstanceOf(NotFoundUserException.class)
+                .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
 
