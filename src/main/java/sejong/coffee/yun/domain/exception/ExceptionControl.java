@@ -29,7 +29,11 @@ public enum ExceptionControl {
     NOT_FOUND_PAYMENT_TYPE("올바르지 않은 결제 수단입니다."),
 
     // PayDetails
-    NOT_FOUND_PAY_DETAILS("해당 결제내역이 존재하지 않습니다.");
+    NOT_FOUND_PAY_DETAILS("해당 결제내역이 존재하지 않습니다."),
+    NOT_MATCHED_PAYMENT_KEY("결제 키가 일치하지 않습니다."),
+
+    // OCR
+    NOT_FOUND_OCR_RESPONSE_BODY("올바른 OCR 응답을 받을 수 없습니다.");
 
     private final String message;
 
@@ -40,9 +44,11 @@ public enum ExceptionControl {
     public MenuException throwException() {
         return new MenuException(this.message);
     }
+
     public NotFoundException notFoundException() {
         return new NotFoundException(this.message);
     }
+
     public NotMatchUserException notMatchUserException() {
         return new NotMatchUserException(this.message);
     }
@@ -50,9 +56,11 @@ public enum ExceptionControl {
     public PaymentException paymentException() {
         return new PaymentException(this.message);
     }
+
     public PaymentDetailsException paymentDetailsException() {
         return new PaymentDetailsException(this.message);
     }
+
     public CardException cardException() {
         return new CardException(this.message);
     }
@@ -67,5 +75,9 @@ public enum ExceptionControl {
     }
     public JwtException tokenExpiredException() {
         return new JwtException(this.message);
+    }
+
+    public CardException ocrException() {
+        return new CardException(this.message);
     }
 }
