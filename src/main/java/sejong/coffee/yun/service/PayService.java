@@ -30,7 +30,7 @@ public class PayService {
     }
 
     public CardPayment getByPaymentKey(String paymentKey) {
-        return payRepository.findByPaymentKeyAndStatus(paymentKey, DONE)
+        return payRepository.findByPaymentKeyAndPaymentStatus(paymentKey, DONE)
                 .orElseThrow(ExceptionControl.NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 
