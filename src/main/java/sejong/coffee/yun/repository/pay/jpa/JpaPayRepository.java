@@ -5,8 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import sejong.coffee.yun.domain.pay.CardPayment;
 
+import java.util.Optional;
+
 public interface JpaPayRepository extends JpaRepository<CardPayment, Long> {
 
     @Query("select c from Card c left join c.member where c.member.id =: memberId")
     void findCardByOrderWithinMember(@Param("memberId") Long id);
+
+    Optional<CardPayment> findByOrderId(String orderId);
 }
