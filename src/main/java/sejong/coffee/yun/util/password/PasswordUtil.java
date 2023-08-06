@@ -7,6 +7,8 @@ import java.util.Objects;
 
 public class PasswordUtil {
 
+    private static final String SALT = salt();
+
     private static String salt() {
 
         SecureRandom sr = new SecureRandom();
@@ -14,9 +16,13 @@ public class PasswordUtil {
 
         sr.nextBytes(salt);
 
+        return getToHex(salt);
+    }
+
+    private static String getToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
 
-        for(var a : salt) {
+        for(var a : bytes) {
             sb.append(String.format("%02x", a));
         }
 
@@ -30,16 +36,10 @@ public class PasswordUtil {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            md.update((password + salt()).getBytes());
+            md.update((password + SALT).getBytes());
             byte[] saltedPassword = md.digest();
 
-            StringBuilder sb = new StringBuilder();
-
-            for(var a : saltedPassword) {
-                sb.append(String.format("%02x", a));
-            }
-
-            str = sb.toString();
+            str = getToHex(saltedPassword);
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -49,6 +49,8 @@ public class PasswordUtil {
     }
 
     public static boolean match(String rawString, String string) {
-        return Objects.equals(rawString, PasswordUtil.encryptPassword(string));
+        String password = PasswordUtil.encryptPassword(string);
+
+        return Objects.equals(rawString, password);
     }
 }

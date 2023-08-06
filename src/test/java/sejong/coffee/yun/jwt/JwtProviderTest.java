@@ -23,7 +23,6 @@ class JwtProviderTest {
                 .name("홍길동")
                 .money(Money.ZERO)
                 .password("qwer1234@A")
-                .orderId(1L)
                 .userRank(UserRank.BRONZE)
                 .build();
     }

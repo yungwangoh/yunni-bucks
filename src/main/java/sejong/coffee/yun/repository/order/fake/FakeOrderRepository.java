@@ -29,7 +29,7 @@ public class FakeOrderRepository implements OrderRepository {
         return orders.stream()
                 .filter(order -> Objects.equals(order.getId(), id))
                 .findAny()
-                .orElseThrow(NOT_FOUND_ORDER::notFoundOrderException);
+                .orElseThrow(NOT_FOUND_ORDER::notFoundException);
     }
 
     @Override

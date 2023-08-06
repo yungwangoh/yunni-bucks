@@ -1,6 +1,7 @@
 package sejong.coffee.yun.repository.user.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.user.Member;
@@ -9,9 +10,10 @@ import sejong.coffee.yun.repository.user.jpa.JpaUserRepository;
 
 import java.util.List;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
@@ -74,18 +76,22 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean duplicateEmail(String email) {
-        return jpaUserRepository.existsByEmail(email);
+    public void duplicateEmail(String email) {
+        if(jpaUserRepository.existsByEmail(email)) {
+            throw DUPLICATE_USER_EMAIL.duplicatedEmailException();
+        }
     }
 
     @Override
-    public boolean duplicateName(String name) {
-        return jpaUserRepository.existsByName(name);
+    public void duplicateName(String name) {
+        if(jpaUserRepository.existsByName(name)) {
+            throw DUPLICATE_USER_NAME.duplicatedNameException();
+        }
     }
 
     private Member getUser(Long id) {
         return jpaUserRepository.findById(id)
-                .orElseThrow(NOT_FOUND_USER::notFoundUserException);
+                .orElseThrow(NOT_FOUND_USER::notFoundException);
     }
 
 

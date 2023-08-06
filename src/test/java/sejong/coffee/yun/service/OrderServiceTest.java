@@ -18,6 +18,7 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.repository.order.OrderRepository;
+import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,6 +36,8 @@ class OrderServiceTest {
     private Calculator calculator;
     @Mock
     private OrderRepository orderRepository;
+    @Mock
+    private UserRepository userRepository;
 
     private Member member;
     private Order order;
@@ -49,6 +52,7 @@ class OrderServiceTest {
                 .password("qwer1234@A")
                 .money(Money.ZERO)
                 .email("qwer123@naver.com")
+                .orderCount(0)
                 .build();
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
@@ -63,9 +67,10 @@ class OrderServiceTest {
     void 주문() {
         // given
         given(orderRepository.save(any())).willReturn(order);
+        given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(member, menuList);
+        Order saveOrder = orderService.order(1L, menuList);
 
         // then
         assertThat(saveOrder).isEqualTo(order);
@@ -99,10 +104,11 @@ class OrderServiceTest {
     void 주문_총_금액_확인() {
         // given
         given(orderRepository.save(any())).willReturn(order);
+        given(userRepository.findById(any())).willReturn(member);
         given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal("10000")));
 
         // when
-        Order saveOrder = orderService.order(member, menuList);
+        Order saveOrder = orderService.order(1L, menuList);
 
         // then
         assertThat(saveOrder.fetchTotalOrderPrice()).isEqualTo(new BigDecimal("10000"));
@@ -112,11 +118,25 @@ class OrderServiceTest {
     void 주문명_확인() {
         // given
         given(orderRepository.save(any())).willReturn(order);
+        given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(member, menuList);
+        Order saveOrder = orderService.order(1L, menuList);
 
         // then
         assertThat(saveOrder.getName()).isEqualTo("커피 외 1개");
+    }
+
+    @Test
+    void 유저가_주문_하고_주문_개수_확인() {
+        // given
+        given(orderRepository.save(any())).willReturn(order);
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Order saveOrder = orderService.order(1L, menuList);
+
+        // then
+        assertThat(saveOrder.getMember().getOrderCount()).isEqualTo(1);
     }
 }
