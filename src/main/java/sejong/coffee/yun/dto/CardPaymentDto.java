@@ -1,48 +1,53 @@
 package sejong.coffee.yun.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import sejong.coffee.yun.domain.pay.CardPayment;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class CardPaymentDto {
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Request {
+@Builder
+public class CardPaymentDto {
+    public record Request (
         @NotNull(message = "카드번호가 없습니다.")
-        private String cardNumber;
+        String cardNumber,
         @Pattern(regexp="(?=.*[0-9]).{4}", message = "비밀번호는 숫자 4자여야 합니다.")
-        private String cardPassword;
+        String cardPassword,
         @NotNull(message = "만료 연도가 없습니다.")
-        private String cardExpirationYear;
+        String cardExpirationYear,
         @NotNull(message = "만료 월이 없습니다.")
-        private String cardExpirationMonth;
+        String cardExpirationMonth,
         @NotNull(message = "주문 아이디가 없습니다.")
-        private String orderId;
+        String orderId,
         @NotNull(message = "주문명이 없습니다.")
-        private String orderName;
+        String orderName,
         @NotNull(message = "주문 금액이 없습니다.")
-        private String amount;
+        String amount,
         @NotNull(message = "카드 소유자 번호가없습니다.")
-        private String customerIdentityNumber;
-        private String customerName;
+        String customerIdentityNumber,
+        String customerName
+    ) {
+        public static Request from(CardPayment cardPayment) {
+            return new Request(cardPayment.getCardNumber(), cardPayment.getCardPassword(),
+                    cardPayment.getCardExpirationYear(), cardPayment.getCardExpirationMonth(),
+                    cardPayment.getOrder().mapOrderName(), cardPayment.getOrder().getName(),
+                    cardPayment.getOrder().getOrderPrice().getTotalPrice().toString(),
+                    cardPayment.getOrder().getMember().getEmail().split("@")[0],
+                    cardPayment.getOrder().getMember().getName());
+        }
     }
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Response {
-        private String cardNumber;
-        private String cardExpirationYear;
-        private String cardExpirationMonth;
-        private String cardPassword;
-        private String amount;
-        private String orderName;
+    public record Response (
+        String orderId,
+        String orderName,
+        String method,
+        String cardNumber,
+        String totalAmount
+    ) {
+        public Response(CardPayment entity, String method) {
+            this(entity.getOrder().mapOrderName(), entity.getOrder().getName(), method,
+                    entity.getCardNumber(), entity.getOrder().getOrderPrice().getTotalPrice().toString());
+        }
     }
 }
