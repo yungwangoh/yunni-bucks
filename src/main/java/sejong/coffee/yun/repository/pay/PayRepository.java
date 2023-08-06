@@ -15,6 +15,6 @@ public interface PayRepository {
     List<CardPayment> findAll();
 
     Optional<CardPayment> findByOrderId(String orderId);
-    Optional<CardPayment> findByPaymentKeyAndStatus(String paymentKey, PaymentStatus paymentStatus);
+    Optional<CardPayment> findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus);
 
 }
