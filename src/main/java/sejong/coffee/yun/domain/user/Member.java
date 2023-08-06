@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
+import sejong.coffee.yun.util.password.PasswordUtil;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
 
 @Entity
 @Getter
@@ -80,5 +83,10 @@ public class Member extends DateTimeEntity {
     }
     public boolean hasCoupon() {
         return this.coupon != null && this.coupon.hasAvailableCoupon();
+    }
+    public void checkPasswordMatch(String checkPassword) {
+        boolean match = PasswordUtil.match(this.password, checkPassword);
+
+        if(!match) throw NOT_MATCH_USER.notMatchUserException();
     }
 }
