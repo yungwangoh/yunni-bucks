@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sejong.coffee.yun.domain.order.Calculator;
-import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -21,6 +20,7 @@ import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +41,7 @@ class OrderServiceTest {
 
     private Member member;
     private Order order;
-    private MenuList menuList;
+    private List<Menu> menuList = new ArrayList<>();
 
     @BeforeEach
     void init() {
@@ -59,7 +59,7 @@ class OrderServiceTest {
         Menu menu1 = new Beverage("커피", "에티오피아산 커피",
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
 
-        menuList = new MenuList(List.of(menu1));
+        menuList.add(menu1);
         order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")));
     }
 

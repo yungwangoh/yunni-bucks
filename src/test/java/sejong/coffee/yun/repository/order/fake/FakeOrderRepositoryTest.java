@@ -6,7 +6,6 @@ import sejong.coffee.yun.domain.discount.condition.CouponCondition;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.order.Calculator;
-import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
@@ -33,6 +32,7 @@ class FakeOrderRepositoryTest {
     private Menu menu1;
     private Menu menu2;
     private Menu menu3;
+    private List<Menu> menuList;
 
     @BeforeEach
     void init() {
@@ -63,13 +63,14 @@ class FakeOrderRepositoryTest {
             .coupon(coupon)
             .email("qwer1234@naver.com")
             .build();
+
+        menuList = List.of(menu1, menu2, menu3);
     }
 
     @Test
     void 주문_저장() {
         // given
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         Order order = Order.createOrder(member, menuList, money);
 
@@ -83,8 +84,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 주문_찾기() {
         // given
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         Order order = Order.createOrder(member, menuList, money);
         Order save = orderRepository.save(order);
@@ -99,8 +99,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 주문_리스트() {
         // given
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         Order order = Order.createOrder(member, menuList, money);
         orderRepository.save(order);
@@ -115,8 +114,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 회원의_주문리스트() {
         // given
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         Order order = Order.createOrder(member, menuList, money);
         orderRepository.save(order);

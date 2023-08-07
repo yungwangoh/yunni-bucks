@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Calculator;
-import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.repository.order.OrderRepository;
@@ -22,11 +22,11 @@ public class OrderService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Order order(Long memberId, MenuList menuList) {
+    public Order order(Long memberId, List<Menu> menuList) {
 
         Member member = userRepository.findById(memberId);
 
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         member.addOrderCount();
 
