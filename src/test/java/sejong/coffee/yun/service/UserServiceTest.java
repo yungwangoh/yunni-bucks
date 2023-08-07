@@ -6,11 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.exception.NotMatchUserException;
-import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -31,10 +29,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mockStatic;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
 
@@ -61,16 +59,19 @@ class UserServiceTest {
                 .address(new Address("서울시", "광진구", "화양동", "123-432"))
                 .userRank(UserRank.BRONZE)
                 .name("홍길동")
-                .password("qwer1234@A")
+                .password(PasswordUtil.encryptPassword("qwer1234@A"))
                 .money(Money.ZERO)
                 .email("qwer123@naver.com")
+                .orderCount(1)
                 .build();
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
         Menu menu1 = new Beverage("커피", "에티오피아산 커피",
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
 
-        order = Order.createOrder(member, new MenuList(List.of(menu1)), null);
+        List<Menu> menuList = List.of(menu1);
+
+        order = Order.createOrder(member, menuList, null);
     }
 
     @Test
@@ -118,19 +119,15 @@ class UserServiceTest {
         String accessToken = "1234";
         String refreshToken = "1234";
 
-        try(MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
+        given(userRepository.findByEmail(any())).willReturn(member);
+        given(jwtProvider.createAccessToken(any())).willReturn(accessToken);
+        given(jwtProvider.createRefreshToken(any())).willReturn(refreshToken);
 
-            given(userRepository.findByEmail(any())).willReturn(member);
-            given(jwtProvider.createAccessToken(any())).willReturn(accessToken);
-            given(jwtProvider.createRefreshToken(any())).willReturn(refreshToken);
-            given(PasswordUtil.match(anyString(), anyString())).willReturn(true);
+        // when
+        String token = userService.signIn(member.getEmail(), "qwer1234@A");
 
-            // when
-            String token = userService.signIn(member.getEmail(), member.getPassword());
-
-            // then
-            assertThat(token).isEqualTo(accessToken);
-        }
+        // then
+        assertThat(token).isEqualTo(accessToken);
     }
 
     @Test
@@ -148,20 +145,15 @@ class UserServiceTest {
 
     @Test
     void 로그인_입력정보와_가입정보와_다른_경우() {
+        // given
+        given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
-        try(MockedStatic<PasswordUtil> passwordUtil = mockStatic(PasswordUtil.class)) {
+        // when
 
-            // given
-            given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundException());
-            given(PasswordUtil.match(anyString(), anyString())).willReturn(false);
-
-            // when
-
-            // then
-            assertThatThrownBy(() -> userService.signIn(member.getEmail(), member.getPassword()))
-                    .isInstanceOf(NotMatchUserException.class)
-                    .hasMessageContaining(NOT_MATCH_USER.getMessage());
-        }
+        // then
+        assertThatThrownBy(() -> userService.signIn(member.getEmail(), member.getPassword()))
+                .isInstanceOf(NotMatchUserException.class)
+                .hasMessageContaining(NOT_MATCH_USER.getMessage());
     }
 
     @Test

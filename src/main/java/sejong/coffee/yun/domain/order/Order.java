@@ -25,8 +25,8 @@ public class Order extends DateTimeEntity {
     private Long id;
     @Column(name = "order_name")
     private String name;
-    @OneToOne(fetch = FetchType.LAZY)
-    private MenuList menuList;
+    @OneToMany
+    private List<Menu> menuList;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -36,7 +36,7 @@ public class Order extends DateTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private OrderPayStatus payStatus;
 
-    private Order(String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
+    private Order(String name, List<Menu> menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
         this.name = name;
         this.menuList = menuList;
         this.member = member;
@@ -45,7 +45,7 @@ public class Order extends DateTimeEntity {
         this.payStatus = payStatus;
     }
 
-    private Order(Long id, String name, MenuList menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
+    private Order(Long id, String name, List<Menu> menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
         this(name, menuList, member, status, orderPrice, payStatus);
         this.id = id;
     }
@@ -55,8 +55,8 @@ public class Order extends DateTimeEntity {
                 order.getStatus(), order.getOrderPrice(), order.getPayStatus());
     }
 
-    public static Order createOrder(Member member, MenuList menuList, Money orderPrice) {
-        String orderName = makeOrderName(menuList.getMenus());
+    public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice) {
+        String orderName = makeOrderName(menuList);
 
         if(member.getCoupon() != null) {
             member.getCoupon().convertStatusUsedCoupon();

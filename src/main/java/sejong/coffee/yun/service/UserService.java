@@ -148,15 +148,14 @@ public class UserService {
 
     private String userCheck(String password, Member member) {
         String accessToken;
-        if (PasswordUtil.match(member.getPassword(), password)) {
 
-            accessToken = jwtProvider.createAccessToken(member);
-            String refreshToken = jwtProvider.createRefreshToken(member);
+        member.checkPasswordMatch(password);
 
-            redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
-        } else {
-            throw NOT_MATCH_USER.notMatchUserException();
-        }
+        accessToken = jwtProvider.createAccessToken(member);
+        String refreshToken = jwtProvider.createRefreshToken(member);
+
+        redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
+
         return accessToken;
     }
 }

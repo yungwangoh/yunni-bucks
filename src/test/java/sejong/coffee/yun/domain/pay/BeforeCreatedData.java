@@ -4,13 +4,12 @@ import sejong.coffee.yun.domain.discount.condition.CouponCondition;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.order.Calculator;
-import sejong.coffee.yun.domain.order.MenuList;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
 public class BeforeCreatedData {
 
@@ -44,10 +43,7 @@ public class BeforeCreatedData {
         menu3 = new Bread("소라빵", "소라빵",
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
 
-        MenuList menuList = new MenuList(new ArrayList<>());
-        menuList.addMenu(menu1);
-        menuList.addMenu(menu2);
-        menuList.addMenu(menu3);
+        List<Menu> menuList = List.of(menu1, menu2, menu3);
 
         this.member = Member.builder()
                 .address(address)
@@ -60,7 +56,7 @@ public class BeforeCreatedData {
 
         this.card = new Card("123456789123", "23/10", "1234", this.member);
 
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
         this.order = Order.createOrder(member, menuList, money);
     }
 }
