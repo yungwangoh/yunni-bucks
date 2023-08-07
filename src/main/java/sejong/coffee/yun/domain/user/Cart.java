@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
-import static sejong.coffee.yun.domain.user.CartControl.*;
+import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 
 @Entity
 @Getter
