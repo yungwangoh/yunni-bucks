@@ -11,6 +11,7 @@ import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +30,7 @@ class OrderTest {
     private Menu menu2;
     private Menu menu3;
     private Coupon coupon;
+    private List<Menu> menuList;
 
     @BeforeEach
     void init() {
@@ -49,6 +51,8 @@ class OrderTest {
             .couponUse(CouponUse.NO)
             .expireAt(LocalDateTime.of(2024, 7, 29, 10, 10))
             .build();
+
+        menuList = List.of(menu1, menu2, menu3);
     }
 
     @Test
@@ -63,9 +67,7 @@ class OrderTest {
                 .email("qwer1234@naver.com")
                 .build();
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         // when
         Order order = Order.createOrder(member, menuList, money);
@@ -87,13 +89,11 @@ class OrderTest {
                 .email("qwer1234@naver.com")
                 .build();
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         // when
         Order order = Order.createOrder(member, menuList, money);
-        String orderName = menuList.getMenus().get(0).getTitle() + " 외 " + menuList.getMenus().size() + "개";
+        String orderName = menuList.get(0).getTitle() + " 외 " + menuList.size() + "개";
 
         // then
         assertThat(order.getName()).isEqualTo(orderName);
@@ -113,10 +113,10 @@ class OrderTest {
                 .build();
 
         // when
-        MenuList menuList = new MenuList(List.of());
+        List<Menu> emptyMenuList = new ArrayList<>();
 
         // then
-        assertThatThrownBy(() -> Order.createOrder(member, menuList, Money.ZERO))
+        assertThatThrownBy(() -> Order.createOrder(member, emptyMenuList, Money.ZERO))
                 .isInstanceOf(MenuException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }
@@ -133,9 +133,7 @@ class OrderTest {
                 .email("qwer1234@naver.com")
                 .build();
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
         Order order = Order.createOrder(member, menuList, money);
 
         // when
@@ -158,8 +156,7 @@ class OrderTest {
                 .email("qwer1234@naver.com")
                 .build();
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         // when
         Order.createOrder(member, menuList, money);
@@ -181,8 +178,7 @@ class OrderTest {
                 .email("qwer1234@naver.com")
                 .build();
 
-        MenuList menuList = new MenuList(List.of(menu1, menu2, menu3));
-        Money money = calculator.calculateMenus(member, menuList.getMenus());
+        Money money = calculator.calculateMenus(member, menuList);
 
         // when
         Order order = Order.createOrder(member, menuList, money);
