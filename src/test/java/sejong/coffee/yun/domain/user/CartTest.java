@@ -131,4 +131,16 @@ class CartTest {
         // then
         assertThat(order.getMenuList()).isEqualTo(cart.getMenuList());
     }
+
+    @Test
+    void 카트가_생성되지않고_메뉴를_추가_제거같은_행위를_할_경우() {
+        // given
+        Cart cart = new Cart(member, null);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> cart.addMenu(menu1))
+                .isInstanceOf(NullPointerException.class);
+    }
 }
