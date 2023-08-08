@@ -85,4 +85,39 @@ public class MoneyTest {
                 .hasMessageContaining("할인률은 1 이하 0이상이여야 합니다.");
     }
 
+    @Test
+    void 소수점_정수로_치환_int_discount() {
+        // given
+        Money money = Money.initialPrice(new BigDecimal(10000));
+
+        // when
+        money.discount(new BigDecimal("0.1"));
+
+        // then
+        assertThat(Money.mapBigDecimalToInt(money.getTotalPrice())).isEqualTo(9000);
+    }
+
+    @Test
+    void 소수점_정수로_치환_int_plus() {
+        // given
+        Money money = Money.initialPrice(new BigDecimal(10000));
+
+        // when
+        money.plus(Money.initialPrice(new BigDecimal(1000)));
+
+        // then
+        assertThat(Money.mapBigDecimalToInt(money.getTotalPrice())).isEqualTo(11000);
+    }
+
+    @Test
+    void 소수점_정수로_치환_long_discount() {
+        // given
+        Money money = Money.initialPrice(new BigDecimal(10000));
+
+        // when
+        money.discount(new BigDecimal("0.1"));
+
+        // then
+        assertThat(Money.mapBigDecimalToLong(money.getTotalPrice())).isEqualTo(9000);
+    }
 }
