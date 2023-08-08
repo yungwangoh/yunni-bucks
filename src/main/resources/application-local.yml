@@ -16,7 +16,7 @@ spring:
         auto_quote_keyword: true
     database-platform:
 
-가  redis:
+  redis:
     host: localhost
     port: 6379
 
