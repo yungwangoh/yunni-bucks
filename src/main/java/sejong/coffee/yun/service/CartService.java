@@ -67,7 +67,9 @@ public class CartService {
     }
 
     @Transactional
-    public void removeCart(Long cartId) {
-        cartRepository.delete(cartId);
+    public void removeCart(Long memberId) {
+        Cart cart = cartRepository.findByMember(memberId);
+
+        cartRepository.delete(cart);
     }
 }
