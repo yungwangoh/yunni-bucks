@@ -3,20 +3,25 @@ package sejong.coffee.yun.domain.pay;
 import lombok.*;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Card;
+import sejong.coffee.yun.dto.CardPaymentDto;
+import sejong.coffee.yun.infra.port.UuidHolder;
 
 import javax.persistence.*;
 
-import static sejong.coffee.yun.domain.pay.PaymentStatus.READY;
+import java.time.LocalDateTime;
+
 import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of ={"id", "cardNumber", "cardPassword"})
+@ToString(of = {"id", "cardNumber", "cardPassword", "customerName", "cardExpirationYear", "cardExpirationMonth",
+        "paymentKey", "orderUuid", "requestedAt", "approvedAt"})
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "card_payment_id")
     private Long id;
     private String cardNumber;
@@ -25,22 +30,46 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     private String cardExpirationYear;
     private String cardExpirationMonth;
     private String paymentKey;
+    private String orderUuid;
     private PaymentType paymentType;
     private PaymentStatus paymentStatus;
+    private LocalDateTime requestedAt;
+    private LocalDateTime approvedAt;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @Builder
-    public CardPayment(Card card, Order order) {
+    public CardPayment(Card card, Order order, UuidHolder uuidHolder) {
         this.cardNumber = card.getNumber();
         this.cardPassword = displayTwoDigits(card.getCardPassword());
         this.customerName = order.getMember().getName();
         this.cardExpirationYear = parsingCardValidDate(card.getValidThru())[0];
         this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[1];
         this.order = order;
-        this.paymentStatus = READY;
+        this.paymentType = PaymentType.CARD;
+        this.paymentStatus = PaymentStatus.READY;
+        this.orderUuid = uuidHolder.random();
+    }
+
+    @Builder
+    public CardPayment(Long id, String cardNumber, String cardPassword, String customerName,
+                       String cardExpirationYear, String cardExpirationMonth, PaymentType type,
+                       PaymentStatus status, LocalDateTime requestedAt, LocalDateTime approvedAt,
+                       String paymentKey, String orderUuid, Order order) {
+        this.id = id;
+        this.cardNumber = cardNumber;
+        this.cardPassword = displayTwoDigits(cardPassword);
+        this.customerName = customerName;
+        this.cardExpirationYear = cardExpirationYear;
+        this.cardExpirationMonth = cardExpirationMonth;
+        this.paymentType = type;
+        this.paymentStatus = status;
+        this.requestedAt = requestedAt;
+        this.approvedAt = approvedAt;
+        this.paymentKey = paymentKey;
+        this.orderUuid = orderUuid;
+        this.order = order;
     }
 
     @Override
@@ -57,8 +86,31 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         return carPassword.substring(0, 2);
     }
 
+    public static CardPayment fromModel(CardPaymentDto.Request cardDomain) {
+        CardPayment cardPayment = new CardPayment();
+        cardPayment.cardNumber = cardDomain.cardNumber();
+        cardPayment.cardPassword = cardDomain.cardPassword();
+        cardPayment.customerName = cardDomain.customerName();
+        cardPayment.cardExpirationYear = cardDomain.cardExpirationYear();
+        cardPayment.cardExpirationMonth = cardDomain.cardExpirationMonth();
+        return cardPayment;
+    }
 
-    public void update() {
-        this.paymentStatus = PaymentStatus.DONE;
+    public static CardPayment approvalPayment(CardPayment cardPayment, String paymentKey,
+                                              LocalDateTime approvedAt) {
+        return CardPayment.builder()
+                .cardNumber(cardPayment.getCardNumber())
+                .cardExpirationYear(cardPayment.getCardExpirationYear())
+                .cardExpirationMonth(cardPayment.getCardExpirationMonth())
+                .type(cardPayment.getPaymentType())
+                .cardPassword(cardPayment.getCardPassword())
+                .customerName(cardPayment.getCustomerName())
+                .requestedAt(cardPayment.getRequestedAt())
+                .status(PaymentStatus.DONE)
+                .paymentKey(paymentKey)
+                .approvedAt(approvedAt)
+                .order(cardPayment.getOrder())
+                .orderUuid(cardPayment.getOrderUuid())
+                .build();
     }
 }
