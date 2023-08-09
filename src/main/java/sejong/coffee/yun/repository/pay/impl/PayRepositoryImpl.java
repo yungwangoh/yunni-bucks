@@ -22,7 +22,7 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public Optional<CardPayment> findById(Long id) {
+    public Optional<CardPayment> findById(long id) {
         return jpaPayRepository.findById(id);
     }
 
@@ -32,8 +32,8 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public Optional<CardPayment> findByOrderId(String orderId) {
-        return jpaPayRepository.findByOrderId(orderId);
+    public Optional<CardPayment> findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus status) {
+        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderUuid, PaymentStatus.DONE);
     }
 
     @Override
