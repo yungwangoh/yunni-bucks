@@ -17,7 +17,6 @@ public class BeforeCreatedData {
     protected final Member member;
     protected final Calculator calculator;
     protected final Card card;
-
     public BeforeCreatedData() {
 
         this.calculator = new Calculator(new PercentPolicy(new RankCondition(), new CouponCondition()));
