@@ -3,7 +3,6 @@ package sejong.coffee.yun.util.parse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.dto.CardPaymentDto;
 
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class JsonParsing {
         return objectMapper.writeValueAsString(response);
     }
 
-    public static CardPayment parsePaymentObjectByJson(String responseBody) throws JsonProcessingException {
-        return objectMapper.readValue(responseBody, CardPayment.class);
+    public static CardPaymentDto.Response parsePaymentObjectByJson(String responseBody) throws JsonProcessingException {
+        return objectMapper.readValue(responseBody, CardPaymentDto.Response.class);
     }
 }
