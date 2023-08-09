@@ -5,8 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.DateTimeEntity;
 import sejong.coffee.yun.domain.order.menu.Menu;
-import sejong.coffee.yun.domain.user.Money;
+import sejong.coffee.yun.domain.user.CartControl;
 import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.domain.user.Money;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.List;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
 import static sejong.coffee.yun.domain.order.OrderStatus.CANCEL;
 import static sejong.coffee.yun.domain.order.OrderStatus.ORDER;
+import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 
 @Entity
 @Getter
@@ -65,12 +67,27 @@ public class Order extends DateTimeEntity {
         return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO);
     }
 
+    public void completePayment() {
+        this.payStatus = OrderPayStatus.YES;
+    }
+
     public void cancel() {
         this.status = CANCEL;
     }
 
     public BigDecimal fetchTotalOrderPrice() {
         return this.orderPrice.getTotalPrice();
+    }
+
+    public void addMenu(Menu menu) {
+        if(this.menuList.size() >= CartControl.SIZE.getSize())
+            throw new RuntimeException("카트는 메뉴를 " + SIZE + "개만 담을 수 있습니다.");
+
+        this.menuList.add(menu);
+    }
+
+    public void removeMenu(int idx) {
+        this.menuList.remove(idx);
     }
 
     private static String makeOrderName(List<Menu> menus) {
