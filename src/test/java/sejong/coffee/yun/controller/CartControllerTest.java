@@ -44,6 +44,9 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
+import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -259,6 +262,119 @@ class CartControllerTest {
                                 fieldWithPath("menuSize").description("메뉴 크기"),
                                 fieldWithPath("createAt").description("생성일"),
                                 fieldWithPath("updateAt").description("수정일")
+                        )
+                ));
+    }
+
+    @Test
+    void 카트가_생성되지_않았는데_메뉴를_추가_할_경우() throws Exception {
+        // given
+        given(cartService.addMenu(anyLong(), anyLong())).willThrow(NOT_FOUND_CART.notFoundException());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/carts/menu")
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("menuId", "1"));
+
+        // then
+        resultActions.andExpect(status().isNotFound())
+                .andDo(document("menu-add-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        requestParameters(
+                                parameterWithName("menuId").description("메뉴 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
+                        )
+                ));
+    }
+
+    @Test
+    void 카트가_비어있는_상태에서_메뉴를_삭제할_경우() throws Exception {
+        // given
+        given(cartService.removeMenu(anyLong(), anyInt())).willThrow(NOT_FOUND_MENU.notFoundException());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(delete("/api/carts/menu")
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("menuIdx", "1"));
+
+        // then
+        resultActions.andExpect(status().isNotFound())
+                .andDo(document("menu-remove-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        requestParameters(
+                                parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
+                        )
+                ));
+    }
+
+    @Test
+    void 카트가_비어있는_상태에서_메뉴를_가져올_경우() throws Exception {
+        // given
+        given(cartService.getMenu(anyLong(), anyInt())).willThrow(NOT_FOUND_MENU.notFoundException());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(get("/api/carts/menu")
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("menuIdx", "1"));
+
+        // then
+        resultActions.andExpect(status().isNotFound())
+                .andDo(document("menu-get-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        requestParameters(
+                                parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
+                        )
+                ));
+    }
+
+    @Test
+    void 카트는_메뉴를_담을때_10개를_초과할_수_없다() throws Exception {
+        // given
+        given(cartService.addMenu(anyLong(), anyLong()))
+                .willThrow(new RuntimeException("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다."));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/carts/menu")
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("menuId", "1"));
+
+        // then
+        resultActions.andExpect(status().isInternalServerError())
+                .andDo(document("menu-add-over-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        requestParameters(
+                                parameterWithName("menuId").description("메뉴 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
                         )
                 ));
     }
