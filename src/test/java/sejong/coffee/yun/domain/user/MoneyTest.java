@@ -93,8 +93,10 @@ public class MoneyTest {
         // when
         money.discount(new BigDecimal("0.1"));
 
+        money.mapBigDecimalToLong();
+
         // then
-        assertThat(Money.mapBigDecimalToInt(money.getTotalPrice())).isEqualTo(9000);
+        assertThat(money.getTotalPrice()).isEqualTo("9000");
     }
 
     @Test
@@ -105,8 +107,10 @@ public class MoneyTest {
         // when
         money.plus(Money.initialPrice(new BigDecimal(1000)));
 
+        money.mapBigDecimalToInt();
+
         // then
-        assertThat(Money.mapBigDecimalToInt(money.getTotalPrice())).isEqualTo(11000);
+        assertThat(money.getTotalPrice()).isEqualTo("11000");
     }
 
     @Test
@@ -117,7 +121,9 @@ public class MoneyTest {
         // when
         money.discount(new BigDecimal("0.1"));
 
+        money.mapBigDecimalToLong();
+
         // then
-        assertThat(Money.mapBigDecimalToLong(money.getTotalPrice())).isEqualTo(9000);
+        assertThat(money.getTotalPrice()).isEqualTo("9000");
     }
 }
