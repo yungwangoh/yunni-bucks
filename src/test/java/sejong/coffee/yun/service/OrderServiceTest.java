@@ -16,6 +16,7 @@ import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -38,10 +40,13 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private MenuRepository menuRepository;
 
     private Member member;
     private Order order;
     private List<Menu> menuList = new ArrayList<>();
+    private Menu menu1;
 
     @BeforeEach
     void init() {
@@ -56,7 +61,7 @@ class OrderServiceTest {
                 .build();
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-        Menu menu1 = new Beverage("커피", "에티오피아산 커피",
+        menu1 = new Beverage("커피", "에티오피아산 커피",
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
 
         menuList.add(menu1);
@@ -138,5 +143,58 @@ class OrderServiceTest {
 
         // then
         assertThat(saveOrder.getMember().getOrderCount()).isEqualTo(1);
+    }
+
+    @Test
+    void 유저가_주문취소된_상태에서_메뉴_수정할_때_예외() {
+        // given
+        order.cancel();
+        given(orderRepository.findByMemberId(any())).willReturn(order);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
+    }
+
+    @Test
+    void 유저가_결제가된_상태에서_메뉴_수정할_때_예외() {
+        // given
+        order.completePayment();
+        given(orderRepository.findByMemberId(any())).willReturn(order);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
+    }
+
+    @Test
+    void 유저가_주문을_변경한다_메뉴추가() {
+        // given
+        given(orderRepository.findByMemberId(any())).willReturn(order);
+        given(menuRepository.findById(any())).willReturn(menu1);
+
+        // when
+        Order updateAddMenu = orderService.updateAddMenu(1L, 1L);
+
+        // then
+        assertThat(updateAddMenu.getMenuList().size()).isEqualTo(2);
+    }
+
+    @Test
+    void 유저가_주문을_변경한다_메뉴삭제() {
+        // given
+        given(orderRepository.findByMemberId(any())).willReturn(order);
+
+        // when
+        Order updateRemoveMenu = orderService.updateRemoveMenu(1L, 0);
+
+        // then
+        assertThat(updateRemoveMenu.getMenuList().size()).isEqualTo(0);
     }
 }

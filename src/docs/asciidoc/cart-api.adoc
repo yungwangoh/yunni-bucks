@@ -1,0 +1,48 @@
+[[Cart-API]]
+= Cart API
+
+[[Success]]
+== 성공
+
+[[Cart-create]]
+=== 카트 생성
+operation::cart-create[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Cart-find]]
+=== 카트 조회
+operation::cart-find[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Cart-delete]]
+=== 카트 삭제
+operation::cart-delete[snippets='http-request,request-headers,http-response']
+
+[[Menu-add]]
+=== 메뉴 추가
+operation::menu-add[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-get]]
+=== 메뉴 조회
+operation::menu-get[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-remove]]
+=== 메뉴 삭제
+operation::menu-remove[snippets='http-request,request-headers,request-parameters,http-response']
+
+[[Fail]]
+== 실패
+
+[[Menu-add-fail]]
+=== 메뉴 추가 실패 (카트가 존재하지 않을 경우)
+operation::menu-add-fail[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-add-over-fail]]
+=== 메뉴 추가 초과 실패 (장바구니엔 최대 10개까지만 담을 수 있다.)
+operation::menu-add-over-fail[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-get-fail]]
+=== 메뉴 얻기 실패 (카트가 존재하지 않을 경우)
+operation::menu-get-fail[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-remove-fail]]
+=== 메뉴 삭제 실패 (메뉴가 존재하지 않을 경우)
+operation::menu-remove-fail[snippets='http-request,request-headers,request-parameters,http-response,response-fields']

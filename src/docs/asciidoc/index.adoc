@@ -2,78 +2,11 @@
 까페 결제 시스템
 :doctype: book
 :icons: font
-:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
-:toc: left // toc (Table Of Contents)를 문서의 좌측에 두기
+:source-highlighter: highlightjs
+:toc: left
 :toclevels: 2
 :sectlinks:
 
-[[Member-API]]
-= Member API
-
-[[Member-success]]
-== 성공
-
-[[Member-회원-등록]]
-=== 회원 등록
-operation::member-create[snippets='http-request,request-fields,http-response,response-fields']
-
-[[Member-회원-단건-조회]]
-=== 회원 단건 조회
-operation::member-find[snippets='http-request,http-response,response-fields']
-
-[[Member-회원-리스트-조회]]
-=== 회원 리스트 조회
-operation::member-list[snippets='http-request,http-response,response-fields']
-
-[[Member-회원-삭제]]
-=== 회원 삭제
-operation::member-delete[snippets='http-request']
-
-[[Member-로그-인]]
-=== 로그인
-operation::sign-in[snippets='http-request,request-fields,http-response,response-fields']
-
-[[Member-로그-아웃]]
-=== 로그아웃
-operation::sign-out[snippets='http-request']
-
-[[Member-회원-중복-이름]]
-=== 회원 중복 이름
-operation::member-duplicate-name[snippets='http-request,request-parameters,response-body']
-
-[[Member-회원-중복-이메일]]
-=== 회원 중복 이메일
-operation::member-duplicate-email[snippets='http-request,request-parameters,response-body']
-
-[[Member-fail]]
-== 실패
-
-[[Member-회원-등록-실패]]
-=== 회원 등록 실패
-operation::member-create-duplicate-email-fail[snippets='http-request,request-fields,http-response,response-fields']
-
-[[Member-회원-유효성-실패]]
-=== 회원 유효성 실패
-operation::member-create-validation-fail[snippets='http-response,response-fields']
-
-[[Member-로그인-실패]]
-=== 로그인 실패
-operation::sign-in-not-match-fail[snippets='http-request,request-fields,http-response,response-fields']
-
-[[Member-로그아웃-실패]]
-=== 로그아웃 실패
-operation::sign-out-token-expire[snippets='http-request,http-response,response-fields']
-
-[[Member-회원-이름-중복검증-실패]]
-=== 회원 이름 중복검증 실패
-operation::member-duplicate-check-name-fail[snippets='http-request,request-parameters,http-response,response-fields']
-
-[[Member-회원-이메일-중복검증-실패]]
-=== 회원 이메일 중복검증 실패
-operation::member-duplicate-check-email-fail[snippets='http-request,request-parameters,http-response,response-fields']
-
-[[Member-회원-삭제-실패]]
-=== 회원 삭제 실패
-operation::member-delete-fail[snippets='http-request,http-response,response-fields']
-
+include::member-api.adoc[]
+include::cart-api.adoc[]
 
