@@ -8,4 +8,5 @@ public interface CartRepository {
     Cart findById(Long id);
     Cart findByMember(Long memberId);
     void delete(Long id);
+    void delete(Cart cart);
 }
