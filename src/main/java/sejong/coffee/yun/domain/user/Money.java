@@ -41,12 +41,12 @@ public class Money {
         this.totalPrice = this.totalPrice.subtract(mul);
     }
 
-    public static int mapBigDecimalToInt(BigDecimal bigDecimal) {
-        return bigDecimal.intValue();
+    public void mapBigDecimalToInt() {
+        this.totalPrice = BigDecimal.valueOf(this.totalPrice.intValue());
     }
 
-    public static long mapBigDecimalToLong(BigDecimal bigDecimal) {
-        return bigDecimal.longValue();
+    public void mapBigDecimalToLong() {
+        this.totalPrice = BigDecimal.valueOf(this.totalPrice.longValue());
     }
 
     public static Money initialPrice(BigDecimal totalPrice) {
