@@ -1,0 +1,29 @@
+[[Cart-API]]
+= Cart API
+
+[[Success]]
+== 성공
+
+[[Cart-create]]
+=== 카트 생성
+operation::cart-create[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Cart-find]]
+=== 카트 조회
+operation::cart-find[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Cart-delete]]
+=== 카트 삭제
+operation::cart-delete[snippets='http-request,request-headers,http-response']
+
+[[Menu-add]]
+=== 메뉴 추가
+operation::menu-add[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-get]]
+=== 메뉴 조회
+operation::menu-get[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+[[Menu-remove]]
+=== 메뉴 삭제
+operation::menu-remove[snippets='http-request,request-headers,request-parameters,http-response']
