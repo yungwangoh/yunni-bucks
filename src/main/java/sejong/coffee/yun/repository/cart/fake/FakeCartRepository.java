@@ -32,4 +32,9 @@ public class FakeCartRepository implements CartRepository {
     public void delete(Long id) {
 
     }
+
+    @Override
+    public void delete(Cart cart) {
+
+    }
 }
