@@ -30,8 +30,20 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Order findByMemberId(Long memberId) {
+        return jpaOrderRepository.findByMemberId(memberId)
+                .orElseThrow(NOT_FOUND_ORDER::notFoundException);
+    }
+
+    @Override
     public List<Order> findAll() {
         return jpaOrderRepository.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        jpaOrderRepository.deleteById(id);
     }
 
     @Override

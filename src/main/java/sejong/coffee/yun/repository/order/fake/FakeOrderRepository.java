@@ -38,9 +38,19 @@ public class FakeOrderRepository implements OrderRepository {
     }
 
     @Override
+    public void delete(Long id) {
+        orders.remove(id);
+    }
+
+    @Override
     public List<Order> findAllByMemberId(Long memberId) {
         return orders.stream()
                 .filter(order -> Objects.equals(order.getMember().getId(), memberId))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Order findByMemberId(Long memberId) {
+        return null;
     }
 }
