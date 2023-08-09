@@ -30,14 +30,18 @@ public class Cart {
 
     public void addMenu(Menu menu) {
         if(this.menuList.size() >= SIZE.getSize()) {
-            throw new RuntimeException("카트는 메뉴를 " + SIZE + "개만 담을 수 있습니다.");
+            throw new RuntimeException("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다.");
         }
 
         this.menuList.add(menu);
     }
 
     public Menu getMenu(int idx) {
-        return this.menuList.get(idx);
+        try {
+            return this.menuList.get(idx);
+        } catch (Exception e) {
+            throw NOT_FOUND_MENU.notFoundException();
+        }
     }
 
     public void removeMenu(int idx) {
