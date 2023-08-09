@@ -37,4 +37,9 @@ public class CartRepositoryImpl implements CartRepository {
     public void delete(Long id) {
         jpaCartRepository.deleteById(id);
     }
+
+    @Override
+    public void delete(Cart cart) {
+        jpaCartRepository.delete(cart);
+    }
 }
