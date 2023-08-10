@@ -31,9 +31,17 @@ public class Card {
     private Member member;
 
     @Builder
-    public Card(String number, String validThru, String cardPassword, Member member) {
+    public Card(Long id, String number, String validThru, String cardPassword, Member member) {
+        this.id = id;
         this.number = number;
         this.validThru = checkExpirationDate(validThru);
+        this.cardPassword = cardPassword;
+        this.member = member;
+    }
+
+    public Card(String number, String validThru, String cardPassword, Member member) {
+        this.number = number;
+        this.validThru = validThru;
         this.cardPassword = cardPassword;
         this.member = member;
     }
