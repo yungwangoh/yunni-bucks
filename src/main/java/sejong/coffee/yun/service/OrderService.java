@@ -63,6 +63,11 @@ public class OrderService {
             Menu menu = menuRepository.findById(menuId);
 
             order.addMenu(menu);
+
+            Money money = calculator.calculateMenus(order.getMember(), order.getMenuList());
+
+            order.updatePrice(money);
+
         } else {
             throw new RuntimeException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
         }
@@ -76,6 +81,11 @@ public class OrderService {
 
         if(order.getStatus() == OrderStatus.ORDER && order.getPayStatus() == OrderPayStatus.NO) {
             order.removeMenu(menuIdx);
+
+            Money money = calculator.calculateMenus(order.getMember(), order.getMenuList());
+
+            order.updatePrice(money);
+
         } else {
             throw new RuntimeException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
         }
