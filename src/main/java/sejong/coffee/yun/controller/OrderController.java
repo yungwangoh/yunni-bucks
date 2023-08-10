@@ -43,7 +43,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("")
+    @GetMapping("/cancel")
     ResponseEntity<Void> orderCancel(@RequestParam("orderId") Long orderId) {
 
         orderService.cancel(orderId);
@@ -51,7 +51,7 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("")
+    @PatchMapping("/update/add")
     ResponseEntity<OrderDto.Response> updateAddMenu(@MemberId Long memberId,
                                                     @RequestParam("menuId") Long menuId) {
 
@@ -62,7 +62,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("")
+    @PatchMapping("/update/remove")
     ResponseEntity<OrderDto.Response> updateRemoveMenu(@MemberId Long memberId,
                                                        @RequestParam("menuIdx") int menuIdx) {
 
