@@ -15,7 +15,7 @@ import static sejong.coffee.yun.dto.CardPaymentDto.Request;
 import static sejong.coffee.yun.dto.CardPaymentDto.Response;
 
 @RestController
-@RequestMapping("/api/payments/")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentController {
