@@ -1,9 +1,9 @@
-package sejong.coffee.yun.infra;
+package sejong.coffee.yun.infra.port;
 
 import sejong.coffee.yun.dto.CardPaymentDto;
 
 import java.io.IOException;
 
-public interface TossAPIService {
+public interface TossApiService {
     CardPaymentDto.Response callExternalAPI(CardPaymentDto.Request cardPaymentDto) throws IOException, InterruptedException;
 }

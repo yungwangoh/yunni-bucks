@@ -1,8 +1,9 @@
 package sejong.coffee.yun.infra;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import sejong.coffee.yun.dto.CardPaymentDto;
+import sejong.coffee.yun.infra.port.TossApiService;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,13 +14,13 @@ import java.net.http.HttpResponse;
 import static sejong.coffee.yun.util.parse.JsonParsing.parsePaymentObjectByJson;
 import static sejong.coffee.yun.util.parse.JsonParsing.parsePaymentStringByJson;
 
-@Service
-public class TossAPIServiceImpl implements TossAPIService{
+@Component
+public class TossApiServiceImpl implements TossApiService {
 
     private final String apiUri;
     private final String secretKey;
 
-    public TossAPIServiceImpl(@Value("${secrets.toss.apiUri}") final String apiUri,
+    public TossApiServiceImpl(@Value("${secrets.toss.apiUri}") final String apiUri,
                               @Value("${secrets.toss.secret-key}") final String secretKey) {
 
         this.apiUri = apiUri;
