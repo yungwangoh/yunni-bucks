@@ -30,6 +30,8 @@ public class Calculator {
 
         initialPrice.discount(BigDecimal.valueOf(discount));
 
+        initialPrice.mapBigDecimalToLong();
+
         return initialPrice;
     }
 
