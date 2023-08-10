@@ -8,7 +8,8 @@ import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.pay.jpa.JpaPayRepository;
 
 import java.util.List;
-import java.util.Optional;
+
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_PAY_DETAILS;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,8 +23,9 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public Optional<CardPayment> findById(long id) {
-        return jpaPayRepository.findById(id);
+    public CardPayment findById(long id) {
+        return jpaPayRepository.findById(id)
+                .orElseThrow((NOT_FOUND_PAY_DETAILS::paymentDetailsException));
     }
 
     @Override
@@ -32,12 +34,14 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public Optional<CardPayment> findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus status) {
-        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderUuid, PaymentStatus.DONE);
+    public CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus status) {
+        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderUuid, PaymentStatus.DONE)
+                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 
     @Override
-    public Optional<CardPayment> findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus) {
-        return jpaPayRepository.findByPaymentKeyAndPaymentStatus(paymentKey, paymentStatus);
+    public CardPayment findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus) {
+        return jpaPayRepository.findByPaymentKeyAndPaymentStatus(paymentKey, paymentStatus)
+                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 }
