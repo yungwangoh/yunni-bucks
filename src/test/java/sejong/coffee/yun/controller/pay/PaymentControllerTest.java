@@ -12,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import sejong.coffee.yun.dto.CardPaymentDto;
-import sejong.coffee.yun.infra.TossAPIServiceImpl;
+import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.util.parse.JsonParsing;
 
 import static org.hamcrest.Matchers.containsString;
@@ -32,7 +32,7 @@ class PaymentControllerTest extends CreatePaymentData {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private TossAPIServiceImpl tossAPIServiceImpl;
+    private ApiService apiService;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -44,11 +44,11 @@ class PaymentControllerTest extends CreatePaymentData {
         // Serialize the mock response to JSON
         String mockResponseJson = objectMapper.writeValueAsString(mockResponse);
         CardPaymentDto.Response parsingCardPayment = JsonParsing.parsePaymentObjectByJson(mockResponseJson);
-        given(tossAPIServiceImpl.callExternalAPI(any(CardPaymentDto.Request.class))).willReturn(parsingCardPayment);
+        given(apiService.callApi(any(CardPaymentDto.Request.class))).willReturn(parsingCardPayment);
 
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
 
-        mockMvc.perform(post("/pay/v1/payments/card")
+        mockMvc.perform(post("/card-payment/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())

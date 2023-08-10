@@ -10,7 +10,6 @@ import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,10 +62,10 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         payRepository.save(approvalPayment);
 
         //when
-        Optional<CardPayment> result = payRepository.findByOrderIdAnAndPaymentStatus(uuid, PaymentStatus.DONE);
+        CardPayment result = payRepository.findByOrderIdAnAndPaymentStatus(uuid, PaymentStatus.DONE);
 
         //then
-        assertThat(result.isPresent()).isTrue();
+        assertThat(result.getOrderUuid()).isEqualTo("asdfasdfasdf");
     }
 
     @Test
@@ -79,10 +78,10 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         payRepository.save(approvalPayment);
 
         //when
-        Optional<CardPayment> result = payRepository.findByPaymentKeyAndPaymentStatus(paymentKey, PaymentStatus.DONE);
+        CardPayment result = payRepository.findByPaymentKeyAndPaymentStatus(paymentKey, PaymentStatus.DONE);
 
         //then
-        assertThat(result.isPresent()).isTrue();
+        assertThat(result.getPaymentKey()).isEqualTo("5zJ4xY7m0kODnyRpQWGrN2xqGlNvLrKwv1M9ENjbeoPaZdL6");
     }
 
     @Test

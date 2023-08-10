@@ -6,7 +6,7 @@ import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
 
-class CreatePaymentData extends BeforeCreatedData {
+public class CreatePaymentData extends BeforeCreatedData {
 
     protected final CardPayment cardPayment;
 
