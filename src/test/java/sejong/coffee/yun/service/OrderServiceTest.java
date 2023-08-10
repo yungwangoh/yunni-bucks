@@ -178,23 +178,29 @@ class OrderServiceTest {
         // given
         given(orderRepository.findByMemberId(any())).willReturn(order);
         given(menuRepository.findById(any())).willReturn(menu1);
+        given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal(2000)));
 
         // when
         Order updateAddMenu = orderService.updateAddMenu(1L, 1L);
 
         // then
         assertThat(updateAddMenu.getMenuList().size()).isEqualTo(2);
+        assertThat(updateAddMenu.getOrderPrice().getTotalPrice())
+                .isEqualTo(Money.initialPrice(new BigDecimal(2000)).getTotalPrice());
     }
 
     @Test
     void 유저가_주문을_변경한다_메뉴삭제() {
         // given
         given(orderRepository.findByMemberId(any())).willReturn(order);
+        given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal(0)));
 
         // when
         Order updateRemoveMenu = orderService.updateRemoveMenu(1L, 0);
 
         // then
         assertThat(updateRemoveMenu.getMenuList().size()).isEqualTo(0);
+        assertThat(updateRemoveMenu.getOrderPrice().getTotalPrice())
+                .isEqualTo(Money.initialPrice(new BigDecimal(0)).getTotalPrice());
     }
 }
