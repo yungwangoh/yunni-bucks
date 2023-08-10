@@ -45,10 +45,10 @@ public class CardPaymentDto {
         public static Request from(CardPayment cardPayment) {
             return new Request(cardPayment.getCardNumber(), cardPayment.getCardPassword(),
                     cardPayment.getCardExpirationYear(), cardPayment.getCardExpirationMonth(),
-                    cardPayment.getOrder().mapOrderName(), cardPayment.getOrder().getName(),
+                    cardPayment.getOrderUuid(), cardPayment.getOrder().getName(),
                     cardPayment.getOrder().getOrderPrice().getTotalPrice().toString(),
                     cardPayment.getOrder().getMember().getEmail().split("@")[0],
-                    cardPayment.getOrder().getMember().getName(), cardPayment.getRequestedAt());
+                    cardPayment.getOrder().getMember().getName(), LocalDateTime.now());
         }
     }
 
