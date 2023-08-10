@@ -48,7 +48,7 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[1];
         this.order = order;
         this.paymentType = PaymentType.CARD;
-        this.paymentStatus = PaymentStatus.READY;
+        this.paymentStatus = PaymentStatus.DONE;
         this.orderUuid = uuidHolder.random();
     }
 
