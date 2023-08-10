@@ -44,7 +44,7 @@ class CalculatorTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"BRONZE, 3000.0", "SILVER, 2700.0", "GOLD, 2550.00", "PLATINUM, 2400.0", "DIAMOND, 2100.0"})
+    @CsvSource({"BRONZE, 3000", "SILVER, 2700", "GOLD, 2550", "PLATINUM, 2400", "DIAMOND, 2100"})
     void 메뉴리스트를_계산_한다(UserRank userRank, BigDecimal bigDecimal) {
         // given
         Member member = Member.builder()
@@ -60,6 +60,8 @@ class CalculatorTest {
 
         // when
         Money money = calculator.calculateMenus(member, menuList);
+
+        money.mapBigDecimalToLong();
 
         // then
         assertThat(money.getTotalPrice()).isEqualTo(bigDecimal);
