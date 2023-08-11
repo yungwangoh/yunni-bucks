@@ -3,6 +3,7 @@ package sejong.coffee.yun.domain.pay;
 import org.junit.jupiter.api.Test;
 import sejong.coffee.yun.domain.exception.CardException;
 import sejong.coffee.yun.domain.user.Card;
+import sejong.coffee.yun.infra.fake.FakeUuidHolder;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +32,7 @@ class CardPaymentTest extends BeforeCreatedData {
         //given
 
         //when
-        CardPayment cardPayment = new CardPayment(order, card);
+        CardPayment cardPayment = new CardPayment(card, order, new FakeUuidHolder("asdfasdf"));
 
         //then
         assertThat(Integer.parseInt(cardPayment.getCardExpirationYear()))
@@ -46,7 +47,7 @@ class CardPaymentTest extends BeforeCreatedData {
     @Test
     void 카드결제_유효기간_검증_예외발생() {
         assertThatThrownBy(() -> Card.builder()
-                .cardNumber("123456789123")
+                .number("123456789123")
                 .validThru("22/13")
                 .cardPassword("1234")
                 .member(member)

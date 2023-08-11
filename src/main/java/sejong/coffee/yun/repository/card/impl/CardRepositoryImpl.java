@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardRepositoryImpl implements CardRepository {
 
-    private JpaCardRepository jpaCardRepository;
+    private final JpaCardRepository jpaCardRepository;
 
     @Override
     public Card save(Card card) {
@@ -23,6 +23,12 @@ public class CardRepositoryImpl implements CardRepository {
     @Override
     public Card findById(Long id) {
         return jpaCardRepository.findById(id)
+                .orElseThrow(ExceptionControl.NOT_FOUND_REGISTER_CARD::cardException);
+    }
+
+    @Override
+    public Card findByMemberId(Long memberId) {
+        return jpaCardRepository.findById(memberId)
                 .orElseThrow(ExceptionControl.NOT_FOUND_REGISTER_CARD::cardException);
     }
 

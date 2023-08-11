@@ -9,6 +9,7 @@ public interface CardRepository {
     Card save(Card card);
 
     Card findById(Long id);
+    Card findByMemberId(Long memberId);
 
     List<Card> findAll();
 }
