@@ -148,7 +148,7 @@ class OrderControllerTest {
     void 주문() throws Exception {
         // given
         given(cartService.findCartByMember(anyLong())).willReturn(cart);
-        given(orderService.order(anyLong(), any())).willReturn(order);
+        given(orderService.order(anyLong(), any(), any())).willReturn(order);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -215,7 +215,7 @@ class OrderControllerTest {
     @Test
     void 업데이트_메뉴_추가() throws Exception {
         // given
-        given(orderService.updateAddMenu(anyLong(), anyLong())).willReturn(order);
+        given(orderService.updateAddMenu(anyLong(), anyLong(), any())).willReturn(order);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -243,7 +243,7 @@ class OrderControllerTest {
     @Test
     void 업데이트_메뉴_제거() throws Exception {
         // given
-        given(orderService.updateAddMenu(anyLong(), anyLong())).willReturn(order);
+        given(orderService.updateAddMenu(anyLong(), anyLong(), any())).willReturn(order);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -294,7 +294,7 @@ class OrderControllerTest {
     @Test
     void 유저가_주문_취소_상태_또는_결제된_상태일때_메뉴_수정하면_예외() throws Exception {
         // given
-        given(orderService.updateAddMenu(anyLong(), anyLong()))
+        given(orderService.updateAddMenu(anyLong(), anyLong(), any()))
                 .willThrow(new IllegalArgumentException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다."));
 
         // when

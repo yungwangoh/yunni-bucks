@@ -1,6 +1,8 @@
 package sejong.coffee.yun.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Calculator;
@@ -15,6 +17,7 @@ import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,7 +31,7 @@ public class OrderService {
     private final MenuRepository menuRepository;
 
     @Transactional
-    public Order order(Long memberId, List<Menu> menuList) {
+    public Order order(Long memberId, List<Menu> menuList, LocalDateTime now) {
 
         Member member = userRepository.findById(memberId);
 
@@ -36,7 +39,7 @@ public class OrderService {
 
         member.addOrderCount();
 
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, now);
 
         return orderRepository.save(order);
     }
@@ -56,7 +59,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order updateAddMenu(Long memberId, Long menuId) {
+    public Order updateAddMenu(Long memberId, Long menuId, LocalDateTime now) {
         Order order = orderRepository.findByMemberId(memberId);
 
         if(order.getStatus() == OrderStatus.ORDER && order.getPayStatus() == OrderPayStatus.NO) {
@@ -68,15 +71,17 @@ public class OrderService {
 
             order.updatePrice(money);
 
+            order.setUpdateAt(now);
+
         } else {
-            throw new RuntimeException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
+            throw new IllegalArgumentException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
         }
 
         return order;
     }
 
     @Transactional
-    public Order updateRemoveMenu(Long memberId, int menuIdx) {
+    public Order updateRemoveMenu(Long memberId, int menuIdx, LocalDateTime now) {
         Order order = orderRepository.findByMemberId(memberId);
 
         if(order.getStatus() == OrderStatus.ORDER && order.getPayStatus() == OrderPayStatus.NO) {
@@ -86,8 +91,10 @@ public class OrderService {
 
             order.updatePrice(money);
 
+            order.setUpdateAt(now);
+
         } else {
-            throw new RuntimeException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
+            throw new IllegalArgumentException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
         }
 
         return order;
@@ -95,5 +102,17 @@ public class OrderService {
 
     public List<Order> findAll() {
         return orderRepository.findAll();
+    }
+
+    public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
+        return orderRepository.findAllByMemberId(pageable, memberId);
+    }
+
+    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId) {
+        return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId);
+    }
+
+    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId) {
+        return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId);
     }
 }

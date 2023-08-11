@@ -6,6 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.Beverage;
@@ -28,6 +31,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,10 +80,26 @@ class OrderServiceTest {
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(1L, menuList);
+        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
 
         // then
         assertThat(saveOrder).isEqualTo(order);
+    }
+
+    @Test
+    void 유저가_주문한_시간() {
+        // given
+        Order order1 = Order.createOrder(member, menuList, Money.ZERO,
+                LocalDateTime.of(2023, 8, 11, 5, 11));
+
+        given(orderRepository.save(any())).willReturn(order1);
+        given(userRepository.findById(any())).willReturn(member);
+
+        // when
+        Order order2 = orderService.order(1L, menuList, LocalDateTime.of(2023, 8, 11, 5, 11));
+
+        // then
+        assertThat(order2.getCreateAt()).isEqualTo(order1.getCreateAt());
     }
 
     @Test
@@ -114,7 +134,7 @@ class OrderServiceTest {
         given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal("10000")));
 
         // when
-        Order saveOrder = orderService.order(1L, menuList);
+        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
 
         // then
         assertThat(saveOrder.fetchTotalOrderPrice()).isEqualTo(new BigDecimal("10000"));
@@ -127,7 +147,7 @@ class OrderServiceTest {
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(1L, menuList);
+        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
 
         // then
         assertThat(saveOrder.getName()).isEqualTo("커피 외 1개");
@@ -140,7 +160,7 @@ class OrderServiceTest {
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(1L, menuList);
+        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
 
         // then
         assertThat(saveOrder.getMember().getOrderCount()).isEqualTo(1);
@@ -155,7 +175,7 @@ class OrderServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L))
+        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L, LocalDateTime.now()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
     }
@@ -169,7 +189,7 @@ class OrderServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L))
+        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L, LocalDateTime.now()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
     }
@@ -182,7 +202,7 @@ class OrderServiceTest {
         given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal(2000)));
 
         // when
-        Order updateAddMenu = orderService.updateAddMenu(1L, 1L);
+        Order updateAddMenu = orderService.updateAddMenu(1L, 1L, LocalDateTime.now());
 
         // then
         assertThat(updateAddMenu.getMenuList().size()).isEqualTo(2);
@@ -197,11 +217,72 @@ class OrderServiceTest {
         given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal(0)));
 
         // when
-        Order updateRemoveMenu = orderService.updateRemoveMenu(1L, 0);
+        Order updateRemoveMenu = orderService.updateRemoveMenu(1L, 0, LocalDateTime.now());
 
         // then
         assertThat(updateRemoveMenu.getMenuList().size()).isEqualTo(0);
         assertThat(updateRemoveMenu.getOrderPrice().getTotalPrice())
                 .isEqualTo(Money.initialPrice(new BigDecimal(0)).getTotalPrice());
+    }
+
+    @Test
+    void 유저가_주문한_내역() {
+        // given
+        PageRequest pr = PageRequest.of(0, 10);
+        Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        List<Order> orders = List.of(order1);
+
+        PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
+
+        given(orderRepository.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+
+        // when
+        Page<Order> all = orderService.findAllByMemberId(pr, 1L);
+
+        // then
+        assertThat(all.getTotalElements()).isEqualTo(1);
+        assertThat(all.getTotalPages()).isEqualTo(1);
+    }
+
+    @Test
+    void 유저가_주문_취소한_내역() {
+        // given
+        PageRequest pr = PageRequest.of(0, 10);
+        Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        order1.cancel();
+
+        List<Order> orders = List.of(order1);
+
+        PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
+
+        given(orderRepository.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+
+        // when
+        Page<Order> all = orderService.findAllByMemberId(pr, 1L);
+
+        // then
+        assertThat(all.getTotalElements()).isEqualTo(1);
+        assertThat(all.getTotalPages()).isEqualTo(1);
+    }
+
+    @Test
+    void 유저가_주문하고_결제한_내역() {
+        // given
+        PageRequest pr = PageRequest.of(0, 10);
+        Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        order1.completePayment();
+
+        List<Order> orders = List.of(order1);
+
+        PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
+
+        given(orderRepository.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+
+        // when
+        Page<Order> all = orderService.findAllByMemberId(pr, 1L);
+
+        // then
+        assertThat(all.getTotalElements()).isEqualTo(1);
+        assertThat(all.getTotalPages()).isEqualTo(1);
     }
 }

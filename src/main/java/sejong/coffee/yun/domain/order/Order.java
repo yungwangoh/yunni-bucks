@@ -115,6 +115,10 @@ public class Order {
         this.orderPrice = money;
     }
 
+    public void setUpdateAt(LocalDateTime now) {
+        this.updateAt = now;
+    }
+
     public String mapOrderName() {
         return this.id + "00000";
     }

@@ -12,6 +12,8 @@ import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
@@ -26,7 +28,7 @@ public class OrderController {
 
         Cart cart = cartService.findCartByMember(memberId);
 
-        Order order = orderService.order(memberId, cart.getMenuList());
+        Order order = orderService.order(memberId, cart.getMenuList(), LocalDateTime.now());
 
         OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
 
@@ -55,7 +57,7 @@ public class OrderController {
     ResponseEntity<OrderDto.Response> updateAddMenu(@MemberId Long memberId,
                                                     @RequestParam("menuId") Long menuId) {
 
-        Order order = orderService.updateAddMenu(memberId, menuId);
+        Order order = orderService.updateAddMenu(memberId, menuId, LocalDateTime.now());
 
         OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
 
@@ -66,7 +68,7 @@ public class OrderController {
     ResponseEntity<OrderDto.Response> updateRemoveMenu(@MemberId Long memberId,
                                                        @RequestParam("menuIdx") int menuIdx) {
 
-        Order order = orderService.updateRemoveMenu(memberId, menuIdx);
+        Order order = orderService.updateRemoveMenu(memberId, menuIdx, LocalDateTime.now());
 
         OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
 
