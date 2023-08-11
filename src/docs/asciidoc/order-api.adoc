@@ -1,0 +1,32 @@
+[[Order-Api]]
+= Order API
+
+[[Success]]
+== 성공
+
+[[Order-create]]
+=== 주문 생성
+operation::order[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Order-get]]
+=== 주문 찾기
+operation::order-get[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Order-cancel]]
+=== 주문 취소
+operation::order-cancel[snippets='http-request,request-parameters,http-response']
+
+[[Order-update-menu-add]]
+=== 주문 수정 (메뉴 추가)
+operation::order-update-menu-add[snippets='http-request,request-parameters,http-response,response-fields']
+
+[[Order-update-menu-remove]]
+=== 주문 수정 (메뉴 제거)
+operation::order-update-menu-remove[snippets='http-request,request-parameters,http-response,response-fields']
+
+[[Fail]]
+== 실패
+
+[[Order-fail]]
+=== 주문 실패
+operation::order-fail[snippets='http-request,request-headers,http-response,response-fields']

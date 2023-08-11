@@ -9,4 +9,5 @@
 
 include::member-api.adoc[]
 include::cart-api.adoc[]
+include::order-api.adoc[]
 
