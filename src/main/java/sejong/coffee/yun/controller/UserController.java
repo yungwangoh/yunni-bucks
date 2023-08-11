@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.coffee.yun.custom.annotation.MemberId;
-import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.mapper.CustomMapper;
@@ -62,15 +61,6 @@ public class UserController {
         String s = userService.signOut(accessToken, memberId);
 
         return ResponseEntity.ok(s);
-    }
-
-    @GetMapping("/order-list")
-    ResponseEntity<UserDto.Order.Response> findOrders(@MemberId Long memberId) {
-        List<Order> orders = userService.findAllByMemberId(memberId);
-
-        UserDto.Order.Response response = customMapper.map(orders, UserDto.Order.Response.class);
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("")

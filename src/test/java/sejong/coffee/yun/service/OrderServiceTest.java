@@ -127,6 +127,21 @@ class OrderServiceTest {
     }
 
     @Test
+    void 주문_수정_시간() {
+        // given
+        given(orderRepository.findByMemberId(anyLong())).willReturn(order);
+        given(menuRepository.findById(anyLong())).willReturn(menu1);
+        given(calculator.calculateMenus(any(), any())).willReturn(Money.ZERO);
+
+        // when
+        LocalDateTime updateTime = LocalDateTime.of(2023, 8, 11, 5, 11);
+        Order updateAddMenu = orderService.updateAddMenu(1L, 1L, updateTime);
+
+        // then
+        assertThat(updateAddMenu.getUpdateAt()).isEqualTo(updateTime);
+    }
+
+    @Test
     void 주문_총_금액_확인() {
         // given
         given(orderRepository.save(any())).willReturn(order);

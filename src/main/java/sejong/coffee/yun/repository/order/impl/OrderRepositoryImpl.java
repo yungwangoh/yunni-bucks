@@ -1,21 +1,30 @@
 package sejong.coffee.yun.repository.order.impl;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.order.jpa.JpaOrderRepository;
 
 import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_ORDER;
+import static sejong.coffee.yun.domain.order.QOrder.order;
 
 @Repository
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 
     private final JpaOrderRepository jpaOrderRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     @Transactional
@@ -47,7 +56,65 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public List<Order> findAllByMemberId(Long memberId) {
-        return jpaOrderRepository.findAllByMemberId(memberId);
+    public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
+        List<Order> orders = jpaQueryFactory.selectFrom(order)
+                .where(order.member.id.eq(memberId))
+                .orderBy(order.createAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(order.count())
+                .from(order);
+
+        return PageableExecutionUtils.getPage(orders, pageable, jpaQuery::fetchOne);
+    }
+
+    @Override
+    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId) {
+        List<Order> orders = jpaQueryFactory.selectFrom(order)
+                .where(order.member.id.eq(memberId))
+                .where(order.status.eq(OrderStatus.ORDER))
+                .orderBy(order.createAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(order.count())
+                .from(order);
+
+        return PageableExecutionUtils.getPage(orders, pageable, jpaQuery::fetchOne);
+    }
+
+    @Override
+    public Page<Order> findAllByMemberIdAndOrderCancelStatus(Pageable pageable, Long memberId) {
+        List<Order> orders = jpaQueryFactory.selectFrom(order)
+                .where(order.member.id.eq(memberId))
+                .where(order.status.eq(OrderStatus.CANCEL))
+                .orderBy(order.createAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(order.count())
+                .from(order);
+
+        return PageableExecutionUtils.getPage(orders, pageable, jpaQuery::fetchOne);
+    }
+
+    @Override
+    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId) {
+        List<Order> orders = jpaQueryFactory.selectFrom(order)
+                .where(order.member.id.eq(memberId))
+                .where(order.payStatus.eq(OrderPayStatus.YES))
+                .orderBy(order.createAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(order.count())
+                .from(order);
+
+        return PageableExecutionUtils.getPage(orders, pageable, jpaQuery::fetchOne);
     }
 }

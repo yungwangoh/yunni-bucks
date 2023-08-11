@@ -1,6 +1,8 @@
 package sejong.coffee.yun.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Order;
@@ -130,8 +132,8 @@ public class UserService {
         }
     }
 
-    public List<Order> findAllByMemberId(Long memberId) {
-        return orderRepository.findAllByMemberId(memberId);
+    public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
+        return orderRepository.findAllByMemberId(pageable, memberId);
     }
 
     public String duplicateName(String name) {

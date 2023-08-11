@@ -43,6 +43,23 @@ public class PercentPolicy implements DiscountPolicy {
                 .anyMatch(condition -> condition.isSatisfiedBy(member));
     }
 
+//    private double provideDiscountRate(Class<? extends DiscountCondition> conditionType, Object o) {
+//        return conditions.stream()
+//                .filter(conditionType::isInstance)
+//                .mapToDouble(condition -> provideDiscountRateBy(o))
+//                .sum();
+//    }
+//
+//    private double provideDiscountRateBy(Object o) {
+//        if(o instanceof Coupon) {
+//            return ((Coupon) o).getDiscountRate();
+//        } else if(o instanceof UserRank) {
+//            return ((UserRank) o).getDiscountRate();
+//        } else {
+//            return 0.0;
+//        }
+//    }
+
     private double provideDiscountRate(Class<? extends DiscountCondition> conditionType, DiscountType discountType) {
         return conditions.stream()
                 .filter(conditionType::isInstance)

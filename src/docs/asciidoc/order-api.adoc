@@ -30,3 +30,7 @@ operation::order-update-menu-remove[snippets='http-request,request-parameters,ht
 [[Order-fail]]
 === 주문 실패
 operation::order-fail[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Order-menu-update-fail]]
+=== 결제된 상태 또는 주문 취소 상태에서 메뉴 수정 실패
+operation::order-update-add-fail[snippets='http-request,request-headers,http-response,response-fields']
