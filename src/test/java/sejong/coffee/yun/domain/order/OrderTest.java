@@ -69,11 +69,13 @@ class OrderTest {
 
         Money money = calculator.calculateMenus(member, menuList);
 
+        money.mapBigDecimalToLong();
+
         // when
         Order order = Order.createOrder(member, menuList, money);
 
         // then
-        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("3000.0");
+        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("3000");
         assertThat(order.getStatus()).isEqualTo(OrderStatus.ORDER);
     }
 
@@ -180,10 +182,12 @@ class OrderTest {
 
         Money money = calculator.calculateMenus(member, menuList);
 
+        money.mapBigDecimalToLong();
+
         // when
         Order order = Order.createOrder(member, menuList, money);
 
         // then
-        assertThat(order.fetchTotalOrderPrice()).isEqualTo("2400.0");
+        assertThat(order.fetchTotalOrderPrice()).isEqualTo("2400");
     }
 }
