@@ -20,6 +20,7 @@ public class CustomMapper {
 
             return constructor.newInstance(entity);
         } catch (Exception e) {
+            log.error("error = {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
