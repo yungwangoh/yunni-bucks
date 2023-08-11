@@ -49,6 +49,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -255,6 +256,30 @@ class OrderControllerTest {
                         ),
                         responseFields(
                                 getResponse()
+                        )
+                ));
+    }
+
+    @Test
+    void 빈_장바구니로_주문을_할_경우() throws Exception {
+        // given
+        given(cartService.findCartByMember(anyLong())).willThrow(NOT_FOUND_CART.notFoundException());
+
+        // when
+        ResultActions resultActions = mockMvc.perform(post("/api/orders")
+                .header(HttpHeaders.AUTHORIZATION, token));
+
+        // then
+        resultActions.andExpect(status().isNotFound())
+                .andDo(document("order-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
                         )
                 ));
     }
