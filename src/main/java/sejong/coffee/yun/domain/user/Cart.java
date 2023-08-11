@@ -28,6 +28,12 @@ public class Cart {
         this.menuList = menuList;
     }
 
+    public Cart(Long id, Member member, List<Menu> menuList) {
+        this.id = id;
+        this.member = member;
+        this.menuList = menuList;
+    }
+
     public void addMenu(Menu menu) {
         if(this.menuList.size() >= SIZE.getSize()) {
             throw new RuntimeException("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다.");
