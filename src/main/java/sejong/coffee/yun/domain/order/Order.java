@@ -100,6 +100,10 @@ public class Order extends DateTimeEntity {
         }
     }
 
+    public void updatePrice(Money money) {
+        this.orderPrice = money;
+    }
+
     public String mapOrderName() {
         return this.id + "00000";
     }
