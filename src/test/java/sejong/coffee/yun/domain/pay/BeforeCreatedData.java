@@ -9,6 +9,7 @@ import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BeforeCreatedData {
@@ -57,6 +58,6 @@ public class BeforeCreatedData {
         this.card = new Card("123456789123", "23/10", "1234", this.member);
 
         Money money = calculator.calculateMenus(member, menuList);
-        this.order = Order.createOrder(member, menuList, money);
+        this.order = Order.createOrder(member, menuList, money, LocalDateTime.now());
     }
 }

@@ -7,6 +7,7 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.stream.IntStream;
 
@@ -126,7 +127,7 @@ class CartTest {
         cart.addMenu(menu3);
 
         // when
-        Order order = Order.createOrder(member, cart.getMenuList(), Money.ZERO);
+        Order order = Order.createOrder(member, cart.getMenuList(), Money.ZERO, LocalDateTime.now());
 
         // then
         assertThat(order.getMenuList()).isEqualTo(cart.getMenuList());

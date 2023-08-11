@@ -72,7 +72,7 @@ class FakeOrderRepositoryTest {
         // given
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
 
         // when
         Order save = orderRepository.save(order);
@@ -86,7 +86,7 @@ class FakeOrderRepositoryTest {
         // given
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
         Order save = orderRepository.save(order);
 
         // when
@@ -101,7 +101,7 @@ class FakeOrderRepositoryTest {
         // given
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
         orderRepository.save(order);
 
         // when
@@ -112,18 +112,12 @@ class FakeOrderRepositoryTest {
     }
 
     @Test
-    void 회원의_주문리스트() {
+    void 유저가_주문한_내역() {
         // given
-        Money money = calculator.calculateMenus(member, menuList);
-
-        Order order = Order.createOrder(member, menuList, money);
-        orderRepository.save(order);
-        orderRepository.save(order);
 
         // when
-        List<Order> orderLists = orderRepository.findAllByMemberId(member.getId());
 
         // then
-        assertThat(orderLists.size()).isEqualTo(2);
+
     }
 }

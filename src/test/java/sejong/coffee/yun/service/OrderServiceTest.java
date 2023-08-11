@@ -21,6 +21,7 @@ import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ class OrderServiceTest {
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
 
         menuList.add(menu1);
-        order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")));
+        order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
     }
 
     @Test

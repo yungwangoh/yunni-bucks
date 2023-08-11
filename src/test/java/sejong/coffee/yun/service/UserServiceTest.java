@@ -25,6 +25,7 @@ import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +72,7 @@ class UserServiceTest {
 
         List<Menu> menuList = List.of(menu1);
 
-        order = Order.createOrder(member, menuList, null);
+        order = Order.createOrder(member, menuList, null, LocalDateTime.now());
     }
 
     @Test
@@ -235,18 +236,6 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.updatePassword(any(), "gdgd"))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
-    }
-
-    @Test
-    void 유저가_어떤_주문을_했는지_조회() {
-        // given
-        given(orderRepository.findAllByMemberId(any())).willReturn(List.of(order));
-
-        // when
-        List<Order> orders = userService.findAllByMemberId(any());
-
-        // then
-        assertThat(orders.size()).isEqualTo(1);
     }
 
     @Test

@@ -72,7 +72,7 @@ class OrderTest {
         money.mapBigDecimalToLong();
 
         // when
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
 
         // then
         assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("3000");
@@ -94,7 +94,7 @@ class OrderTest {
         Money money = calculator.calculateMenus(member, menuList);
 
         // when
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
         String orderName = menuList.get(0).getTitle() + " 외 " + menuList.size() + "개";
 
         // then
@@ -118,7 +118,7 @@ class OrderTest {
         List<Menu> emptyMenuList = new ArrayList<>();
 
         // then
-        assertThatThrownBy(() -> Order.createOrder(member, emptyMenuList, Money.ZERO))
+        assertThatThrownBy(() -> Order.createOrder(member, emptyMenuList, Money.ZERO, LocalDateTime.now()))
                 .isInstanceOf(MenuException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }
@@ -136,7 +136,7 @@ class OrderTest {
                 .build();
 
         Money money = calculator.calculateMenus(member, menuList);
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
 
         // when
         order.cancel();
@@ -161,7 +161,7 @@ class OrderTest {
         Money money = calculator.calculateMenus(member, menuList);
 
         // when
-        Order.createOrder(member, menuList, money);
+        Order.createOrder(member, menuList, money, LocalDateTime.now());
 
         // then
         assertThat(member.getCoupon().getCouponUse()).isEqualTo(CouponUse.YES);
@@ -185,7 +185,7 @@ class OrderTest {
         money.mapBigDecimalToLong();
 
         // when
-        Order order = Order.createOrder(member, menuList, money);
+        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
 
         // then
         assertThat(order.fetchTotalOrderPrice()).isEqualTo("2400");

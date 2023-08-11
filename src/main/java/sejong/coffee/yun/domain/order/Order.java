@@ -3,7 +3,6 @@ package sejong.coffee.yun.domain.order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import sejong.coffee.yun.domain.DateTimeEntity;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.CartControl;
 import sejong.coffee.yun.domain.user.Member;
@@ -11,6 +10,7 @@ import sejong.coffee.yun.domain.user.Money;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
@@ -21,7 +21,7 @@ import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends DateTimeEntity {
+public class Order {
 
     @Id @GeneratedValue
     private Long id;
@@ -37,34 +37,45 @@ public class Order extends DateTimeEntity {
     private Money orderPrice;
     @Enumerated(value = EnumType.STRING)
     private OrderPayStatus payStatus;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 
-    private Order(String name, List<Menu> menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
+    private Order(String name, List<Menu> menuList, Member member,
+                  OrderStatus status, Money orderPrice, OrderPayStatus payStatus,
+                  LocalDateTime createAt, LocalDateTime updateAt) {
+
         this.name = name;
         this.menuList = menuList;
         this.member = member;
         this.status = status;
         this.orderPrice = orderPrice;
         this.payStatus = payStatus;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
     }
 
-    private Order(Long id, String name, List<Menu> menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus) {
-        this(name, menuList, member, status, orderPrice, payStatus);
+    private Order(Long id, String name, List<Menu> menuList,
+                  Member member, OrderStatus status, Money orderPrice,
+                  OrderPayStatus payStatus, LocalDateTime createAt, LocalDateTime updateAt) {
+
+        this(name, menuList, member, status, orderPrice, payStatus, createAt, updateAt);
         this.id = id;
     }
 
     public static Order order(Long id, Order order) {
         return new Order(id, order.getName(), order.getMenuList(), order.getMember(),
-                order.getStatus(), order.getOrderPrice(), order.getPayStatus());
+                order.getStatus(), order.getOrderPrice(), order.getPayStatus(),
+                order.getCreateAt(), order.getUpdateAt());
     }
 
-    public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice) {
+    public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice, LocalDateTime now) {
         String orderName = makeOrderName(menuList);
 
         if(member.getCoupon() != null) {
             member.getCoupon().convertStatusUsedCoupon();
         }
 
-        return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO);
+        return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO, now, now);
     }
 
     public void completePayment() {

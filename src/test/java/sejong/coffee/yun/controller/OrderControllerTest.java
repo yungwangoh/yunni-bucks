@@ -32,6 +32,7 @@ import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -110,7 +111,7 @@ class OrderControllerTest {
 
         cart = new Cart(member, List.of(menu));
 
-        order = Order.createOrder(member, cart.getMenuList(), menu.getPrice());
+        order = Order.createOrder(member, cart.getMenuList(), menu.getPrice(), LocalDateTime.now());
 
         response = new OrderDto.Response(1L, order.getName(), order.getMenuList(),
                 order.getStatus(), order.getOrderPrice(), order.getPayStatus());
@@ -133,6 +134,13 @@ class OrderControllerTest {
                 fieldWithPath("status").type(JsonFieldType.STRING).description("주문 상태"),
                 fieldWithPath("money.totalPrice").type(JsonFieldType.NUMBER).description("주문 총 가격"),
                 fieldWithPath("payStatus").type(JsonFieldType.STRING).description("결제 상태")
+        );
+    }
+
+    static List<FieldDescriptor> getFailResponse() {
+        return List.of(
+                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
+                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
         );
     }
 
@@ -278,8 +286,35 @@ class OrderControllerTest {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description(token)
                         ),
                         responseFields(
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
+                                getFailResponse()
+                        )
+                ));
+    }
+
+    @Test
+    void 유저가_주문_취소_상태_또는_결제된_상태일때_메뉴_수정하면_예외() throws Exception {
+        // given
+        given(orderService.updateAddMenu(anyLong(), anyLong()))
+                .willThrow(new IllegalArgumentException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다."));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(patch("/api/orders/update/add")
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("menuId", "1"));
+
+        // then
+        resultActions.andExpect(status().isBadRequest())
+                .andDo(document("order-update-add-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        requestParameters(
+                                parameterWithName("menuId").description("1")
+                        ),
+                        responseFields(
+                                getFailResponse()
                         )
                 ));
     }
