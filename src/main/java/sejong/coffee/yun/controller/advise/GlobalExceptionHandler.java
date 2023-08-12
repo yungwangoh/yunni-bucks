@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sejong.coffee.yun.domain.exception.*;
 import sejong.coffee.yun.dto.error.ErrorResult;
 
+import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -100,7 +102,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> methodArgumentNotValidException(MethodArgumentNotValidException e) {
 
-        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
+        ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, INPUT_ERROR.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
     }
