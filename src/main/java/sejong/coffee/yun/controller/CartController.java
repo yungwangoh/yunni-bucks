@@ -8,6 +8,7 @@ import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.dto.cart.CartDto;
+import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.CartService;
 
@@ -60,12 +61,14 @@ public class CartController {
     }
 
     @GetMapping("/menu")
-    ResponseEntity<Menu> getMenu(@MemberId Long memberId,
-                                 @RequestParam("menuIdx") int menuIdx) {
+    ResponseEntity<MenuDto.Response> getMenu(@MemberId Long memberId,
+                                    @RequestParam("menuIdx") int menuIdx) {
 
         Menu menu = cartService.getMenu(memberId, menuIdx);
 
-        return ResponseEntity.ok(menu);
+        MenuDto.Response response = customMapper.map(menu, MenuDto.Response.class);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/menu")
