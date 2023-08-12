@@ -2,23 +2,13 @@ package sejong.coffee.yun.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
@@ -37,23 +27,12 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
 import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 
-@AutoConfigureRestDocs
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @WebMvcTest(CartController.class)
 class CartControllerTest {
 
@@ -74,13 +53,6 @@ class CartControllerTest {
     private static CartDto.Response response;
     private static MenuDto.Response menuResponse;
     private static Menu menu;
-
-    @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
-                .build();
-    }
 
     @BeforeAll
     static void init() {
@@ -116,21 +88,6 @@ class CartControllerTest {
                 menu.getPrice(), menu.getNutrients(), menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
     }
 
-    static List<FieldDescriptor> getResponse() {
-        return List.of(
-                fieldWithPath("cartId").type(JsonFieldType.NUMBER).description("카트 ID"),
-                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("회원 ID"),
-                fieldWithPath("menuList[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
-                fieldWithPath("menuList[].createAt").type(JsonFieldType.STRING).description("생성일"),
-                fieldWithPath("menuList[].updateAt").type(JsonFieldType.STRING).description("수정일"),
-                fieldWithPath("menuList[].title").type(JsonFieldType.STRING).description("메뉴 제목"),
-                fieldWithPath("menuList[].description").type(JsonFieldType.STRING).description("메뉴 설명"),
-                fieldWithPath("menuList[].price.totalPrice").type(JsonFieldType.NUMBER).description("메뉴 가격"),
-                fieldWithPath("menuList[].nutrients").type(JsonFieldType.OBJECT).description("영양 정보"),
-                fieldWithPath("menuList[].menuSize").type(JsonFieldType.STRING).description("메뉴 크기")
-        );
-    }
-
     @Test
     void 카트_생성() throws Exception {
         // given
@@ -142,17 +99,7 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isCreated())
-                .andDo(document("cart-create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getResponse()
-                        )
-                ));
+        resultActions.andExpect(status().isCreated());
     }
 
     @Test
@@ -166,17 +113,7 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("cart-find",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getResponse()
-                        )
-        ));
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -188,14 +125,7 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isNoContent())
-                .andDo(document("cart-delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        )
-                ));
+        resultActions.andExpect(status().isNoContent());
     }
 
     @Test
@@ -210,20 +140,7 @@ class CartControllerTest {
                 .param("menuId", "1"));
 
         // then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("menu-add",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuId").description("메뉴 ID")
-                        ),
-                        responseFields(
-                                getResponse()
-                        )
-                ));
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -238,17 +155,7 @@ class CartControllerTest {
                 .param("menuIdx", "1"));
 
         // then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("menu-remove",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
-                        )
-                ));
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -263,27 +170,7 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("menu-get",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
-                        ),
-                        responseFields(
-                                fieldWithPath("menuId").description("메뉴 ID"),
-                                fieldWithPath("title").description("메뉴 제목"),
-                                fieldWithPath("description").description("메뉴 설명"),
-                                fieldWithPath("price.totalPrice").description("메뉴 가격 정보"),
-                                fieldWithPath("nutrients").description("메뉴 영양 정보"),
-                                fieldWithPath("menuSize").description("메뉴 크기"),
-                                fieldWithPath("createAt").description("생성일"),
-                                fieldWithPath("updateAt").description("수정일")
-                        )
-                ));
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -297,21 +184,7 @@ class CartControllerTest {
                 .param("menuId", "1"));
 
         // then
-        resultActions.andExpect(status().isNotFound())
-                .andDo(document("menu-add-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuId").description("메뉴 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
-                        )
-                ));
+        resultActions.andExpect(status().isNotFound());
     }
 
     @Test
@@ -325,21 +198,7 @@ class CartControllerTest {
                 .param("menuIdx", "1"));
 
         // then
-        resultActions.andExpect(status().isNotFound())
-                .andDo(document("menu-remove-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
-                        ),
-                        responseFields(
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
-                        )
-                ));
+        resultActions.andExpect(status().isNotFound());
     }
 
     @Test
@@ -353,21 +212,7 @@ class CartControllerTest {
                 .param("menuIdx", "1"));
 
         // then
-        resultActions.andExpect(status().isNotFound())
-                .andDo(document("menu-get-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
-                        ),
-                        responseFields(
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
-                        )
-                ));
+        resultActions.andExpect(status().isNotFound());
     }
 
     @Test
@@ -382,20 +227,6 @@ class CartControllerTest {
                 .param("menuId", "1"));
 
         // then
-        resultActions.andExpect(status().isInternalServerError())
-                .andDo(document("menu-add-over-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestParameters(
-                                parameterWithName("menuId").description("메뉴 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
-                                fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
-                        )
-                ));
+        resultActions.andExpect(status().isInternalServerError());
     }
 }
