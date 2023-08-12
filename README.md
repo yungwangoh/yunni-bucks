@@ -19,7 +19,7 @@ Unit Test, Integration Test로 Fake Object, Mock를 활용하여 테스트 OOP�
 <img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/aff78566-56fe-42db-83f2-fde016bdbc93">
 
 ### Domain Model
-<img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/d20c0f98-6b94-4e15-81fa-aa4b8ae7a672">
+<img width="757" alt="image" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/35e060e7-dd72-46c7-90f0-b28fc55b36d7">
 
 ### 1.SRP
 주문, 결제, 할인, 배달은 각각의 기능만 가지며 책임을 수행한다.
