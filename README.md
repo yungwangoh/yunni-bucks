@@ -12,7 +12,7 @@ OCR(https://clova.ai/ocr/) ,Payment(https://docs.tosspayments.com/guides/index) 
 
 신용/체크카드 이미지 인식 및 자동 결제 시스템 개발
 
-Unit Test, Integration Test로 Fake Object, Mock를 활용하여 TDD 개발 및 OOP에 초점, SOLID 원칙 준수
+Unit Test, Integration Test로 Fake Object, Mock를 활용하여 테스트 OOP에 초점, SOLID 원칙 준수
 
 ### ERD
 
