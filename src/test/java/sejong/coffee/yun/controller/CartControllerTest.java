@@ -1,5 +1,6 @@
 package sejong.coffee.yun.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
@@ -99,7 +101,8 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isCreated());
+        resultActions.andExpect(status().isCreated())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -113,7 +116,8 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -140,7 +144,8 @@ class CartControllerTest {
                 .param("menuId", "1"));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -155,7 +160,8 @@ class CartControllerTest {
                 .param("menuIdx", "1"));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -170,7 +176,8 @@ class CartControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(menuResponse)));
     }
 
     @Test
@@ -228,5 +235,9 @@ class CartControllerTest {
 
         // then
         resultActions.andExpect(status().isInternalServerError());
+    }
+
+    private String toJson(Object o) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(o);
     }
 }

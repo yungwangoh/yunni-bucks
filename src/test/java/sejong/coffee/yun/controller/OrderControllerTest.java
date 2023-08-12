@@ -1,5 +1,6 @@
 package sejong.coffee.yun.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 
@@ -118,7 +120,8 @@ class OrderControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isCreated());
+        resultActions.andExpect(status().isCreated())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -145,7 +148,8 @@ class OrderControllerTest {
                 .param("menuId", "1"));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -160,7 +164,8 @@ class OrderControllerTest {
                 .param("menuIdx", "1"));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(response)));
     }
 
     @Test
@@ -202,7 +207,8 @@ class OrderControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(pageResponse)));
     }
 
     @Test
@@ -216,7 +222,8 @@ class OrderControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(pageResponse)));
     }
 
     @Test
@@ -230,6 +237,11 @@ class OrderControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().json(toJson(pageResponse)));
+    }
+
+    private String toJson(Object o) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(o);
     }
 }

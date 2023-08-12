@@ -1,5 +1,6 @@
 package sejong.coffee.yun.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -63,7 +64,8 @@ class UserControllerTest extends BaseUserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
-        resultActions.andExpect(status().isBadRequest());
+        resultActions.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("message").value(INPUT_ERROR.getMessage()));
     }
 
     @Test
@@ -165,7 +167,7 @@ class UserControllerTest extends BaseUserControllerTest {
     }
 
     @Test
-    void 회원_식제_실패() throws Exception {
+    void 회원_삭제_실패() throws Exception {
         // given
         willThrow(NOT_FOUND_USER.notFoundException()).given(userService).deleteMember(any());
 
@@ -346,5 +348,8 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isBadRequest());
+    }
+    private String toJson(Object o) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(o);
     }
 }
