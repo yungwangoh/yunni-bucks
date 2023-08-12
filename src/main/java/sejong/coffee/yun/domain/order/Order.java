@@ -64,10 +64,10 @@ public class Order {
         this.id = id;
     }
 
-    public static Order order(Long id, Order order, LocalDateTime now) {
+    public static Order from(Long id, Order order) {
         return new Order(id, order.getName(), order.getMenuList(), order.getMember(),
                 order.getStatus(), order.getOrderPrice(), order.getPayStatus(),
-                now);
+                order.getCreateAt());
     }
 
     public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice, LocalDateTime now) {
