@@ -68,7 +68,7 @@ class UserServiceTest {
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
         Menu menu1 = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
 
         List<Menu> menuList = List.of(menu1);
 

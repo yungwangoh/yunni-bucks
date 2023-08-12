@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,12 +25,15 @@ import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.dto.cart.CartDto;
+import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.CartService;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -68,6 +72,7 @@ class CartControllerTest {
     private static String token;
     private static Member member;
     private static CartDto.Response response;
+    private static MenuDto.Response menuResponse;
     private static Menu menu;
 
     @BeforeEach
@@ -98,12 +103,32 @@ class CartControllerTest {
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
         menu = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
 
+        MenuDto.Response menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
+                menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
 
         cart = new Cart(member, new ArrayList<>());
         token = "bearer accessToken";
-        response = new CartDto.Response(cart);
+        response = new CartDto.Response(1L, cart.getMember().getId(), List.of(menuResponse));
+
+        CartControllerTest.menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(),
+                menu.getPrice(), menu.getNutrients(), menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
+    }
+
+    static List<FieldDescriptor> getResponse() {
+        return List.of(
+                fieldWithPath("cartId").type(JsonFieldType.NUMBER).description("카트 ID"),
+                fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("회원 ID"),
+                fieldWithPath("menuList[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
+                fieldWithPath("menuList[].createAt").type(JsonFieldType.STRING).description("생성일"),
+                fieldWithPath("menuList[].updateAt").type(JsonFieldType.STRING).description("수정일"),
+                fieldWithPath("menuList[].title").type(JsonFieldType.STRING).description("메뉴 제목"),
+                fieldWithPath("menuList[].description").type(JsonFieldType.STRING).description("메뉴 설명"),
+                fieldWithPath("menuList[].price.totalPrice").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                fieldWithPath("menuList[].nutrients").type(JsonFieldType.OBJECT).description("영양 정보"),
+                fieldWithPath("menuList[].menuSize").type(JsonFieldType.STRING).description("메뉴 크기")
+        );
     }
 
     @Test
@@ -125,9 +150,7 @@ class CartControllerTest {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description(token)
                         ),
                         responseFields(
-                                fieldWithPath("cartId").description("카트 ID"),
-                                fieldWithPath("memberId").description("카트에 속한 회원 정보 ID"),
-                                fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("카트에 담긴 메뉴 리스트")
+                                getResponse()
                         )
                 ));
     }
@@ -151,9 +174,7 @@ class CartControllerTest {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description(token)
                         ),
                         responseFields(
-                                fieldWithPath("cartId").description("카트 ID"),
-                                fieldWithPath("memberId").description("카트에 속한 회원 정보 ID"),
-                                fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("카트에 담긴 메뉴 리스트")
+                                getResponse()
                         )
         ));
     }
@@ -200,9 +221,7 @@ class CartControllerTest {
                                 parameterWithName("menuId").description("메뉴 ID")
                         ),
                         responseFields(
-                                fieldWithPath("cartId").description("카트 ID"),
-                                fieldWithPath("memberId").description("카트에 속한 회원 정보 ID"),
-                                fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("카트에 담긴 메뉴 리스트")
+                                getResponse()
                         )
                 ));
     }
@@ -236,6 +255,7 @@ class CartControllerTest {
     void 카트에서_메뉴_꺼내기() throws Exception {
         // given
         given(cartService.getMenu(anyLong(), anyInt())).willReturn(menu);
+        given(customMapper.map(any(), any())).willReturn(menuResponse);
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/carts/menu")
@@ -254,7 +274,7 @@ class CartControllerTest {
                                 parameterWithName("menuIdx").description("카트 INDEX (리스트 번호)")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("메뉴 ID"),
+                                fieldWithPath("menuId").description("메뉴 ID"),
                                 fieldWithPath("title").description("메뉴 제목"),
                                 fieldWithPath("description").description("메뉴 설명"),
                                 fieldWithPath("price.totalPrice").description("메뉴 가격 정보"),

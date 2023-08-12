@@ -67,7 +67,7 @@ class OrderServiceTest {
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
         menu1 = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
 
         menuList.add(menu1);
         order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());

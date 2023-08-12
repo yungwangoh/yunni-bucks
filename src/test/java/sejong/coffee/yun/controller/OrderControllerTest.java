@@ -9,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,6 +29,7 @@ import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
+import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
@@ -45,8 +50,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,6 +80,7 @@ class OrderControllerTest {
     static OrderDto.Response response;
     static Order order;
     static Cart cart;
+    static Page<Order> orderPage;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -105,16 +110,24 @@ class OrderControllerTest {
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
         menu = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
 
         token = "bearer accessToken";
 
         cart = new Cart(member, List.of(menu));
 
-        order = Order.createOrder(member, cart.getMenuList(), menu.getPrice(), LocalDateTime.now());
+        order = Order.from(1L,
+                Order.createOrder(member, cart.getMenuList(), menu.getPrice(), LocalDateTime.now()));
 
-        response = new OrderDto.Response(1L, order.getName(), order.getMenuList(),
+        MenuDto.Response menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
+                menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
+
+        response = new OrderDto.Response(1L, order.getName(), List.of(menuResponse),
                 order.getStatus(), order.getOrderPrice(), order.getPayStatus());
+
+        PageRequest pr = PageRequest.of(0, 10);
+        List<Order> orders = List.of(order);
+        orderPage = new PageImpl<>(orders, pr, orders.size());
     }
 
     static List<FieldDescriptor> getResponse() {
@@ -123,9 +136,9 @@ class OrderControllerTest {
                 fieldWithPath("name").type(JsonFieldType.STRING).description("주문 이름"),
                 fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("메뉴 목록")
                         .attributes(key("element").value("Menu 객체")),
-                fieldWithPath("menuList[].id").type(JsonFieldType.NULL).description("메뉴 ID"),
-                fieldWithPath("menuList[].createAt").type(JsonFieldType.NULL).description("생성일"),
-                fieldWithPath("menuList[].updateAt").type(JsonFieldType.NULL).description("수정일"),
+                fieldWithPath("menuList[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
+                fieldWithPath("menuList[].createAt").type(JsonFieldType.STRING).description("생성일"),
+                fieldWithPath("menuList[].updateAt").type(JsonFieldType.STRING).description("수정일"),
                 fieldWithPath("menuList[].title").type(JsonFieldType.STRING).description("메뉴 제목"),
                 fieldWithPath("menuList[].description").type(JsonFieldType.STRING).description("메뉴 설명"),
                 fieldWithPath("menuList[].price.totalPrice").type(JsonFieldType.NUMBER).description("메뉴 가격"),
@@ -134,6 +147,27 @@ class OrderControllerTest {
                 fieldWithPath("status").type(JsonFieldType.STRING).description("주문 상태"),
                 fieldWithPath("money.totalPrice").type(JsonFieldType.NUMBER).description("주문 총 가격"),
                 fieldWithPath("payStatus").type(JsonFieldType.STRING).description("결제 상태")
+        );
+    }
+    static List<FieldDescriptor> getPageResponse() {
+        return List.of(
+                fieldWithPath("pageNum").type(JsonFieldType.NUMBER).description("페이지 번호"),
+                fieldWithPath("responses").type(JsonFieldType.ARRAY).description("주문 리스트"),
+                fieldWithPath("responses[].orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                fieldWithPath("responses[].name").type(JsonFieldType.STRING).description("주문 이름"),
+                fieldWithPath("responses[].menuList").type(JsonFieldType.ARRAY).description("메뉴 목록")
+                        .attributes(key("element").value("Menu 객체")),
+                fieldWithPath("responses[].menuList[].menuId").type(JsonFieldType.NULL).description("메뉴 ID"),
+                fieldWithPath("responses[].menuList[].createAt").type(JsonFieldType.NULL).description("생성일"),
+                fieldWithPath("responses[].menuList[].updateAt").type(JsonFieldType.NULL).description("수정일"),
+                fieldWithPath("responses[].menuList[].title").type(JsonFieldType.STRING).description("메뉴 제목"),
+                fieldWithPath("responses[].menuList[].description").type(JsonFieldType.STRING).description("메뉴 설명"),
+                fieldWithPath("responses[].menuList[].price.totalPrice").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                fieldWithPath("responses[].menuList[].nutrients").type(JsonFieldType.OBJECT).description("영양 정보"),
+                fieldWithPath("responses[].menuList[].menuSize").type(JsonFieldType.STRING).description("메뉴 크기"),
+                fieldWithPath("responses[].status").type(JsonFieldType.STRING).description("주문 상태"),
+                fieldWithPath("responses[].money.totalPrice").type(JsonFieldType.NUMBER).description("주문 총 가격"),
+                fieldWithPath("responses[].payStatus").type(JsonFieldType.STRING).description("결제 상태")
         );
     }
 
@@ -158,30 +192,6 @@ class OrderControllerTest {
         // then
         resultActions.andExpect(status().isCreated())
                 .andDo(document("order",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getResponse()
-                        )
-                ));
-    }
-
-    @Test
-    void 유저가_주문한_주문내역_찾기() throws Exception {
-        // given
-        given(orderService.findOrderByMemberId(anyLong())).willReturn(order);
-        given(customMapper.map(any(), any())).willReturn(response);
-
-        // when
-        ResultActions resultActions = mockMvc.perform(get("/api/orders")
-                .header(HttpHeaders.AUTHORIZATION, token));
-
-        // then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("order-get",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -315,6 +325,84 @@ class OrderControllerTest {
                         ),
                         responseFields(
                                 getFailResponse()
+                        )
+                ));
+    }
+
+    @Test
+    void 유저의_주문내역() throws Exception {
+        // given
+        given(orderService.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}", 0)
+                .header(HttpHeaders.AUTHORIZATION, token));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(document("order-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("pageNum").description("페이지 번호")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        responseFields(
+                                getPageResponse()
+                        )
+                ));
+    }
+
+    @Test
+    void 유저의_주문내역_주문상태() throws Exception {
+        // given
+        given(orderService.findAllByMemberIdAndOrderStatus(any(), anyLong())).willReturn(orderPage);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/order-status", 0)
+                .header(HttpHeaders.AUTHORIZATION, token));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(document("order-list-order-status",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("pageNum").description("페이지 번호")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        responseFields(
+                                getPageResponse()
+                        )
+                ));
+    }
+
+    @Test
+    void 유저의_주문상태_결제상태() throws Exception {
+        // given
+        given(orderService.findAllByMemberIdAndPayStatus(any(), anyLong())).willReturn(orderPage);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/paid-status", 0)
+                .header(HttpHeaders.AUTHORIZATION, token));
+
+        // then
+        resultActions.andExpect(status().isOk())
+                .andDo(document("order-list-pay-status",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("pageNum").description("페이지 번호")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
+                        ),
+                        responseFields(
+                                getPageResponse()
                         )
                 ));
     }
