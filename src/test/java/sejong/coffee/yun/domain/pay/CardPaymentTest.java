@@ -36,7 +36,7 @@ class CardPaymentTest extends BeforeCreatedData {
 
         //then
         assertThat(Integer.parseInt(cardPayment.getCardExpirationYear()))
-                .isGreaterThanOrEqualTo((LocalDateTime.now().getDayOfYear()) % 100)
+                .isGreaterThanOrEqualTo((LocalDateTime.now().getYear()) % 100)
                 .isLessThanOrEqualTo(99);
 
         assertThat(cardPayment.getCardExpirationMonth())
