@@ -70,4 +70,13 @@ public class Card {
         }
         return cardPassword;
     }
+
+    public static Card createCard(String number, String validThru, String cardPassword, Member member) {
+        return Card.builder()
+                .number(number)
+                .cardPassword(cardPassword)
+                .validThru(validThru)
+                .member(member)
+                .build();
+    }
 }
