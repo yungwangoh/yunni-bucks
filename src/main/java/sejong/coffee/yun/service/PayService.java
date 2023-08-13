@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.user.Card;
-import sejong.coffee.yun.dto.CardPaymentDto;
+import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.infra.port.UuidHolder;
 import sejong.coffee.yun.repository.card.CardRepository;
@@ -17,7 +17,7 @@ import sejong.coffee.yun.repository.pay.PayRepository;
 import java.io.IOException;
 
 import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
-import static sejong.coffee.yun.dto.CardPaymentDto.Response;
+import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
 
 @Service
 @RequiredArgsConstructor
@@ -52,9 +52,9 @@ public class PayService {
     }
 
     @Transactional
-    public CardPaymentDto.Request initPayment(Long orderId){
+    public CardPaymentDto.Request initPayment(Long orderId, Long memberId){
         Order order = orderRepository.findById(orderId);
-        Card card = cardRepository.findByMemberId(order.getMember().getId());
+        Card card = cardRepository.findByMemberId(memberId);
 
         return CardPaymentDto.Request.create(card, order, uuidHolder);
     }
