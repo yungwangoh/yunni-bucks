@@ -1,15 +1,11 @@
 package sejong.coffee.yun.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import sejong.coffee.yun.dto.user.UserDto;
 
 import java.util.List;
@@ -18,14 +14,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
@@ -33,13 +21,6 @@ import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_E
 import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_NAME;
 
 class UserControllerTest extends BaseUserControllerTest {
-
-    @BeforeEach
-    void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .apply(documentationConfiguration(restDocumentation))
-                .build();
-    }
 
     @Test
     void 회원_등록() throws Exception {
@@ -65,17 +46,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .andExpect(jsonPath("$.address.detail").value(member.getAddress().getDetail()))
                 .andExpect(jsonPath("$.address.zipCode").value(member.getAddress().getZipCode()))
                 .andExpect(jsonPath("$.userRank").value(member.getUserRank().name()))
-                .andExpect(jsonPath("$.money.totalPrice").value(member.getMoney().getTotalPrice()))
-                .andDo(document("member-create",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                getUserRequests()
-                        ),
-                        responseFields(
-                                getUserResponses()
-                        )
-                ));
+                .andExpect(jsonPath("$.money.totalPrice").value(member.getMoney().getTotalPrice()));
     }
 
     @Test
@@ -94,16 +65,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isBadRequest())
-                .andDo(document("member-create-validation-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                getUserRequests()
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+                .andExpect(jsonPath("message").value(INPUT_ERROR.getMessage()));
     }
 
     @Test
@@ -122,17 +84,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(DUPLICATE_USER_EMAIL.getMessage()))
-                .andDo(document("member-create-duplicate-email-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                getUserRequests()
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+                .andExpect(jsonPath("$.message").value(DUPLICATE_USER_EMAIL.getMessage()));
     }
 
     @Test
@@ -151,17 +103,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(DUPLICATE_USER_NAME.getMessage()))
-                .andDo(document("member-create-duplicate-name-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestFields(
-                                getUserRequests()
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+                .andExpect(jsonPath("$.message").value(DUPLICATE_USER_NAME.getMessage()));
     }
 
     @Test
@@ -174,27 +116,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // when
-        resultActions.andExpect(status().isOk())
-                .andDo(document("member-list",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                            headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                fieldWithPath("[].memberId").type(JsonFieldType.NUMBER).description(1),
-                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("홍길동"),
-                                fieldWithPath("[].email").type(JsonFieldType.STRING).description("qwer1234@naver.com"),
-                                fieldWithPath("[].address.city").type(JsonFieldType.STRING).description("서울시"),
-                                fieldWithPath("[].address.district").type(JsonFieldType.STRING).description("광진구"),
-                                fieldWithPath("[].address.detail").type(JsonFieldType.STRING).description("능동로 209 세종대학교"),
-                                fieldWithPath("[].address.zipCode").type(JsonFieldType.STRING).description("123-123"),
-                                fieldWithPath("[].userRank").type(JsonFieldType.STRING).description("BRONZE"),
-                                fieldWithPath("[].money.totalPrice").type(JsonFieldType.NUMBER).description("0"),
-                                fieldWithPath("[].createAt").description("생성 시간"),
-                                fieldWithPath("[].updateAt").description("수정 시간")
-                        )
-                ));
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -216,17 +138,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .andExpect(jsonPath("$.address.detail").value(member.getAddress().getDetail()))
                 .andExpect(jsonPath("$.address.zipCode").value(member.getAddress().getZipCode()))
                 .andExpect(jsonPath("$.userRank").value(member.getUserRank().name()))
-                .andExpect(jsonPath("$.money.totalPrice").value(member.getMoney().getTotalPrice()))
-                .andDo(document("member-find",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getUserResponses()
-                        )
-                ));
+                .andExpect(jsonPath("$.money.totalPrice").value(member.getMoney().getTotalPrice()));
     }
 
     @Test
@@ -239,17 +151,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isNotFound())
-                .andDo(document("member-find-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+        resultActions.andExpect(status().isNotFound());
     }
 
     @Test
@@ -261,18 +163,11 @@ class UserControllerTest extends BaseUserControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isNoContent())
-                .andDo(document("member-delete",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        )
-                ));
+        resultActions.andExpect(status().isNoContent());
     }
 
     @Test
-    void 회원_식제_실패() throws Exception {
+    void 회원_삭제_실패() throws Exception {
         // given
         willThrow(NOT_FOUND_USER.notFoundException()).given(userService).deleteMember(any());
 
@@ -281,17 +176,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isNotFound())
-                .andDo(document("member-delete-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+        resultActions.andExpect(status().isNotFound());
     }
 
     @Test
@@ -313,20 +198,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(updateEmail))
-                .andDo(document("member-update-email",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestFields(
-                                fieldWithPath("updateEmail").type(JsonFieldType.STRING).description("수정할 이메일")
-                        ),
-                        responseFields(
-                                getUserResponses()
-                        )
-                ));
+                .andExpect(jsonPath("$.email").value(updateEmail));
     }
 
     @Test
@@ -348,20 +220,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(updateName))
-                .andDo(document("member-update-name",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestFields(
-                                fieldWithPath("updateName").type(JsonFieldType.STRING).description("수정할 이름")
-                        ),
-                        responseFields(
-                                getUserResponses()
-                        )
-                ));
+                .andExpect(jsonPath("$.name").value(updateName));
     }
 
     @Test
@@ -384,21 +243,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value(accessToken))
-                .andDo(document("sign-in",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
-                                fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("토큰")
-                        )
-                ));
+                .andExpect(jsonPath("$.accessToken").value(accessToken));
     }
 
     @Test
@@ -418,21 +263,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
-        resultActions.andExpect(status().isBadRequest())
-                .andDo(document("sign-in-not-match-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING).description("회원 이메일"),
-                                fieldWithPath("password").type(JsonFieldType.STRING).description("회원 비밀번호")
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+        resultActions.andExpect(status().isBadRequest());
     }
 
     @Test
@@ -445,14 +276,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, accessToken));
 
         // then
-        resultActions.andExpect(status().isOk())
-                .andDo(document("sign-out",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        )
-                ));
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -467,17 +291,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, accessToken));
 
         // then
-        resultActions.andExpect(status().isBadRequest())
-                .andDo(document("sign-out-token-expire",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description(token)
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+        resultActions.andExpect(status().isBadRequest());
     }
 
     @Test
@@ -492,14 +306,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(content().string(SUCCESS_DUPLICATE_EMAIL.getMessage()))
-                .andDo(document("member-duplicate-email",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    requestParameters(
-                          parameterWithName("email").description("이메일")
-                    )
-                ));
+                .andExpect(content().string(SUCCESS_DUPLICATE_EMAIL.getMessage()));
     }
 
     @Test
@@ -512,17 +319,7 @@ class UserControllerTest extends BaseUserControllerTest {
                 .param("email", email));
 
         // then
-        resultActions.andExpect(status().isBadRequest())
-                .andDo(document("member-duplicate-check-email-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("email").description("이메일")
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+        resultActions.andExpect(status().isBadRequest());
     }
 
     @Test
@@ -537,14 +334,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(content().string(SUCCESS_DUPLICATE_NAME.getMessage()))
-                .andDo(document("member-duplicate-name",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("name").description("이름")
-                        )
-                ));
+                .andExpect(content().string(SUCCESS_DUPLICATE_NAME.getMessage()));
     }
 
     @Test
@@ -557,16 +347,9 @@ class UserControllerTest extends BaseUserControllerTest {
                 .param("name", name));
 
         // then
-        resultActions.andExpect(status().isBadRequest())
-                .andDo(document("member-duplicate-check-name-fail",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestParameters(
-                                parameterWithName("name").description("이름")
-                        ),
-                        responseFields(
-                                getUserFailResponses()
-                        )
-                ));
+        resultActions.andExpect(status().isBadRequest());
+    }
+    private String toJson(Object o) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(o);
     }
 }

@@ -3,8 +3,8 @@ package sejong.coffee.yun.dto.order;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
-import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Money;
+import sejong.coffee.yun.dto.menu.MenuDto;
 
 import java.util.List;
 
@@ -13,14 +13,20 @@ public class OrderDto {
     public record Response(
             Long orderId,
             String name,
-            List<Menu> menuList,
+            List<MenuDto.Response> menuList,
             OrderStatus status,
             Money money,
             OrderPayStatus payStatus
     ) {
         public Response(Order order) {
-            this(order.getId(), order.getName(), order.getMenuList(),
-                    order.getStatus(), order.getOrderPrice(), order.getPayStatus());
+            this(
+                    order.getId(),
+                    order.getName(),
+                    order.getMenuList().stream().map(MenuDto.Response::new).toList(),
+                    order.getStatus(),
+                    order.getOrderPrice(),
+                    order.getPayStatus()
+            );
         }
     }
 }

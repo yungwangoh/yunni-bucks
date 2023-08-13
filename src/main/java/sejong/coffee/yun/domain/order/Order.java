@@ -37,12 +37,14 @@ public class Order {
     private Money orderPrice;
     @Enumerated(value = EnumType.STRING)
     private OrderPayStatus payStatus;
+    @Column(name = "create_at")
     private LocalDateTime createAt;
+    @Column(name = "update_at")
     private LocalDateTime updateAt;
 
     private Order(String name, List<Menu> menuList, Member member,
                   OrderStatus status, Money orderPrice, OrderPayStatus payStatus,
-                  LocalDateTime createAt, LocalDateTime updateAt) {
+                  LocalDateTime now) {
 
         this.name = name;
         this.menuList = menuList;
@@ -50,22 +52,22 @@ public class Order {
         this.status = status;
         this.orderPrice = orderPrice;
         this.payStatus = payStatus;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
+        this.createAt = now;
+        this.updateAt = now;
     }
 
     private Order(Long id, String name, List<Menu> menuList,
                   Member member, OrderStatus status, Money orderPrice,
-                  OrderPayStatus payStatus, LocalDateTime createAt, LocalDateTime updateAt) {
+                  OrderPayStatus payStatus, LocalDateTime now) {
 
-        this(name, menuList, member, status, orderPrice, payStatus, createAt, updateAt);
+        this(name, menuList, member, status, orderPrice, payStatus, now);
         this.id = id;
     }
 
-    public static Order order(Long id, Order order) {
+    public static Order from(Long id, Order order) {
         return new Order(id, order.getName(), order.getMenuList(), order.getMember(),
                 order.getStatus(), order.getOrderPrice(), order.getPayStatus(),
-                order.getCreateAt(), order.getUpdateAt());
+                order.getCreateAt());
     }
 
     public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice, LocalDateTime now) {
@@ -75,7 +77,7 @@ public class Order {
             member.getCoupon().convertStatusUsedCoupon();
         }
 
-        return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO, now, now);
+        return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO, now);
     }
 
     public void completePayment() {

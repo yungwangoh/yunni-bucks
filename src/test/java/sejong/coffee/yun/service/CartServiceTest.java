@@ -17,6 +17,7 @@ import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,11 +63,11 @@ class CartServiceTest {
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
 
         menu1 = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
         menu2 = new Beverage("아이스티", "복숭아 아이스티",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
         menu3 = new Bread("소라빵", "소라빵",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M);
+                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
 
         cart.addMenu(menu1);
         cart.addMenu(menu2);

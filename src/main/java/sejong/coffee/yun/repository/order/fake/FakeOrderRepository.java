@@ -22,7 +22,7 @@ public class FakeOrderRepository implements OrderRepository {
 
     @Override
     public Order save(Order order) {
-        Order newOrder = Order.order(++id, order);
+        Order newOrder = Order.from(++id, order);
 
         orders.add(newOrder);
 
