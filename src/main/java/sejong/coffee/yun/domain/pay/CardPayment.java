@@ -3,7 +3,7 @@ package sejong.coffee.yun.domain.pay;
 import lombok.*;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Card;
-import sejong.coffee.yun.dto.CardPaymentDto;
+import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.port.UuidHolder;
 
 import javax.persistence.*;
@@ -17,7 +17,7 @@ import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidD
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "cardNumber", "cardPassword", "customerName", "cardExpirationYear", "cardExpirationMonth",
         "paymentKey", "orderUuid", "requestedAt", "approvedAt"})
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@Table(name = "card_payment")
 public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
     @Id
@@ -93,6 +93,9 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         cardPayment.customerName = cardDomain.customerName();
         cardPayment.cardExpirationYear = cardDomain.cardExpirationYear();
         cardPayment.cardExpirationMonth = cardDomain.cardExpirationMonth();
+        cardPayment.orderUuid = cardDomain.orderUuid();
+        cardPayment.requestedAt = cardDomain.requestedAt();
+        cardPayment.order = cardDomain.order();
         return cardPayment;
     }
 
