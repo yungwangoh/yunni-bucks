@@ -19,5 +19,8 @@ public interface JpaPayRepository extends JpaRepository<CardPayment, Long> {
             @Param("paymentStatus") PaymentStatus paymentStatus
     );
 
-    Optional<CardPayment> findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus);
+    @Query("SELECT cp FROM CardPayment cp WHERE cp.paymentKey = :paymentKey AND cp.paymentStatus = :paymentStatus")
+    Optional<CardPayment> findByPaymentKeyAndPaymentStatus(
+            @Param("paymentKey") String paymentKey,
+            @Param("paymentStatus") PaymentStatus paymentStatus);
 }
