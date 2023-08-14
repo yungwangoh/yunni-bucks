@@ -1,10 +1,17 @@
 package sejong.coffee.yun.service;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import sejong.coffee.yun.domain.delivery.*;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -22,6 +29,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
 
@@ -36,6 +49,9 @@ class DeliveryServiceTest {
     static Menu menu;
     static List<Menu> menuList = new ArrayList<>();
     static Member member;
+    static ReserveDelivery reserveDelivery;
+    static NormalDelivery normalDelivery;
+    static Page<Delivery> deliveryPage;
 
     @BeforeAll
     static void init() {
@@ -55,5 +71,198 @@ class DeliveryServiceTest {
 
         menuList.add(menu);
         order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
+
+        reserveDelivery = ReserveDelivery.create(
+                order,
+                LocalDateTime.now(),
+                member.getAddress(),
+                DeliveryType.RESERVE,
+                DeliveryStatus.READY,
+                LocalDateTime.now()
+        );
+
+        normalDelivery = NormalDelivery.create(
+                order,
+                LocalDateTime.now(),
+                member.getAddress(),
+                DeliveryType.RESERVE,
+                DeliveryStatus.READY
+        );
+
+        PageRequest pr = PageRequest.of(0, 10);
+        List<Delivery> deliveries = List.of(reserveDelivery, normalDelivery);
+        deliveryPage = new PageImpl<>(deliveries, pr, deliveries.size());
+    }
+
+    @Test
+    void 예약_배달() {
+        // given
+        given(orderRepository.findById(anyLong())).willReturn(order);
+        given(deliveryRepository.save(any())).willReturn(reserveDelivery);
+
+        // when
+        Delivery delivery = deliveryService.save(
+                1L,
+                member.getAddress(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                DeliveryType.RESERVE
+        );
+
+        // then
+        assertThat(delivery).isEqualTo(reserveDelivery);
+    }
+
+    @Test
+    void 일반_배달() {
+        // given
+        given(orderRepository.findById(anyLong())).willReturn(order);
+        given(deliveryRepository.save(any())).willReturn(normalDelivery);
+
+        // when
+        Delivery delivery = deliveryService.save(
+                1L,
+                member.getAddress(),
+                LocalDateTime.now(),
+                DeliveryType.NORMAL
+        );
+
+        // then
+        assertThat(delivery).isEqualTo(normalDelivery);
+    }
+
+    @Test
+    void 배달_취소() {
+        // given
+        NormalDelivery d = NormalDelivery.create(
+                order,
+                LocalDateTime.now(),
+                member.getAddress(),
+                DeliveryType.RESERVE,
+                DeliveryStatus.READY
+        );
+
+        given(deliveryRepository.findOne(anyLong())).willReturn(d);
+
+        // when
+        Delivery delivery = deliveryService.cancel(1L);
+
+        // then
+        assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.CANCEL);
+    }
+
+    @Test
+    void 배달_취소는_준비상태에서만_취소할_수_있다() {
+        // given
+        NormalDelivery d = NormalDelivery.create(
+                order,
+                LocalDateTime.now(),
+                member.getAddress(),
+                DeliveryType.RESERVE,
+                DeliveryStatus.DELIVERY
+        );
+        given(deliveryRepository.findOne(anyLong())).willReturn(d);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> deliveryService.cancel(1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("취소가 불가능합니다.");
+    }
+
+    @Test
+    void 배달_완료() {
+        // given
+        NormalDelivery d = NormalDelivery.create(
+                order,
+                LocalDateTime.now(),
+                member.getAddress(),
+                DeliveryType.RESERVE,
+                DeliveryStatus.DELIVERY
+        );
+        given(deliveryRepository.findOne(anyLong())).willReturn(d);
+
+        // when
+        Delivery delivery = deliveryService.complete(1L);
+
+        // then
+        assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.COMPLETE);
+    }
+
+    @Test
+    void 배달_완료는_배송상태에서만_완료가_가능하다() {
+        // given
+        NormalDelivery d = NormalDelivery.create(
+                order,
+                LocalDateTime.now(),
+                member.getAddress(),
+                DeliveryType.RESERVE,
+                DeliveryStatus.READY
+        );
+        given(deliveryRepository.findOne(anyLong())).willReturn(d);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> deliveryService.complete(1L))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("배송 완료가 불가능합니다.");
+    }
+
+    @Test
+    void 배달_주소_수정() {
+        // given
+        given(deliveryRepository.findOne(anyLong())).willReturn(reserveDelivery);
+
+        // when
+        LocalDateTime updateAt = LocalDateTime.of(2023, 5, 11, 11, 10);
+
+        Delivery delivery = deliveryService.updateAddress(1L, member.getAddress(), updateAt);
+
+        // then
+        assertThat(delivery.getAddress()).isEqualTo(member.getAddress());
+        assertThat(delivery.getUpdateAt()).isEqualTo(updateAt);
+    }
+
+    @Test
+    void 유저의_배달_내역_조회() {
+        // given
+        given(deliveryRepository.findByMemberId(any(), anyLong())).willReturn(deliveryPage);
+
+        // when
+        PageRequest pr = PageRequest.of(0, 10);
+        Page<Delivery> page = deliveryService.findAllByMemberId(pr, 1L);
+
+        // then
+        assertThat(page).isEqualTo(deliveryPage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"RESERVE", "NORMAL"})
+    void 유저의_배달_내역_조회_배달타입(DeliveryType type) {
+        // given
+        given(deliveryRepository.findDeliveryTypeByMemberId(any(), anyLong(), any())).willReturn(deliveryPage);
+
+        // when
+        PageRequest pr = PageRequest.of(0, 10);
+        Page<Delivery> page = deliveryService.findDeliveryTypeAllByMemberId(pr, 1L, type);
+
+        // then
+        assertThat(page).isEqualTo(deliveryPage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"READY", "DELIVERY", "CANCEL", "COMPLETE"})
+    void 유저의_배달_내역_조회_배달상태(DeliveryStatus status) {
+        // given
+        given(deliveryRepository.findDeliveryStatusByMemberId(any(), anyLong(), any())).willReturn(deliveryPage);
+
+        // when
+        PageRequest pr = PageRequest.of(0, 10);
+        Page<Delivery> page = deliveryService.findDeliveryStatusAllByMemberId(pr, 1L, status);
+
+        // then
+        assertThat(page).isEqualTo(deliveryPage);
     }
 }
