@@ -46,7 +46,7 @@ public class DeliveryService {
     }
 
     @Transactional
-    public Delivery cancelService(Long deliveryId) {
+    public Delivery cancel(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
         delivery.cancel();
