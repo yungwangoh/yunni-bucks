@@ -12,7 +12,9 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
+import static sejong.coffee.yun.domain.exception.ExceptionControl.DO_NOT_PAID;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
 import static sejong.coffee.yun.domain.order.OrderStatus.CANCEL;
 import static sejong.coffee.yun.domain.order.OrderStatus.ORDER;
@@ -123,5 +125,11 @@ public class Order {
 
     public String mapOrderName() {
         return this.id + "00000";
+    }
+
+    public void checkOrderStatus() {
+        if(!Objects.equals(this.payStatus, OrderPayStatus.YES)) {
+            throw new IllegalArgumentException(DO_NOT_PAID.getMessage());
+        }
     }
 }
