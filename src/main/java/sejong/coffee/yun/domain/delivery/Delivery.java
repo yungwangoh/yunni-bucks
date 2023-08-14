@@ -1,23 +1,19 @@
 package sejong.coffee.yun.domain.delivery;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.Order;
-import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.user.Address;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
-
-import static sejong.coffee.yun.domain.exception.ExceptionControl.DO_NOT_PAID;
 
 @Entity
 @Getter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DiscriminatorColumn
 public abstract class Delivery {
 
     @Id @GeneratedValue
@@ -31,26 +27,29 @@ public abstract class Delivery {
     private LocalDateTime updateAt;
     private Address address;
     @Enumerated(value = EnumType.STRING)
+    private DeliveryType type;
+    @Enumerated(value = EnumType.STRING)
     private DeliveryStatus status;
 
-    @Builder
-    public Delivery(Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryStatus status) {
+    public Delivery(Order order, LocalDateTime now, Address address, DeliveryType type, DeliveryStatus status) {
         this.order = order;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
+        this.createAt = now;
+        this.updateAt = now;
         this.address = address;
+        this.type = type;
         this.status = status;
     }
 
-    public abstract Delivery delivery();
-
-    public void updateAddress(Address address) {
+    public void updateAddress(Address address, LocalDateTime now) {
         this.address = address;
+        this.updateAt = now;
     }
 
-    public void checkOrderStatus() {
-        if(!Objects.equals(this.order.getPayStatus(), OrderPayStatus.YES)) {
-            throw new IllegalArgumentException(DO_NOT_PAID.getMessage());
-        }
+    public void setStatus(DeliveryStatus status) {
+        this.status = status;
     }
+
+    public abstract void cancel();
+    public abstract void delivery();
+    public abstract void complete();
 }
