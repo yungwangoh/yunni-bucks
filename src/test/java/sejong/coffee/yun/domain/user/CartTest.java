@@ -114,7 +114,7 @@ class CartTest {
         // then
         assertThatThrownBy(() -> IntStream.range(0, 20).forEach(i -> cart.addMenu(menu1)))
                 .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("카트는 메뉴를 " + SIZE + "개만 담을 수 있습니다.");
+                .hasMessageContaining("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다.");
     }
 
     @Test
