@@ -127,7 +127,7 @@ public class Order {
         return this.id + "00000";
     }
 
-    public void checkOrderStatus() {
+    public void checkOrderPayStatus() {
         if(!Objects.equals(this.payStatus, OrderPayStatus.YES)) {
             throw new IllegalArgumentException(DO_NOT_PAID.getMessage());
         }
