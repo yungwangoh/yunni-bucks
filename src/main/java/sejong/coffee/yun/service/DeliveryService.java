@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.delivery.*;
@@ -29,6 +28,8 @@ public class DeliveryService {
 
         Order order = orderRepository.findById(orderId);
 
+        order.checkOrderPayStatus();
+
         NormalDelivery delivery = NormalDelivery.create(order, now, address, type, DeliveryStatus.READY);
 
         return deliveryRepository.save(delivery);
@@ -39,6 +40,8 @@ public class DeliveryService {
                          LocalDateTime reserveDate, DeliveryType type) {
 
         Order order = orderRepository.findById(orderId);
+
+        order.checkOrderPayStatus();
 
         ReserveDelivery delivery = ReserveDelivery.create(order, now, address, type, DeliveryStatus.READY, reserveDate);
 
@@ -55,11 +58,19 @@ public class DeliveryService {
     }
 
     @Transactional
-    @Scheduled(cron = "${schedules.cron.test}")
-    public void delivery() {
+    public void reserveDelivery() {
         List<Delivery> deliveries = deliveryRepository.findAll();
 
         deliveries.forEach(Delivery::delivery);
+    }
+
+    @Transactional
+    public Delivery normalDelivery(Long deliveryId) {
+        Delivery delivery = deliveryRepository.findOne(deliveryId);
+
+        delivery.delivery();
+
+        return delivery;
     }
 
     @Transactional
