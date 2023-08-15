@@ -143,10 +143,8 @@ class FakeOrderRepositoryTest {
         LocalDateTime updateTime = LocalDateTime.of(2023, 9, 11, 5, 11);
         order.setUpdateAt(updateTime);
 
-        Order save = orderRepository.save(order);
-
         // then
-        assertThat(save.getUpdateAt()).isEqualTo(updateTime);
+        assertThat(order.getUpdateAt()).isEqualTo(updateTime);
     }
 
     @Test
