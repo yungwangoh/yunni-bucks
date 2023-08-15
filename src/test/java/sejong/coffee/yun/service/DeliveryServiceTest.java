@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import sejong.coffee.yun.domain.delivery.*;
+import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -34,6 +35,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.DO_NOT_PAID;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryServiceTest {
@@ -95,10 +100,12 @@ class DeliveryServiceTest {
     }
 
     @Test
-    void 예약_배달() {
+    void 예약_배달_저장() {
         // given
         given(orderRepository.findById(anyLong())).willReturn(order);
         given(deliveryRepository.save(any())).willReturn(reserveDelivery);
+
+        order.completePayment();
 
         // when
         Delivery delivery = deliveryService.save(
@@ -114,10 +121,12 @@ class DeliveryServiceTest {
     }
 
     @Test
-    void 일반_배달() {
+    void 일반_배달_저장() {
         // given
         given(orderRepository.findById(anyLong())).willReturn(order);
         given(deliveryRepository.save(any())).willReturn(normalDelivery);
+
+        order.completePayment();
 
         // when
         Delivery delivery = deliveryService.save(
@@ -129,6 +138,19 @@ class DeliveryServiceTest {
 
         // then
         assertThat(delivery).isEqualTo(normalDelivery);
+    }
+
+    @Test
+    void 배달_저장_할때_결제를_안_한_경우() {
+        // given
+        given(orderRepository.findById(anyLong())).willThrow(new IllegalArgumentException(DO_NOT_PAID.getMessage()));
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> deliveryService.save(1L, member.getAddress(), LocalDateTime.now(), DeliveryType.NORMAL))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining(DO_NOT_PAID.getMessage());
     }
 
     @Test
@@ -211,6 +233,33 @@ class DeliveryServiceTest {
     }
 
     @Test
+    void 예약_배달() {
+        // given
+        List<Delivery> deliveries = new ArrayList<>();
+        given(deliveryRepository.findAll()).willReturn(deliveries);
+
+        // when
+        deliveryService.reserveDelivery();
+
+        // then
+        for(var a : deliveries) {
+            then(a).should(times(1)).delivery();
+        }
+    }
+
+    @Test
+    void 일반_배달() {
+        // given
+        given(deliveryRepository.findOne(anyLong())).willReturn(normalDelivery);
+
+        // when
+        Delivery delivery = deliveryService.normalDelivery(1L);
+
+        // then
+        assertThat(delivery).isEqualTo(normalDelivery);
+    }
+
+    @Test
     void 배달_주소_수정() {
         // given
         given(deliveryRepository.findOne(anyLong())).willReturn(reserveDelivery);
@@ -223,6 +272,19 @@ class DeliveryServiceTest {
         // then
         assertThat(delivery.getAddress()).isEqualTo(member.getAddress());
         assertThat(delivery.getUpdateAt()).isEqualTo(updateAt);
+    }
+
+    @Test
+    void 배달_내역을_찾을_수_없다() {
+        // given
+        given(deliveryRepository.findOne(anyLong())).willThrow(NOT_FOUND_DELIVERY.notFoundException());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> deliveryService.updateAddress(1L, member.getAddress(), LocalDateTime.now()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining(NOT_FOUND_DELIVERY.getMessage());
     }
 
     @Test
