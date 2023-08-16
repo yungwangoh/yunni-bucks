@@ -15,6 +15,7 @@ import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.pay.PayRepository;
 
 import java.io.IOException;
+import java.util.List;
 
 import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
 import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
@@ -42,6 +43,9 @@ public class PayService {
         return payRepository.findByPaymentKeyAndPaymentStatus(paymentKey, DONE);
     }
 
+    public List<CardPayment> findAll() {
+        return payRepository.findAll();
+    }
     @Transactional
     public CardPayment pay(CardPaymentDto.Request request) throws IOException, InterruptedException {
 
