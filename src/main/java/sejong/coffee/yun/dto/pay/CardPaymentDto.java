@@ -57,17 +57,21 @@ public class CardPaymentDto {
             String orderUuid,
             String orderName,
             String cardNumber,
+            String cardExpirationYear,
+            String cardExpirationMonth,
             String totalAmount,
             String paymentKey,
             PaymentStatus paymentStatus,
             LocalDateTime requestedAt,
-            LocalDateTime approvedAt
+            LocalDateTime approvedAt,
+            Order order
     ) {
         public Response(CardPayment entity) {
-            this(entity.getOrder().mapOrderName(), entity.getOrder().getName(),
-                    entity.getCardNumber(), entity.getOrder().getOrderPrice().getTotalPrice().toString(),
+            this(entity.getOrderUuid(), entity.getOrder().getName(),
+                    entity.getCardNumber(), entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
+                    entity.getOrder().getOrderPrice().getTotalPrice().toString(),
                     entity.getPaymentKey(), entity.getPaymentStatus(),
-                    entity.getRequestedAt(), entity.getApprovedAt());
+                    entity.getRequestedAt(), entity.getApprovedAt(), entity.getOrder());
         }
     }
 }
