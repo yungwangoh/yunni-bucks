@@ -20,10 +20,18 @@ public class NormalDelivery extends Delivery {
         super(order, now, address, type, status);
     }
 
+    private NormalDelivery(Long id, Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status) {
+        super(id, order, createAt, updateAt, address, type, status);
+    }
+
     public static NormalDelivery create(Order order, LocalDateTime now, Address address,
                                         DeliveryType type, DeliveryStatus status) {
 
         return new NormalDelivery(order, now, address, type, status);
+    }
+
+    public static NormalDelivery from(Long id, NormalDelivery delivery) {
+        return new NormalDelivery(id, delivery.getOrder(), delivery.getCreateAt(), delivery.getUpdateAt(), delivery.getAddress(), delivery.getType(), delivery.getStatus());
     }
 
     @Override

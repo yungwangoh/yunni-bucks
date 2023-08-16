@@ -28,10 +28,14 @@ public class Cart {
         this.menuList = menuList;
     }
 
-    public Cart(Long id, Member member, List<Menu> menuList) {
+    private Cart(Long id, Member member, List<Menu> menuList) {
         this.id = id;
         this.member = member;
         this.menuList = menuList;
+    }
+
+    public static Cart from(Long id, Cart cart) {
+        return new Cart(id, cart.getMember(), cart.getMenuList());
     }
 
     public void addMenu(Menu menu) {

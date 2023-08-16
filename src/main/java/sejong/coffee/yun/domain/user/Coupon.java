@@ -8,10 +8,9 @@ import sejong.coffee.yun.domain.discount.type.DiscountType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static sejong.coffee.yun.domain.user.CouponUse.*;
+import static sejong.coffee.yun.domain.user.CouponUse.NO;
+import static sejong.coffee.yun.domain.user.CouponUse.YES;
 
 @Entity
 @Getter
@@ -43,6 +42,20 @@ public class Coupon implements DiscountType {
         this.expireAt = expireAt;
         this.discountRate = discountRate;
         this.couponUse = couponUse;
+    }
+
+    private Coupon(Long id, String name, String identityNumber, LocalDateTime createAt, LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
+        this.id = id;
+        this.name = name;
+        this.identityNumber = identityNumber;
+        this.createAt = createAt;
+        this.expireAt = expireAt;
+        this.discountRate = discountRate;
+        this.couponUse = couponUse;
+    }
+
+    public static Coupon from(Long id, Coupon coupon) {
+        return new Coupon(id, coupon.getName(), coupon.getIdentityNumber(), coupon.getCreateAt(), coupon.getExpireAt(), coupon.getDiscountRate(), coupon.couponUse);
     }
 
     @Override

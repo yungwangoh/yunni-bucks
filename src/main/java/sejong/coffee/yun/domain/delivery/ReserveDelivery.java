@@ -31,10 +31,19 @@ public class ReserveDelivery extends Delivery {
         this.reserveAt = reserveAt;
     }
 
+    private ReserveDelivery(Long id, Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status, LocalDateTime reserveAt) {
+        super(id, order, createAt, updateAt, address, type, status);
+        this.reserveAt = reserveAt;
+    }
+
     public static ReserveDelivery create(Order order, LocalDateTime now, Address address,
                                          DeliveryType type, DeliveryStatus status, LocalDateTime reserveAt) {
 
         return new ReserveDelivery(order, now, address, type, status, reserveAt);
+    }
+
+    public static ReserveDelivery from(Long id, ReserveDelivery delivery) {
+        return new ReserveDelivery(id, delivery.getOrder(), delivery.getCreateAt(), delivery.getUpdateAt(), delivery.getAddress(), delivery.getType(), delivery.getStatus(), delivery.getReserveAt());
     }
 
     @Override

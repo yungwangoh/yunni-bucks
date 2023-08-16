@@ -30,5 +30,14 @@ public class MenuReview extends DateTimeEntity {
         this.menu = menu;
     }
 
+    private MenuReview(Long id, String comments, Member member, Menu menu) {
+        this.id = id;
+        this.comments = comments;
+        this.member = member;
+        this.menu = menu;
+    }
 
+    public static MenuReview from(Long id, MenuReview menuReview) {
+        return new MenuReview(id, menuReview.getComments(), menuReview.getMember(), menuReview.getMenu());
+    }
 }

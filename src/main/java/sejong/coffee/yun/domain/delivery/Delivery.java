@@ -40,6 +40,16 @@ public abstract class Delivery {
         this.status = status;
     }
 
+     Delivery(Long id, Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status) {
+        this.id = id;
+        this.order = order;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+        this.address = address;
+        this.type = type;
+        this.status = status;
+    }
+
     public void updateAddress(Address address, LocalDateTime now) {
         this.address = address;
         this.updateAt = now;
