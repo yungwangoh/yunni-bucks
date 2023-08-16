@@ -1,23 +1,26 @@
 package sejong.coffee.yun.controller.pay;
 
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.PayService;
 
 import java.io.IOException;
 
-import static sejong.coffee.yun.dto.CardPaymentDto.Request;
-import static sejong.coffee.yun.dto.CardPaymentDto.Response;
+import static sejong.coffee.yun.dto.pay.CardPaymentDto.Request;
+import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
 
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
 @Slf4j
+@Builder
 public class PaymentController {
 
     private final PayService payService;
@@ -25,8 +28,9 @@ public class PaymentController {
 
     @PostMapping("/card-payment/{orderId}")
     public ResponseEntity<Response> keyIn(
-            @PathVariable Long orderId) throws IOException, InterruptedException {
-        Request request = payService.initPayment(orderId);
+            @PathVariable Long orderId,
+            @MemberId Long memberId) throws IOException, InterruptedException {
+        Request request = payService.initPayment(orderId, memberId);
         CardPayment cardPayment = payService.pay(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
