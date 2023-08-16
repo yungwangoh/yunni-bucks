@@ -1,63 +1,119 @@
 package sejong.coffee.yun.controller.pay;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import sejong.coffee.yun.dto.CardPaymentDto;
-import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.util.parse.JsonParsing;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import sejong.coffee.yun.controller.pay.mock.TestPayContainer;
+import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.pay.PaymentStatus;
+import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.dto.card.CardDto;
+import sejong.coffee.yun.dto.pay.CardPaymentDto;
+import sejong.coffee.yun.mapper.CustomMapper;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(PaymentController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-@AutoConfigureMockMvc(addFilters = false)
+import static org.assertj.core.api.Assertions.assertThat;
+
 class PaymentControllerTest extends CreatePaymentData {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
-    private ApiService apiService;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private TestPayContainer testPayContainer;
+
+    @BeforeEach
+    void init() {
+        testPayContainer = TestPayContainer.builder()
+                .uuid("testUuid")
+                .paymentKey("testPaymentKey")
+                .build();
+        Member saveMember = testPayContainer.userRepository.save(this.member);
+        testPayContainer.cardService.create(1L, new CardDto.Request(this.card.getNumber(),
+                this.card.getCardPassword(), this.card.getValidThru()));
+        testPayContainer.orderRepository.save(Order.createOrder(saveMember, menuList, money, LocalDateTime.now()));
+    }
 
     @Test
-    public void testKeyIn() throws Exception {
+    public void keyIn으로_카드결제를_한다() throws Exception {
 
-        CardPaymentDto.Response mockResponse = new CardPaymentDto.Response(cardPayment);
+        // given
+        // when
+        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .keyIn(1L, 1L);
 
-        // Serialize the mock response to JSON
-        String mockResponseJson = objectMapper.writeValueAsString(mockResponse);
-        CardPaymentDto.Response parsingCardPayment = JsonParsing.parsePaymentObjectByJson(mockResponseJson);
-        given(apiService.callApi(any(CardPaymentDto.Request.class))).willReturn(parsingCardPayment);
+        // then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.DONE);
+        assertThat(result.getBody().orderUuid()).isEqualTo("testUuid");
+        assertThat(result.getBody().totalAmount()).isEqualTo("3000");
+        assertThat(result.getBody().order().getMember().getName()).isEqualTo("하윤");
+        assertThat(result.getBody().paymentKey()).isEqualTo("testPaymentKey");
+        assertThat(IntStream.range(0, result.getBody().cardNumber().length())
+                .filter(i -> result.getBody().cardNumber().charAt(i) != '*')
+                .allMatch(i -> result.getBody().cardNumber().charAt(i) == this.card.getNumber().charAt(i))).isTrue();
+    }
 
-        CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
+    @Test
+    public void getByOrderId로_결제내역을_조회한다() throws Exception {
 
-        mockMvc.perform(post("/card-payment/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.cardNumber").value("12341234****123*")) //마스킹 범위를 아직 체크 못 함
-                .andExpect(jsonPath("$.orderName").value("커피 외 3개"))
-                .andExpect(jsonPath("$.orderId", endsWith("00000")))
-                .andExpect(jsonPath("$.totalAmount").value("3000.0"))
-                .andExpect(jsonPath("$.method").value("카드"))
-                .andExpect(jsonPath("$.cardNumber", containsString("12341234")));
+        // given
+        PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .keyIn(1L, 1L);
 
+        // when
+        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .getByOrderId("testUuid");
+
+        // then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.DONE);
+        assertThat(result.getBody().orderUuid()).isEqualTo("testUuid");
+        assertThat(result.getBody().order().getOrderPrice().getTotalPrice().toString()).isEqualTo("3000");
+        assertThat(result.getBody().order().getMember().getName()).isEqualTo("하윤");
+        assertThat(result.getBody().cardExpirationYear()).isEqualTo("23");
+        assertThat(result.getBody().cardExpirationMonth()).isEqualTo("10");
+        assertThat(result.getBody().paymentKey()).isEqualTo("testPaymentKey");
+        assertThat(result.getBody().cardNumber()).isEqualTo(this.card.getNumber());
+    }
+
+    @Test
+    public void getByPaymentKey로_결제내역을_조회한다() throws Exception {
+
+        // given
+        PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .keyIn(1L, 1L);
+
+        // when
+        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .getByPaymentKey("testPaymentKey");
+
+        // then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.DONE);
+        assertThat(result.getBody().orderUuid()).isEqualTo("testUuid");
+        assertThat(result.getBody().order().getOrderPrice().getTotalPrice().toString()).isEqualTo("3000");
+        assertThat(result.getBody().order().getMember().getName()).isEqualTo("하윤");
+        assertThat(result.getBody().cardExpirationYear()).isEqualTo("23");
+        assertThat(result.getBody().cardExpirationMonth()).isEqualTo("10");
+        assertThat(result.getBody().paymentKey()).isEqualTo("testPaymentKey");
+        assertThat(result.getBody().cardNumber()).isEqualTo(this.card.getNumber());
     }
 }
