@@ -1,7 +1,6 @@
 package sejong.coffee.yun.domain.delivery;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.Order;
@@ -13,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.DO_NOT_PAID;
+
 
 @Entity
 @Getter
@@ -33,7 +33,6 @@ public abstract class Delivery {
     @Enumerated(value = EnumType.STRING)
     private DeliveryStatus status;
 
-    @Builder
     public Delivery(Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryStatus status) {
         this.order = order;
         this.createAt = createAt;

@@ -20,6 +20,7 @@ public enum ExceptionControl {
     NOT_FOUND_MENU("메뉴를 찾을 수 없습니다."),
     NOT_FOUND_CART("장바구니를 찾을 수 없습니다."),
     INPUT_ERROR("입력 값을 다시 한번 확인해주세요"),
+    DO_NOT_PAID("결제를 하지 않은 상태에서 배달은 불가능합니다"),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),

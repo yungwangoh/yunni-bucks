@@ -82,7 +82,6 @@ public class PayServiceTest extends CreatePaymentData {
 
         //then
         assertThat(byId.getPaymentStatus()).isEqualTo(DONE);
-
     }
 
     @Test

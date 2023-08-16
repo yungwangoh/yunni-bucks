@@ -17,6 +17,7 @@ import java.util.List;
 
 import static sejong.coffee.yun.domain.delivery.QDelivery.delivery;
 
+
 @Repository
 @RequiredArgsConstructor
 public class DeliveryRepositoryImpl implements DeliveryRepository {
