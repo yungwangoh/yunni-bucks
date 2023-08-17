@@ -1,4 +1,4 @@
-package sejong.coffee.yun.repository.redis.fake;
+package sejong.coffee.yun.mock.repository;
 
 import org.springframework.data.redis.core.TimeoutUtils;
 import org.springframework.util.Assert;

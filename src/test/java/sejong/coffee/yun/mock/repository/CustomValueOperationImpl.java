@@ -1,6 +1,4 @@
-package sejong.coffee.yun.repository.redis.fake;
-
-import lombok.extern.slf4j.Slf4j;
+package sejong.coffee.yun.mock.repository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
 public class CustomValueOperationImpl implements CustomValueOperation {
 
     private final Map<String, String> map = new HashMap<>();

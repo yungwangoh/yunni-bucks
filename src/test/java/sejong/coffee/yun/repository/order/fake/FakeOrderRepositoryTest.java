@@ -11,6 +11,7 @@ import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
+import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.math.BigDecimal;

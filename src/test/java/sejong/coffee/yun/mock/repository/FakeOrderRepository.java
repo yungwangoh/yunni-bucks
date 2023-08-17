@@ -1,8 +1,9 @@
-package sejong.coffee.yun.repository.order.fake;
+package sejong.coffee.yun.mock.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
@@ -15,9 +16,10 @@ import java.util.Objects;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_ORDER;
 
+@Repository
 public class FakeOrderRepository implements OrderRepository {
 
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
     private Long id = 0L;
 
     @Override

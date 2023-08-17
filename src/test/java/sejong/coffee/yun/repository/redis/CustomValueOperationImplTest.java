@@ -1,8 +1,8 @@
 package sejong.coffee.yun.repository.redis;
 
 import org.junit.jupiter.api.Test;
-import sejong.coffee.yun.repository.redis.fake.CustomValueOperation;
-import sejong.coffee.yun.repository.redis.fake.CustomValueOperationImpl;
+import sejong.coffee.yun.mock.repository.CustomValueOperation;
+import sejong.coffee.yun.mock.repository.CustomValueOperationImpl;
 
 import java.time.Duration;
 

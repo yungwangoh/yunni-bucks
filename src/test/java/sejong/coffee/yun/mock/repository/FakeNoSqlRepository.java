@@ -1,13 +1,15 @@
-package sejong.coffee.yun.repository.redis.fake;
+package sejong.coffee.yun.mock.repository;
 
-import lombok.RequiredArgsConstructor;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 
 import java.time.Duration;
 
-@RequiredArgsConstructor
 public class FakeNoSqlRepository implements NoSqlRepository {
     private final CustomValueOperation customValueOperation;
+
+    public FakeNoSqlRepository(CustomValueOperation customValueOperation) {
+        this.customValueOperation = customValueOperation;
+    }
 
     @Override
     public void setValues(String key, String value) {
