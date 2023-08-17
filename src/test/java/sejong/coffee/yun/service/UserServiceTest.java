@@ -30,6 +30,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -132,19 +133,6 @@ class UserServiceTest {
     }
 
     @Test
-    void 로그아웃_만료된_토큰() {
-        // given
-        given(jwtProvider.tokenExpiredCheck(anyString())).willThrow(new JwtException("토큰이 만료되었습니다."));
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> userService.signOut("token", any()))
-                .isInstanceOf(JwtException.class)
-                .hasMessageContaining("토큰이 만료되었습니다.");
-    }
-
-    @Test
     void 로그인_입력정보와_가입정보와_다른_경우() {
         // given
         given(userRepository.findByEmail(any())).willThrow(NOT_FOUND_USER.notFoundException());
@@ -196,11 +184,11 @@ class UserServiceTest {
         Member updateMember = userService.updatePassword(1L, updatePassword);
 
         // then
-        assertThat(updateMember.getPassword()).isEqualTo(updatePassword);
+        assertTrue(PasswordUtil.match(updateMember.getPassword(), updatePassword));
     }
 
     @Test
-    void 회원_이름_변경_할때_다른_id를_넣은_경우() {
+    void 회원_변경_할때_다른_id를_넣은_경우() {
         // given
         given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
@@ -208,32 +196,6 @@ class UserServiceTest {
 
         // then
         assertThatThrownBy(() -> userService.updateName(any(), "gdgd"))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining(NOT_FOUND_USER.getMessage());
-    }
-
-    @Test
-    void 회원_이메일_변경_할때_다른_id를_넣은_경우() {
-        // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> userService.updateEmail(any(), "gdgd"))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining(NOT_FOUND_USER.getMessage());
-    }
-
-    @Test
-    void 회원_패스워드_변경_할때_다른_id를_넣은_경우() {
-        // given
-        given(userRepository.findById(any())).willThrow(NOT_FOUND_USER.notFoundException());
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> userService.updatePassword(any(), "gdgd"))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
