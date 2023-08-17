@@ -1,9 +1,11 @@
 package sejong.coffee.yun.mock.repository;
 
+import org.springframework.boot.test.context.TestComponent;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 
 import java.time.Duration;
 
+@TestComponent
 public class FakeNoSqlRepository implements NoSqlRepository {
     private final CustomValueOperation customValueOperation;
 

@@ -1,6 +1,6 @@
 package sejong.coffee.yun.mock.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.boot.test.context.TestComponent;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.repository.user.UserRepository;
 
@@ -10,7 +10,7 @@ import java.util.Objects;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
-@Repository
+@TestComponent
 public class FakeUserRepository implements UserRepository {
 
     private final List<Member> members = new ArrayList<>();
@@ -96,4 +96,7 @@ public class FakeUserRepository implements UserRepository {
                 .orElseThrow(NOT_FOUND_USER::notFoundException);
     }
 
+    public void clear() {
+        this.members.clear();
+    }
 }
