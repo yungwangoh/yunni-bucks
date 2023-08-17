@@ -3,6 +3,7 @@ package sejong.coffee.yun.repository.order.impl;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -20,6 +21,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_ORDE
 import static sejong.coffee.yun.domain.order.QOrder.order;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 
