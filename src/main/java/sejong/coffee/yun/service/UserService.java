@@ -12,7 +12,7 @@ import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.repository.redis.RedisRepository;
+import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
@@ -29,7 +29,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final RedisRepository redisRepository;
+    private final NoSqlRepository redisRepository;
     private final OrderRepository orderRepository;
 
     @Transactional
@@ -45,6 +45,7 @@ public class UserService {
                 .address(address)
                 .money(Money.ZERO)
                 .userRank(UserRank.BRONZE)
+                .orderCount(0)
                 .build();
 
         return userRepository.save(member);
