@@ -3,6 +3,7 @@ package sejong.coffee.yun.repository.delivery.impl;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -23,6 +24,7 @@ import static sejong.coffee.yun.domain.delivery.QReserveDelivery.reserveDelivery
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class DeliveryRepositoryImpl implements DeliveryRepository {
 
