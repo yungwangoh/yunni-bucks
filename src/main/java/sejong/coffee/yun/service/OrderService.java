@@ -12,7 +12,6 @@ import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -27,7 +26,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final Calculator calculator;
     private final UserRepository userRepository;
-    private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
 
     @Transactional
