@@ -9,8 +9,8 @@ import sejong.coffee.yun.dto.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.infra.fake.FakeApiService;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
+import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
-import sejong.coffee.yun.repository.order.fake.FakeOrderRepository;
 import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
 import sejong.coffee.yun.service.PayService;
 
