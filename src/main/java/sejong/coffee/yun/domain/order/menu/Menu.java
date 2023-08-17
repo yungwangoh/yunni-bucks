@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@DiscriminatorColumn
 public abstract class Menu {
 
     @Id @GeneratedValue
@@ -37,6 +38,17 @@ public abstract class Menu {
         this.menuSize = menuSize;
         this.createAt = now;
         this.updateAt = now;
+    }
+
+    protected Menu(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime createAt, LocalDateTime updateAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.nutrients = nutrients;
+        this.menuSize = menuSize;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
     }
 
     public void setUpdateAt(LocalDateTime now) {
