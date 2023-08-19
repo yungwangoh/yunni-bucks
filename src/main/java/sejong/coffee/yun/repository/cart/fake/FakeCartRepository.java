@@ -19,11 +19,15 @@ public class FakeCartRepository implements CartRepository {
 
     @Override
     public Cart save(Cart cart) {
-        Cart newCart = Cart.from(++id, cart);
+        if(cart.getId() == null || cart.getId() == 0L) {
+            Cart newCart = Cart.from(++id, cart);
 
-        carts.add(newCart);
-
-        return newCart;
+            carts.add(newCart);
+            return newCart;
+        }
+        carts.removeIf(c -> Objects.equals(c.getId(), cart.getId()));
+        carts.add(cart);
+        return cart;
     }
 
     @Override
@@ -55,5 +59,9 @@ public class FakeCartRepository implements CartRepository {
     @Override
     public void delete(Cart cart) {
         carts.remove(cart);
+    }
+
+    public void clear() {
+        carts.clear();
     }
 }
