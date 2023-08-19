@@ -24,7 +24,7 @@ public class FakeApiService implements TossApiService {
         this.request = cardPaymentDto;
         this.response = new Response(request.orderUuid(), request.orderName(), maskingCardNumber(request.cardNumber()),
                 request.cardExpirationYear(), request.cardExpirationMonth(), request.amount(), this.paymentKey,
-                PaymentStatus.DONE, request.requestedAt(), request.requestedAt().plusSeconds(5), cardPaymentDto.order());
+                PaymentStatus.DONE, request.requestedAt(), request.requestedAt().plusSeconds(5), cardPaymentDto.order(), null);
 
         return this.response;
     }
