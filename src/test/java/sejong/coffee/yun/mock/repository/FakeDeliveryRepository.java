@@ -84,4 +84,8 @@ public class FakeDeliveryRepository implements DeliveryRepository {
 
         return new PageImpl<>(list, pageable, list.size());
     }
+
+    public void clear() {
+        deliveries.clear();
+    }
 }
