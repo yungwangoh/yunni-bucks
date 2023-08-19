@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
+import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
@@ -61,5 +62,12 @@ public class PayService {
         Card card = cardRepository.findByMemberId(memberId);
 
         return CardPaymentDto.Request.create(card, order, uuidHolder);
+    }
+
+    public CardPayment cancelPayment(String paymentKey, String cancelCode) {
+        CardPayment findCardPayment = payRepository.findByPaymentKeyAndPaymentStatus(paymentKey, DONE);
+        PaymentCancelReason byCode = PaymentCancelReason.getByCode(cancelCode);
+        findCardPayment.cancel(byCode);
+        return findCardPayment;
     }
 }
