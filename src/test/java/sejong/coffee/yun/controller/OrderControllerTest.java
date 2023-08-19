@@ -214,7 +214,7 @@ class OrderControllerTest {
     @Test
     void 유저의_주문내역_주문상태() throws Exception {
         // given
-        given(orderService.findAllByMemberIdAndOrderStatus(any(), anyLong())).willReturn(orderPage);
+        given(orderService.findAllByMemberIdAndOrderStatus(any(), anyLong(), any())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
@@ -229,7 +229,7 @@ class OrderControllerTest {
     @Test
     void 유저의_주문상태_결제상태() throws Exception {
         // given
-        given(orderService.findAllByMemberIdAndPayStatus(any(), anyLong())).willReturn(orderPage);
+        given(orderService.findAllByMemberIdAndPayStatus(any(), anyLong(), any())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when

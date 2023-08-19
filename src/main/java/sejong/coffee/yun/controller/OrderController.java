@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.dto.order.OrderPageDto;
@@ -81,11 +83,13 @@ public class OrderController {
     }
 
     @GetMapping("/{pageNum}/order-status")
-    ResponseEntity<OrderPageDto.Response> findOrderStatusAllByMember(@MemberId Long memberId, @PathVariable int pageNum) {
+    ResponseEntity<OrderPageDto.Response> findOrderStatusAllByMember(@MemberId Long memberId,
+                                                                     @PathVariable int pageNum,
+                                                                     @RequestParam OrderStatus status) {
 
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        Page<Order> orderPage = orderService.findAllByMemberIdAndOrderStatus(pr, memberId);
+        Page<Order> orderPage = orderService.findAllByMemberIdAndOrderStatus(pr, memberId, status);
 
         OrderPageDto.Response response = customMapper.map(orderPage, OrderPageDto.Response.class);
 
@@ -93,11 +97,13 @@ public class OrderController {
     }
 
     @GetMapping("/{pageNum}/paid-status")
-    ResponseEntity<OrderPageDto.Response> findPayStatusAllByMember(@MemberId Long memberId, @PathVariable int pageNum) {
+    ResponseEntity<OrderPageDto.Response> findPayStatusAllByMember(@MemberId Long memberId,
+                                                                   @PathVariable int pageNum,
+                                                                   @RequestParam OrderPayStatus status) {
 
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        Page<Order> orderPage = orderService.findAllByMemberIdAndPayStatus(pr, memberId);
+        Page<Order> orderPage = orderService.findAllByMemberIdAndPayStatus(pr, memberId, status);
 
         OrderPageDto.Response response = customMapper.map(orderPage, OrderPageDto.Response.class);
 

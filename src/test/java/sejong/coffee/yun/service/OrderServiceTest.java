@@ -3,6 +3,8 @@ package sejong.coffee.yun.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
@@ -240,8 +244,9 @@ class OrderServiceTest {
                 .isEqualTo(Money.initialPrice(new BigDecimal(0)).getTotalPrice());
     }
 
-    @Test
-    void 유저가_주문한_내역() {
+    @ParameterizedTest
+    @ValueSource(strings = {"ORDER", "CANCEL"})
+    void 유저가_주문한_내역_주문_상태(OrderStatus status) {
         // given
         PageRequest pr = PageRequest.of(0, 10);
         Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
@@ -249,39 +254,19 @@ class OrderServiceTest {
 
         PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
 
-        given(orderRepository.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+        given(orderRepository.findAllByMemberIdAndOrderStatus(any(), anyLong(), any())).willReturn(orderPage);
 
         // when
-        Page<Order> all = orderService.findAllByMemberId(pr, 1L);
+        Page<Order> all = orderService.findAllByMemberIdAndOrderStatus(pr, 1L, status);
 
         // then
         assertThat(all.getTotalElements()).isEqualTo(1);
         assertThat(all.getTotalPages()).isEqualTo(1);
     }
 
-    @Test
-    void 유저가_주문_취소한_내역() {
-        // given
-        PageRequest pr = PageRequest.of(0, 10);
-        Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
-        order1.cancel();
-
-        List<Order> orders = List.of(order1);
-
-        PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
-
-        given(orderRepository.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
-
-        // when
-        Page<Order> all = orderService.findAllByMemberId(pr, 1L);
-
-        // then
-        assertThat(all.getTotalElements()).isEqualTo(1);
-        assertThat(all.getTotalPages()).isEqualTo(1);
-    }
-
-    @Test
-    void 유저가_주문하고_결제한_내역() {
+    @ParameterizedTest
+    @ValueSource(strings = {"YES", "NO"})
+    void 유저가_주문하고_결제한_내역_결제_상태(OrderPayStatus status) {
         // given
         PageRequest pr = PageRequest.of(0, 10);
         Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
@@ -291,10 +276,10 @@ class OrderServiceTest {
 
         PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
 
-        given(orderRepository.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+        given(orderRepository.findAllByMemberIdAndPayStatus(any(), anyLong(), any())).willReturn(orderPage);
 
         // when
-        Page<Order> all = orderService.findAllByMemberId(pr, 1L);
+        Page<Order> all = orderService.findAllByMemberIdAndPayStatus(pr, 1L, status);
 
         // then
         assertThat(all.getTotalElements()).isEqualTo(1);

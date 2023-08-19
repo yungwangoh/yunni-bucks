@@ -3,6 +3,8 @@ package sejong.coffee.yun.repository.order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 
 import java.util.List;
 
@@ -14,7 +16,6 @@ public interface OrderRepository {
     void delete(Long id);
     Order findByMemberId(Long memberId);
     Page<Order> findAllByMemberId(Pageable pageable, Long memberId);
-    Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId);
-    Page<Order> findAllByMemberIdAndOrderCancelStatus(Pageable pageable, Long memberId);
-    Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId);
+    Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status);
+    Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status);
 }

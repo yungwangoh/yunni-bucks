@@ -106,11 +106,11 @@ public class OrderService {
         return orderRepository.findAllByMemberId(pageable, memberId);
     }
 
-    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId) {
-        return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId);
+    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status) {
+        return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId, status);
     }
 
-    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId) {
-        return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId);
+    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status) {
+        return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId, status);
     }
 }
