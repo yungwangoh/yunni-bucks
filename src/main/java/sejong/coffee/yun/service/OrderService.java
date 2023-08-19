@@ -42,6 +42,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     public void cancel(Long orderId) {
         Order order = orderRepository.findById(orderId);
 
