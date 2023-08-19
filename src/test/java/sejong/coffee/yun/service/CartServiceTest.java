@@ -28,6 +28,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {
@@ -141,16 +142,15 @@ class CartServiceTest {
     }
 
     @Test
-    void 카트를_찾을_수_없을때() {
+    void 카트에_있는_메뉴를_찾을_수_없을때() {
         // given
-        given(cartRepository.findByMember(anyLong())).willThrow(NOT_FOUND_CART.notFoundException());
-        given(menuRepository.findById(anyLong())).willReturn(menu1);
+        given(menuRepository.findById(anyLong())).willThrow(NOT_FOUND_MENU.notFoundException());
 
         // when
 
         // then
         assertThatThrownBy(() -> cartService.addMenu(1L, 1L))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining(NOT_FOUND_CART.getMessage());
+                .hasMessageContaining(NOT_FOUND_MENU.getMessage());
     }
 }
