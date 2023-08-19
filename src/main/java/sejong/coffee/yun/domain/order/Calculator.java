@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import sejong.coffee.yun.domain.discount.policy.DiscountPolicy;
 import sejong.coffee.yun.domain.order.menu.Menu;
-import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.domain.user.Money;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @Component
 @RequiredArgsConstructor
@@ -20,11 +18,11 @@ public class Calculator {
 
     public Money calculateMenus(Member member, List<Menu> menus) {
 
-        checkEmptyMenuList(menus.size());
+        Money initialPrice = Money.initialPrice(new BigDecimal(0));
+
+        if(checkEmptyMenuList(menus.size())) return initialPrice;
 
         double discount = discountPolicy.calculateDiscount(member);
-
-        Money initialPrice = Money.initialPrice(new BigDecimal(0));
 
         menus.forEach(menu -> initialPrice.plus(menu.getPrice()));
 
@@ -35,7 +33,7 @@ public class Calculator {
         return initialPrice;
     }
 
-    private void checkEmptyMenuList(int size) {
-        if(size <= 0) throw EMPTY_MENUS.throwException();
+    private boolean checkEmptyMenuList(int size) {
+        return size <= 0;
     }
 }
