@@ -15,6 +15,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
@@ -219,7 +221,8 @@ class OrderControllerTest {
 
         // when
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/order-status", 0)
-                .header(HttpHeaders.AUTHORIZATION, token));
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("status", OrderStatus.ORDER.name()));
 
         // then
         resultActions.andExpect(status().isOk())
@@ -234,7 +237,8 @@ class OrderControllerTest {
 
         // when
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/paid-status", 0)
-                .header(HttpHeaders.AUTHORIZATION, token));
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("status", OrderPayStatus.YES.name()));
 
         // then
         resultActions.andExpect(status().isOk())
