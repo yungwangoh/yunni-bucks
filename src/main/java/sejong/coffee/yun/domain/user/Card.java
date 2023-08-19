@@ -58,14 +58,18 @@ public class Card {
     }
 
     public String checkCardNumberLength(String cardNumber) {
-        if (cardNumber.length() > 20) {
+        if(!cardNumber.matches("^[0-9]*$")) {
+            throw ExceptionControl.INVALID_CARD_NUMBER_LENGTH.cardException();
+        } else if (cardNumber.length() > 20) {
             throw ExceptionControl.INVALID_CARD_NUMBER_LENGTH.cardException();
         }
         return cardNumber;
     }
 
     public String checkCardPassword(String cardPassword) {
-        if (cardPassword.length() != 4) {
+        if(!cardPassword.matches("^[0-9]*$")) {
+            throw ExceptionControl.INVALID_CARD_PASSWORD.cardException();
+        } else if (cardPassword.length() != 4) {
             throw ExceptionControl.INVALID_CARD_PASSWORD.cardException();
         }
         return cardPassword;
