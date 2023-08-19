@@ -7,9 +7,9 @@ import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.port.UuidHolder;
 
 import javax.persistence.*;
-
 import java.time.LocalDateTime;
 
+import static sejong.coffee.yun.domain.pay.PaymentStatus.*;
 import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
 
 @Entity
@@ -35,6 +35,7 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     private PaymentStatus paymentStatus;
     private LocalDateTime requestedAt;
     private LocalDateTime approvedAt;
+    private PaymentCancelReason cancelReason;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -48,7 +49,7 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[1];
         this.order = order;
         this.paymentType = PaymentType.CARD;
-        this.paymentStatus = PaymentStatus.DONE;
+        this.paymentStatus = DONE;
         this.orderUuid = uuidHolder.random();
     }
 
@@ -109,11 +110,16 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
                 .cardPassword(cardPayment.getCardPassword())
                 .customerName(cardPayment.getCustomerName())
                 .requestedAt(cardPayment.getRequestedAt())
-                .status(PaymentStatus.DONE)
+                .status(DONE)
                 .paymentKey(paymentKey)
                 .approvedAt(approvedAt)
                 .order(cardPayment.getOrder())
                 .orderUuid(cardPayment.getOrderUuid())
                 .build();
+    }
+
+    public void cancel(PaymentCancelReason cancelReason) {
+        this.cancelReason = cancelReason;
+        this.paymentStatus = CANCEL;
     }
 }
