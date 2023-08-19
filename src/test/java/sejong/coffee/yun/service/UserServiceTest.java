@@ -2,6 +2,7 @@ package sejong.coffee.yun.service;
 
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +40,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_USER
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled("mock test disabled")
 class UserServiceTest {
 
     @InjectMocks

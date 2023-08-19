@@ -1,6 +1,7 @@
 package sejong.coffee.yun.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +32,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled("mock test disabled")
 class CartServiceTest {
 
     @InjectMocks

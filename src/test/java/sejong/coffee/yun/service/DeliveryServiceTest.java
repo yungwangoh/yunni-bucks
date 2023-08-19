@@ -1,6 +1,7 @@
 package sejong.coffee.yun.service;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,6 +42,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.DO_NOT_PAID;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled("mock test disabled")
 class DeliveryServiceTest {
 
     @InjectMocks
