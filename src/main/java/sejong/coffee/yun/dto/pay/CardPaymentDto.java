@@ -3,6 +3,7 @@ package sejong.coffee.yun.dto.pay;
 import lombok.Builder;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
+import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.infra.port.UuidHolder;
@@ -64,14 +65,22 @@ public class CardPaymentDto {
             PaymentStatus paymentStatus,
             LocalDateTime requestedAt,
             LocalDateTime approvedAt,
-            Order order
+            Order order,
+            PaymentCancelReason cancelReason
     ) {
         public Response(CardPayment entity) {
             this(entity.getOrderUuid(), entity.getOrder().getName(),
                     entity.getCardNumber(), entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
                     entity.getOrder().getOrderPrice().getTotalPrice().toString(),
                     entity.getPaymentKey(), entity.getPaymentStatus(),
-                    entity.getRequestedAt(), entity.getApprovedAt(), entity.getOrder());
+                    entity.getRequestedAt(), entity.getApprovedAt(), entity.getOrder(), null);
+        }
+
+        public static Response cancel(CardPayment entity) {
+            return new Response(entity.getOrderUuid(), entity.getOrder().getName(), entity.getCardNumber(),
+                    entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
+                    entity.getOrder().getOrderPrice().getTotalPrice().toString(), entity.getPaymentKey(), entity.getPaymentStatus(),
+                    entity.getRequestedAt(), entity.getApprovedAt(), entity.getOrder(), entity.getCancelReason());
         }
     }
 }
