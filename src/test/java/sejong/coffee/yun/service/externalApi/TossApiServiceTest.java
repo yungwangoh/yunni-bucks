@@ -27,8 +27,22 @@ public class TossApiServiceTest extends CreatePaymentData {
         //then
         assertThat(response.orderName()).isEqualTo("커피 외 3개");
         assertThat(response.totalAmount()).isEqualTo("3000");
-        assertThat(response.cardNumber()).containsAnyOf("12341234");
+        assertThat(isMaskingMatch(request.cardNumber(), response.cardNumber())).isTrue();
         assertThat(response.paymentStatus()).isEqualTo(PaymentStatus.DONE);
         assertThat(response.orderUuid()).isEqualTo("asdfasdf");
+    }
+
+    public static boolean isMaskingMatch(String c, String masking) {
+        if (c.length() != masking.length()) {
+            return false; // 길이가 다르면 일치하지 않음
+        }
+
+        for (int i = 0; i < c.length(); i++) {
+            if (masking.charAt(i) != '*' && masking.charAt(i) != c.charAt(i)) {
+                return false; // masking된 문자열과 다른 문자 발견
+            }
+        }
+
+        return true; // 모든 문자가 일치
     }
 }
