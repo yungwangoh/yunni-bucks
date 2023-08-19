@@ -6,13 +6,29 @@ import sejong.coffee.yun.domain.delivery.DeliveryType;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Address;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public class DeliveryDto {
 
-    public record NormalRequest(Long orderId, Address address, LocalDateTime now, DeliveryType type) {}
-    public record ReserveRequest(Long orderId, Address address, LocalDateTime now, LocalDateTime reserveDate, DeliveryType type){}
-    public record UpdateAddressRequest(Long deliveryId, Address address, LocalDateTime now) {}
+    public record NormalRequest(
+            @NotNull Long orderId,
+            @NotNull Address address,
+            @NotNull LocalDateTime now,
+            @NotNull DeliveryType type
+    ) {}
+    public record ReserveRequest(
+            @NotNull Long orderId,
+            @NotNull Address address,
+            @NotNull LocalDateTime now,
+            @NotNull LocalDateTime reserveDate,
+            @NotNull DeliveryType type
+    ){}
+    public record UpdateAddressRequest(
+            @NotNull Long deliveryId,
+            @NotNull Address address,
+            @NotNull LocalDateTime now
+    ) {}
     public record Response(Long deliveryId, Order order, LocalDateTime now,
                            Address address, DeliveryType type, DeliveryStatus status) {
 
