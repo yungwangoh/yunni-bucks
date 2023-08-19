@@ -30,6 +30,7 @@ public enum ExceptionControl {
 
     // Pay
     NOT_FOUND_PAYMENT_TYPE("올바르지 않은 결제 수단입니다."),
+    NOT_MATCHED_CANCEL_STATUS("결제 취소사유가 올바르지 않습니다."),
 
     // PayDetails
     NOT_FOUND_PAY_DETAILS("해당 결제내역이 존재하지 않습니다."),
