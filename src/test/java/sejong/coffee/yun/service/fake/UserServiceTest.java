@@ -16,6 +16,7 @@ import sejong.coffee.yun.mock.repository.CustomValueOperationImpl;
 import sejong.coffee.yun.mock.repository.FakeNoSqlRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
+import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.service.UserService;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_SIGN_OUT;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
@@ -49,6 +51,8 @@ public class UserServiceTest {
     private JwtProvider jwtProvider;
     @Autowired
     private FakeUserRepository userRepository;
+    @Autowired
+    private NoSqlRepository noSqlRepository;
 
     @AfterEach
     void initDB() {
@@ -121,6 +125,7 @@ public class UserServiceTest {
 
         // then
         assertThat(jwtProvider.mapTokenToId("bearer " + token)).isEqualTo(sign.getId());
+        assertThat(noSqlRepository.getValues(String.valueOf(sign.getId()))).isNotNull();
     }
 
     @Test
@@ -142,6 +147,25 @@ public class UserServiceTest {
         assertThatThrownBy(() -> userService.signIn(wrongEmail, wrongPwd))
                 .isInstanceOf(NotMatchUserException.class)
                 .hasMessageContaining(NOT_MATCH_USER.getMessage());
+    }
+
+    @Test
+    void 로그아웃() {
+        // given
+        String name = "홍길동";
+        String email = "qwer1234@naver.com";
+        String pwd = "qwer1234@A";
+        Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
+
+        Member member = userService.signUp(name, email, pwd, address);
+        String token = userService.signIn(email, pwd);
+
+        // when
+        String signOut = userService.signOut(token, member.getId());
+
+        // then
+        assertThat(signOut).isEqualTo(SUCCESS_SIGN_OUT.getMessage());
+        assertThat(noSqlRepository.getValues(token)).isEqualTo("blackList");
     }
 
     @Test
@@ -247,5 +271,4 @@ public class UserServiceTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
-
 }
