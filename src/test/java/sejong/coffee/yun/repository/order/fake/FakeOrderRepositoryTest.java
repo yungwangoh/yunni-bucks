@@ -9,6 +9,8 @@ import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
@@ -158,7 +160,7 @@ class FakeOrderRepositoryTest {
         PageRequest pr = PageRequest.of(1, 10);
 
         // when
-        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderStatus(pr, 1L);
+        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderStatus(pr, 1L, OrderStatus.ORDER);
 
         // then
         assertThat(orders.getTotalPages()).isEqualTo(2);
@@ -176,7 +178,7 @@ class FakeOrderRepositoryTest {
         PageRequest pr = PageRequest.of(1, 10);
 
         // when
-        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderCancelStatus(pr, 1L);
+        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderStatus(pr, 1L, OrderStatus.CANCEL);
 
         // then
         assertThat(orders.getTotalPages()).isEqualTo(2);
@@ -194,7 +196,7 @@ class FakeOrderRepositoryTest {
         PageRequest pr = PageRequest.of(1, 10);
 
         // when
-        Page<Order> orders = orderRepository.findAllByMemberIdAndPayStatus(pr, 1L);
+        Page<Order> orders = orderRepository.findAllByMemberIdAndPayStatus(pr, 1L, OrderPayStatus.YES);
 
         // then
         assertThat(orders.getTotalPages()).isEqualTo(2);

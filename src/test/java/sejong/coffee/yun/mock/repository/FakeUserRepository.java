@@ -18,10 +18,15 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public Member save(Member member) {
-        Member newMember = Member.from(++id, member);
-        members.add(newMember);
+        if(member.getId() == null || member.getId() == 0L) {
+            Member newMember = Member.from(++id, member);
+            members.add(newMember);
 
-        return newMember;
+            return newMember;
+        }
+        members.removeIf(m -> Objects.equals(m.getId(), member.getId()));
+        members.add(member);
+        return member;
     }
 
     @Override

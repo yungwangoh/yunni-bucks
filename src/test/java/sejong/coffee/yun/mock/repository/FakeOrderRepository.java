@@ -68,10 +68,10 @@ public class FakeOrderRepository implements OrderRepository {
     }
 
     @Override
-    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId) {
+    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status) {
         List<Order> orders = this.orders.stream()
                 .filter(order -> Objects.equals(order.getMember().getId(), memberId))
-                .filter(order -> Objects.equals(order.getStatus(), OrderStatus.ORDER))
+                .filter(order -> Objects.equals(order.getStatus(), status))
                 .sorted(Comparator.comparing(Order::getCreateAt))
                 .toList();
 
@@ -79,24 +79,17 @@ public class FakeOrderRepository implements OrderRepository {
     }
 
     @Override
-    public Page<Order> findAllByMemberIdAndOrderCancelStatus(Pageable pageable, Long memberId) {
+    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status) {
         List<Order> orders = this.orders.stream()
                 .filter(order -> Objects.equals(order.getMember().getId(), memberId))
-                .filter(order -> Objects.equals(order.getStatus(), OrderStatus.CANCEL))
+                .filter(order -> Objects.equals(order.getPayStatus(), status))
                 .sorted(Comparator.comparing(Order::getCreateAt))
                 .toList();
 
         return new PageImpl<>(orders, pageable, orders.size());
     }
 
-    @Override
-    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId) {
-        List<Order> orders = this.orders.stream()
-                .filter(order -> Objects.equals(order.getMember().getId(), memberId))
-                .filter(order -> Objects.equals(order.getPayStatus(), OrderPayStatus.YES))
-                .sorted(Comparator.comparing(Order::getCreateAt))
-                .toList();
-
-        return new PageImpl<>(orders, pageable, orders.size());
+    public void clear() {
+        orders.clear();
     }
 }
