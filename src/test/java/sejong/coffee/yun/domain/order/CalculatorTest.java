@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
 
 class CalculatorTest {
 
@@ -69,7 +67,7 @@ class CalculatorTest {
     }
 
     @Test
-    void 메뉴_리스트가_비어있으면_계산을_수행할_수_없다() {
+    void 메뉴_리스트가_비어있으면_0으로_반환한다() {
         // given
         Member member = Member.builder()
                 .address(null)
@@ -81,9 +79,10 @@ class CalculatorTest {
 
         List<Menu> menuList = new ArrayList<>();
 
+        // when
+        Money money = calculator.calculateMenus(member, menuList);
+
         // then
-        assertThatThrownBy(() -> calculator.calculateMenus(member, menuList))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining(EMPTY_MENUS.getMessage());
+        assertThat(money.getTotalPrice()).isEqualTo(Money.ZERO.getTotalPrice());
     }
 }
