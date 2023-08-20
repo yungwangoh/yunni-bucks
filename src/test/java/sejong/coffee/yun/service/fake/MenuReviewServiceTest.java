@@ -133,6 +133,36 @@ public class MenuReviewServiceTest {
     }
 
     @Test
+    void 메뉴_리뷰_삭제_실패_잘못된_회원ID() {
+        // given
+        String review = "맛있어요";
+
+        MenuReview menuReview = menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> menuReviewService.delete(100L, menuReview.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining(NOT_FOUND_MENU_REVIEW.getMessage());
+    }
+
+    @Test
+    void 메뉴_리뷰_삭제_실패_잘못된_리뷰ID() {
+        // given
+        String review = "맛있어요";
+
+        menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> menuReviewService.delete(saveMember.getId(), 100L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining(NOT_FOUND_MENU_REVIEW.getMessage());
+    }
+
+    @Test
     void 메뉴_리뷰_코멘트_수정() {
         // given
         String review = "맛있어요";
@@ -143,7 +173,7 @@ public class MenuReviewServiceTest {
         LocalDateTime updateTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
         // when
-        String updateComment = menuReviewService.updateComment(menuReview.getId(), updateReview, updateTime);
+        String updateComment = menuReviewService.updateComment(saveMember.getId(), menuReview.getId(), updateReview, updateTime);
 
         // then
         assertThat(updateComment).isEqualTo(updateReview);
