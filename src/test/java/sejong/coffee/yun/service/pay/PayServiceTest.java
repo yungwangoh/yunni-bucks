@@ -3,9 +3,12 @@ package sejong.coffee.yun.service.pay;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import sejong.coffee.yun.controller.pay.CreatePaymentData;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
+import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
@@ -24,6 +27,7 @@ import sejong.coffee.yun.service.PayService;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
@@ -141,13 +145,13 @@ public class PayServiceTest extends CreatePaymentData {
         //given
         Long orderId = 1L;
         Long memberId = 1L;
-        Order byId = orderRepository.findById(orderId);
+        orderRepository.findById(orderId);
         userRepository.findById(memberId);
+
         //when
         CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
         CardPayment cardPayment = payService.pay(request);
 
-        System.out.println(cardPayment.getOrder());
         //then
         assertThat(cardPayment.getPaymentKey()).isEqualTo("paypaypaypay_1234");
         assertThat(cardPayment.getOrderUuid()).isEqualTo("qwerqewrqwer");
@@ -156,5 +160,120 @@ public class PayServiceTest extends CreatePaymentData {
 
         Card byMemberId = cardRepository.findByMemberId(memberId);
         assertThat(byMemberId.getMember().getName()).isEqualTo(cardPayment.getCustomerName());
+    }
+
+    @Test
+    void cancelPayment는_결제를_취소한다() throws IOException, InterruptedException {
+        //given
+        CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
+        CardPaymentDto.Response response = fakeApiService.callExternalAPI(request);
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt());
+
+        payRepository.save(approvalPayment);
+
+        //when
+        String cancelCode = "0001";
+        CardPayment cancelPayment = payService.cancelPayment(approvalPayment.getPaymentKey(), cancelCode);
+
+        //then
+        assertThat(cancelPayment.getCancelReason()).isEqualTo(PaymentCancelReason.getByCode(cancelCode));
+        assertThat(cancelPayment.getCancelPaymentAt()).isAfter(cancelPayment.getApprovedAt());
+    }
+    @Test
+    void findAllByUsernameAndPaymentStatus는_필터링된_결제내역을_조회한다() {
+
+        //given
+        Long orderId = 1L;
+        Long memberId = 1L;
+        orderRepository.findById(orderId);
+        userRepository.findById(memberId);
+
+        IntStream.range(0, 10).forEach(i -> {
+                    CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
+                    try {
+                        payService.pay(request);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Page<CardPayment> cardPayments = payService.getAllByUsernameAndPaymentStatus(pageRequest, "하윤");
+
+        //then
+        assertThat(cardPayments.getTotalPages()).isEqualTo(2);
+        assertThat(cardPayments.getTotalElements()).isEqualTo(10);
+        assertThat(cardPayments.getSize()).isEqualTo(5);
+        assertThat(cardPayments
+                .getContent())
+                .extracting("paymentKey")
+                .contains("paypaypaypay_1234");
+    }
+
+    @Test
+    void findAllByUsernameAndPaymentCancelStatus는_필터링된_결제내역을_조회한다() {
+
+        //given
+        Long orderId = 1L;
+        Long memberId = 1L;
+        orderRepository.findById(orderId);
+        userRepository.findById(memberId);
+
+        IntStream.range(0, 10).forEach(i -> {
+                    CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
+                    try {
+                        CardPayment pay = payService.pay(request);
+                        pay.cancel(PaymentCancelReason.NOT_SATISFIED_SERVICE);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Page<CardPayment> cardPayments = payService.getAllByUsernameAndPaymentCancelStatus(pageRequest, "하윤");
+
+        //then
+        assertThat(cardPayments.getTotalPages()).isEqualTo(2);
+        assertThat(cardPayments.getTotalElements()).isEqualTo(10);
+        assertThat(cardPayments.getSize()).isEqualTo(5);
+        assertThat(cardPayments
+                .getContent())
+                .extracting("cancelReason")
+                .contains(PaymentCancelReason.NOT_SATISFIED_SERVICE);
+    }
+
+    @Test
+    void getAllOrderByApprovedAtByDesc는_필터링된_결제내역을_조회한다() {
+
+        //given
+        Long orderId = 1L;
+        Long memberId = 1L;
+        orderRepository.findById(orderId);
+        userRepository.findById(memberId);
+
+        IntStream.range(0, 10).forEach(i -> {
+                    CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
+                    try {
+                        payService.pay(request);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        //when
+        PageRequest pageRequest = PageRequest.of(0, 5);
+        Page<CardPayment> cardPayments = payService.getAllOrderByApprovedAtByDesc(pageRequest);
+
+        //then
+        assertThat(cardPayments.getTotalPages()).isEqualTo(2);
+        assertThat(cardPayments.getTotalElements()).isEqualTo(10);
+        assertThat(cardPayments.getSize()).isEqualTo(5);
+        assertThat(cardPayments.getContent().get(0).getApprovedAt())
+                .isBefore(cardPayments.getContent().get(1).getApprovedAt());
     }
 }
