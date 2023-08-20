@@ -9,8 +9,11 @@ import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
+import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.math.BigDecimal;
@@ -139,14 +142,12 @@ class FakeOrderRepositoryTest {
 
         Order order = Order.createOrder(member, menuList, money, localDateTime);
 
-        Order save = orderRepository.save(order);
-
         // when
         LocalDateTime updateTime = LocalDateTime.of(2023, 9, 11, 5, 11);
-        save.setUpdateAt(updateTime);
+        order.setUpdateAt(updateTime);
 
         // then
-        assertThat(save.getUpdateAt()).isEqualTo(updateTime);
+        assertThat(order.getUpdateAt()).isEqualTo(updateTime);
     }
 
     @Test
@@ -177,7 +178,7 @@ class FakeOrderRepositoryTest {
         PageRequest pr = PageRequest.of(1, 10);
 
         // when
-        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderCancelStatus(pr, 1L);
+        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderStatus(pr, 1L, OrderStatus.CANCEL);
 
         // then
         assertThat(orders.getTotalPages()).isEqualTo(2);
@@ -195,7 +196,7 @@ class FakeOrderRepositoryTest {
         PageRequest pr = PageRequest.of(1, 10);
 
         // when
-        Page<Order> orders = orderRepository.findAllByMemberIdAndPayStatus(pr, 1L);
+        Page<Order> orders = orderRepository.findAllByMemberIdAndPayStatus(pr, 1L, OrderPayStatus.YES);
 
         // then
         assertThat(orders.getTotalPages()).isEqualTo(2);

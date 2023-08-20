@@ -8,6 +8,7 @@ import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;

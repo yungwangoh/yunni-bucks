@@ -6,7 +6,6 @@ import sejong.coffee.yun.dto.menu.MenuDto;
 import java.util.List;
 
 public class CartDto {
-    public record Request() {}
     public record Response(Long cartId, Long memberId, List<MenuDto.Response> menuList) {
 
         public Response(Cart cart) {

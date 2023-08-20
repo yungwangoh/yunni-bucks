@@ -5,5 +5,6 @@ import sejong.coffee.yun.domain.user.Card;
 
 public interface JpaCardRepository extends JpaRepository<Card, Long> {
 
+    // 카드 FK로 회원 찾기
     Card findByMemberId(Long memberId);
 }

@@ -75,7 +75,7 @@ public class Member extends DateTimeEntity {
     }
 
     public void updatePassword(String password) {
-        this.password = password;
+        this.password = PasswordUtil.encryptPassword(password);
     }
 
     public BigDecimal fetchTotalPrice() {

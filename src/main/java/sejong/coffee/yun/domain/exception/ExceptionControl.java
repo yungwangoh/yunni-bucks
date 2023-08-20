@@ -20,7 +20,13 @@ public enum ExceptionControl {
     NOT_FOUND_MENU("메뉴를 찾을 수 없습니다."),
     NOT_FOUND_CART("장바구니를 찾을 수 없습니다."),
     INPUT_ERROR("입력 값을 다시 한번 확인해주세요"),
-    DO_NOT_PAID("결제를 하지 않은 상태에서 배달은 불가능합니다"),
+    DO_NOT_PAID("결제를 하지 않은 상태에서 배달은 불가능합니다."),
+    NOT_FOUND_DELIVERY("배달 내역을 찾을 수 없습니다."),
+    DELIVERY_CANCEL_EXCEPTION("취소할 수 없습니다."),
+    DELIVERY_EXCEPTION("배송할 수 없습니다."),
+    DELIVERY_COMPLETE_EXCEPTION("배송 완료를 할 수 없습니다."),
+    NOT_FOUND_MENU_REVIEW("메뉴 리뷰를 찾을 수 없습니다."),
+    NOT_FOUND_MENU_THUMBNAIL("메뉴 썸네일을 찾을 수 없습니다."),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
@@ -30,7 +36,6 @@ public enum ExceptionControl {
 
     // Pay
     NOT_FOUND_PAYMENT_TYPE("올바르지 않은 결제 수단입니다."),
-    NOT_MATCHED_CANCEL_STATUS("결제 취소사유가 올바르지 않습니다."),
 
     // PayDetails
     NOT_FOUND_PAY_DETAILS("해당 결제내역이 존재하지 않습니다."),

@@ -15,6 +15,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
@@ -214,12 +216,13 @@ class OrderControllerTest {
     @Test
     void 유저의_주문내역_주문상태() throws Exception {
         // given
-        given(orderService.findAllByMemberIdAndOrderStatus(any(), anyLong())).willReturn(orderPage);
+        given(orderService.findAllByMemberIdAndOrderStatus(any(), anyLong(), any())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/order-status", 0)
-                .header(HttpHeaders.AUTHORIZATION, token));
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("status", OrderStatus.ORDER.name()));
 
         // then
         resultActions.andExpect(status().isOk())
@@ -229,12 +232,13 @@ class OrderControllerTest {
     @Test
     void 유저의_주문상태_결제상태() throws Exception {
         // given
-        given(orderService.findAllByMemberIdAndPayStatus(any(), anyLong())).willReturn(orderPage);
+        given(orderService.findAllByMemberIdAndPayStatus(any(), anyLong(), any())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/paid-status", 0)
-                .header(HttpHeaders.AUTHORIZATION, token));
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .param("status", OrderPayStatus.YES.name()));
 
         // then
         resultActions.andExpect(status().isOk())

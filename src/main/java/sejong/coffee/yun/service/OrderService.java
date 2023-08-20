@@ -12,7 +12,6 @@ import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -27,7 +26,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final Calculator calculator;
     private final UserRepository userRepository;
-    private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
 
     @Transactional
@@ -44,6 +42,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    @Transactional
     public void cancel(Long orderId) {
         Order order = orderRepository.findById(orderId);
 
@@ -108,11 +107,11 @@ public class OrderService {
         return orderRepository.findAllByMemberId(pageable, memberId);
     }
 
-    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId) {
-        return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId);
+    public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status) {
+        return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId, status);
     }
 
-    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId) {
-        return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId);
+    public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status) {
+        return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId, status);
     }
 }
