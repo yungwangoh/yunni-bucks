@@ -47,13 +47,18 @@ public class MenuReviewService {
         menuReviewRepository.delete(reviewId);
     }
 
+    @Transactional
+    public void delete(Long memberId, Long reviewId) {
+        menuReviewRepository.delete(memberId, reviewId);
+    }
+
     public Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId) {
         return menuReviewRepository.findAllByMemberId(pageable, memberId);
     }
 
     @Transactional
-    public String updateComment(Long reviewId, String comments, LocalDateTime now) {
-        MenuReview menuReview = menuReviewRepository.findById(reviewId);
+    public String updateComment(Long memberId, Long reviewId, String comments, LocalDateTime now) {
+        MenuReview menuReview = menuReviewRepository.findByMemberIdAndId(memberId, reviewId);
 
         menuReview.updateComment(comments);
 

@@ -43,6 +43,15 @@ public class FakeMenuReviewRepository implements MenuReviewRepository {
     }
 
     @Override
+    public MenuReview findByMemberIdAndId(Long memberId, Long reviewId) {
+        return reviews.stream()
+                .filter(review -> Objects.equals(review.getMember().getId(), memberId))
+                .filter(review -> Objects.equals(review.getId(), reviewId))
+                .findAny()
+                .orElseThrow(NOT_FOUND_MENU_REVIEW::notFoundException);
+    }
+
+    @Override
     public List<MenuReview> findAll() {
         return reviews;
     }
@@ -50,6 +59,17 @@ public class FakeMenuReviewRepository implements MenuReviewRepository {
     @Override
     public void delete(Long reviewId) {
         MenuReview menuReview = reviews.stream()
+                .filter(review -> Objects.equals(review.getId(), reviewId))
+                .findAny()
+                .orElseThrow(NOT_FOUND_MENU_REVIEW::notFoundException);
+
+        reviews.remove(menuReview);
+    }
+
+    @Override
+    public void delete(Long memberId, Long reviewId) {
+        MenuReview menuReview = reviews.stream()
+                .filter(review -> Objects.equals(review.getMember().getId(), memberId))
                 .filter(review -> Objects.equals(review.getId(), reviewId))
                 .findAny()
                 .orElseThrow(NOT_FOUND_MENU_REVIEW::notFoundException);
