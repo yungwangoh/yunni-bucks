@@ -10,7 +10,9 @@ public interface MenuReviewRepository {
 
     MenuReview save(MenuReview menuReview);
     MenuReview findById(Long reviewId);
+    MenuReview findByMemberIdAndId(Long memberId, Long reviewId);
     List<MenuReview> findAll();
     void delete(Long reviewId);
+    void delete(Long memberId, Long reviewId);
     Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId);
 }

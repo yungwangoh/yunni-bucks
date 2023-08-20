@@ -37,6 +37,12 @@ public class MenuRepositoryImpl implements MenuReviewRepository {
     }
 
     @Override
+    public MenuReview findByMemberIdAndId(Long memberId, Long reviewId) {
+        return jpaMenuReviewRepository.findByMemberIdAndId(memberId, reviewId)
+                .orElseThrow(NOT_FOUND_MENU_REVIEW::notFoundException);
+    }
+
+    @Override
     public List<MenuReview> findAll() {
         return jpaMenuReviewRepository.findAll();
     }
@@ -44,7 +50,21 @@ public class MenuRepositoryImpl implements MenuReviewRepository {
     @Override
     @Transactional
     public void delete(Long reviewId) {
-        jpaMenuReviewRepository.deleteById(reviewId);
+        try {
+            jpaMenuReviewRepository.deleteById(reviewId);
+        } catch (Exception e) {
+            throw NOT_FOUND_MENU_REVIEW.notFoundException();
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long memberId, Long reviewId) {
+        try {
+            jpaMenuReviewRepository.deleteByMemberIdAndId(memberId, reviewId);
+        } catch (Exception e) {
+            throw NOT_FOUND_MENU_REVIEW.notFoundException();
+        }
     }
 
     @Override
