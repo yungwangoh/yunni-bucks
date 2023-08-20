@@ -12,9 +12,11 @@ import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.card.CardDto;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
+import sejong.coffee.yun.dto.pay.CardPaymentPageDto;
 import sejong.coffee.yun.mapper.CustomMapper;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +25,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PaymentControllerTest extends CreatePaymentData {
 
     private TestPayContainer testPayContainer;
-
     @BeforeEach
     void init() {
         testPayContainer = TestPayContainer.builder()
@@ -156,7 +157,6 @@ class PaymentControllerTest extends CreatePaymentData {
                 .keyIn(1L, 1L);
 
         // when
-
         // then
         assertThatThrownBy(() -> PaymentController.builder()
                 .payService(testPayContainer.payService)
@@ -165,5 +165,89 @@ class PaymentControllerTest extends CreatePaymentData {
                 .cancelPayment("testPaymentKey", "0005"))
                 .isInstanceOf(ExceptionControl.NOT_MATCHED_CANCEL_STATUS.paymentException().getClass())
                 .hasMessageContaining("결제 취소사유가 올바르지 않습니다.");
+    }
+
+    @Test
+    void getAllByUsernameAndPaymentStatus로_페이징_처리를_한다() {
+
+        //given
+        IntStream.range(0, 10).forEach(i -> {
+            try {
+                PaymentController.builder()
+                        .payService(testPayContainer.payService)
+                        .customMapper(new CustomMapper())
+                        .build()
+                        .keyIn(1L, 1L);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        //when
+        ResponseEntity<CardPaymentPageDto.Response> result = PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .getAllByUsernameAndPaymentStatus(0, "하윤");
+
+        //then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(Objects.requireNonNull(result.getBody()).pageNumber()).isEqualTo(0);
+    }
+
+    @Test
+    void getAllByUsernameAndPaymentCancelStatus로_페이징_처리를_한다() {
+
+        //given
+        IntStream.range(0, 10).forEach(i -> {
+            try {
+                PaymentController.builder()
+                        .payService(testPayContainer.payService)
+                        .customMapper(new CustomMapper())
+                        .build()
+                        .keyIn(1L, 1L);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        //when
+        ResponseEntity<CardPaymentPageDto.Response> result = PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .getAllByUsernameAndPaymentCancelStatus(0, "하윤");
+
+        //then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(Objects.requireNonNull(result.getBody()).pageNumber()).isEqualTo(0);
+    }
+
+    @Test
+    void getAllOrderByApprovedAtByDesc로_페이징_처리를_한다() {
+
+        //given
+        IntStream.range(0, 10).forEach(i -> {
+            try {
+                PaymentController.builder()
+                        .payService(testPayContainer.payService)
+                        .customMapper(new CustomMapper())
+                        .build()
+                        .keyIn(1L, 1L);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        //when
+        ResponseEntity<CardPaymentPageDto.Response> result = PaymentController.builder()
+                .payService(testPayContainer.payService)
+                .customMapper(new CustomMapper())
+                .build()
+                .getAllOrderByApprovedAtByDesc(0);
+
+        //then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(Objects.requireNonNull(result.getBody()).pageNumber()).isEqualTo(0);
     }
 }
