@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/")
+@RequestMapping("/api")
 @Validated
 @Slf4j
 public class MenuReviewController {
@@ -52,18 +52,22 @@ public class MenuReviewController {
     }
 
     @PatchMapping("/reviews/{reviewId}")
-    ResponseEntity<String> updateComment(@PathVariable Long reviewId,
-                                         @RequestParam("comment") String comment) {
+    ResponseEntity<MenuReviewDto.Update.Response> updateComment(@PathVariable Long reviewId,
+                                         @RequestParam("comment") String comment,
+                                         @MemberId Long memberId) {
 
-        String updateComment = menuReviewService.updateComment(reviewId, comment, LocalDateTime.now());
+        String updateComment = menuReviewService.updateComment(memberId, reviewId, comment, LocalDateTime.now());
 
-        return ResponseEntity.ok(updateComment);
+        MenuReviewDto.Update.Response response = new MenuReviewDto.Update.Response(reviewId, updateComment);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/reviews/{reviewId}")
-    ResponseEntity<Void> menuReviewDelete(@PathVariable Long reviewId) {
+    ResponseEntity<Void> menuReviewDelete(@MemberId Long memberId,
+                                          @PathVariable Long reviewId) {
 
-        menuReviewService.delete(reviewId);
+        menuReviewService.delete(memberId, reviewId);
 
         return ResponseEntity.noContent().build();
     }
