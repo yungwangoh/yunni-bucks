@@ -1,10 +1,10 @@
 package sejong.coffee.yun.controller.pay.mock;
 
 import lombok.Builder;
+import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.repository.user.fake.FakeUserRepository;
 import sejong.coffee.yun.service.CardService;
 
 public class TestCardContainer {

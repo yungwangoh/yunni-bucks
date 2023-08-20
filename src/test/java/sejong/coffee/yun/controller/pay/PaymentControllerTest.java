@@ -164,7 +164,7 @@ class PaymentControllerTest extends CreatePaymentData {
                 .build()
                 .cancelPayment("testPaymentKey", "0005"))
                 .isInstanceOf(ExceptionControl.NOT_MATCHED_CANCEL_STATUS.paymentException().getClass())
-                .hasMessageContaining("결제 취소사유가 올바르지 않습니다.");
+                .hasMessageContaining("결제취소 사유가 올바르지 않습니다.");
     }
 
     @Test

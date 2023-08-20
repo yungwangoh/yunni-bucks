@@ -19,7 +19,7 @@ import static sejong.coffee.yun.domain.order.menu.QMenuReview.menuReview;
 
 @Repository
 @RequiredArgsConstructor
-public class MenuRepositoryImpl implements MenuReviewRepository {
+public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
     private final JpaMenuReviewRepository jpaMenuReviewRepository;
