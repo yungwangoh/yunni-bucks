@@ -120,7 +120,7 @@ class DeliveryControllerTest {
         given(deliveryService.save(anyLong(), any(), any(), any())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
-        String toJson = toJson(new DeliveryDto.NormalRequest(anyLong(), any(), any(), any()));
+        String toJson = toJson(new DeliveryDto.NormalRequest(1L, member.getAddress(), LocalDateTime.now(), DeliveryType.NORMAL));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/deliveries")
@@ -140,7 +140,7 @@ class DeliveryControllerTest {
         given(deliveryService.save(anyLong(), any(), any(), any())).willReturn(reserveDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
-        String toJson = toJson(new DeliveryDto.ReserveRequest(anyLong(), any(), any(), any(), any()));
+        String toJson = toJson(new DeliveryDto.ReserveRequest(1L, member.getAddress(), LocalDateTime.now(), LocalDateTime.now(), DeliveryType.RESERVE));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/deliveries/reserve")
@@ -160,7 +160,7 @@ class DeliveryControllerTest {
         given(deliveryService.save(anyLong(), any(), any(), any()))
                 .willThrow(new IllegalArgumentException(DO_NOT_PAID.getMessage()));
 
-        String toJson = toJson(new DeliveryDto.NormalRequest(anyLong(), any(), any(), any()));
+        String toJson = toJson(new DeliveryDto.NormalRequest(1L, member.getAddress(), LocalDateTime.now(), DeliveryType.NORMAL));
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/deliveries")
@@ -180,7 +180,7 @@ class DeliveryControllerTest {
         given(deliveryService.updateAddress(anyLong(), any(), any())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
-        String toJson = toJson(new DeliveryDto.UpdateAddressRequest(anyLong(), any(), any()));
+        String toJson = toJson(new DeliveryDto.UpdateAddressRequest(1L, member.getAddress(), LocalDateTime.now()));
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/deliveries/address")
@@ -199,7 +199,7 @@ class DeliveryControllerTest {
         // given
         given(deliveryService.updateAddress(anyLong(), any(), any())).willThrow(NOT_FOUND_DELIVERY.notFoundException());
 
-        String toJson = toJson(new DeliveryDto.UpdateAddressRequest(anyLong(), any(), any()));
+        String toJson = toJson(new DeliveryDto.UpdateAddressRequest(1L, member.getAddress(), LocalDateTime.now()));
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/deliveries/address")
