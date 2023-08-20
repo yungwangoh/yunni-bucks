@@ -3,14 +3,13 @@ package sejong.coffee.yun.domain.order.menu;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import sejong.coffee.yun.domain.DateTimeEntity;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MenuThumbnail extends DateTimeEntity {
+public class MenuThumbnail {
 
     @Id @GeneratedValue
     private Long id;
