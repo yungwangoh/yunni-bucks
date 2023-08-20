@@ -26,6 +26,7 @@ public enum ExceptionControl {
     DELIVERY_EXCEPTION("배송할 수 없습니다."),
     DELIVERY_COMPLETE_EXCEPTION("배송 완료를 할 수 없습니다."),
     NOT_FOUND_MENU_REVIEW("메뉴 리뷰를 찾을 수 없습니다."),
+    NOT_FOUND_MENU_THUMBNAIL("메뉴 썸네일을 찾을 수 없습니다."),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
