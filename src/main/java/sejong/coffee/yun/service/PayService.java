@@ -2,6 +2,8 @@ package sejong.coffee.yun.service;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.Order;
@@ -47,6 +49,7 @@ public class PayService {
     public List<CardPayment> findAll() {
         return payRepository.findAll();
     }
+
     @Transactional
     public CardPayment pay(CardPaymentDto.Request request) throws IOException, InterruptedException {
 
@@ -69,5 +72,17 @@ public class PayService {
         PaymentCancelReason byCode = PaymentCancelReason.getByCode(cancelCode);
         findCardPayment.cancel(byCode);
         return findCardPayment;
+    }
+
+    public Page<CardPayment> getAllByUsernameAndPaymentStatus(Pageable pageable, String username) {
+        return payRepository.findAllByUsernameAndPaymentStatus(pageable, username);
+    }
+
+    public Page<CardPayment> getAllByUsernameAndPaymentCancelStatus(Pageable pageable, String username) {
+        return payRepository.findAllByUsernameAndPaymentCancelStatus(pageable, username);
+    }
+
+    public Page<CardPayment> getAllOrderByApprovedAtByDesc(Pageable pageable) {
+        return payRepository.findAllOrderByApprovedAtByDesc(pageable);
     }
 }
