@@ -16,7 +16,7 @@ import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidD
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "cardNumber", "cardPassword", "customerName", "cardExpirationYear", "cardExpirationMonth",
-        "paymentKey", "orderUuid", "requestedAt", "approvedAt"})
+        "paymentKey", "orderUuid", "requestedAt", "approvedAt", "paymentStatus"})
 @Table(name = "card_payment")
 public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
@@ -35,6 +35,7 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     private PaymentStatus paymentStatus;
     private LocalDateTime requestedAt;
     private LocalDateTime approvedAt;
+    private LocalDateTime cancelPaymentAt;
     private PaymentCancelReason cancelReason;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -121,5 +122,6 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     public void cancel(PaymentCancelReason cancelReason) {
         this.cancelReason = cancelReason;
         this.paymentStatus = CANCEL;
+        this.cancelPaymentAt = LocalDateTime.now();
     }
 }
