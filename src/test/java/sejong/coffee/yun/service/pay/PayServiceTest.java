@@ -15,14 +15,14 @@ import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.infra.fake.FakeApiService;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
+import sejong.coffee.yun.mock.repository.FakeOrderRepository;
+import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.repository.order.fake.FakeOrderRepository;
 import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.repository.user.fake.FakeUserRepository;
 import sejong.coffee.yun.service.PayService;
 
 import java.io.IOException;

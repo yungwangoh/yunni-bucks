@@ -160,7 +160,7 @@ class FakeOrderRepositoryTest {
         PageRequest pr = PageRequest.of(1, 10);
 
         // when
-        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderStatus(pr, 1L);
+        Page<Order> orders = orderRepository.findAllByMemberIdAndOrderStatus(pr, 1L, OrderStatus.ORDER);
 
         // then
         assertThat(orders.getTotalPages()).isEqualTo(2);
