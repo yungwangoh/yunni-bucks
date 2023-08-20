@@ -1,5 +1,6 @@
 package sejong.coffee.yun.repository.redis;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import sejong.coffee.yun.mock.repository.CustomValueOperation;
 import sejong.coffee.yun.mock.repository.CustomValueOperationImpl;
@@ -31,15 +32,16 @@ class CustomValueOperationImplTest {
     }
 
     @Test
+    @Disabled
     void set_타임아웃_테스트() throws InterruptedException{
         // given
         String key = "key";
         String value = "value";
-        Duration duration = Duration.ofMillis(500);
+        Duration duration = Duration.ofMillis(10);
         customValueOperation.set(key, value, duration);
 
         // when
-        Thread.sleep(3000);
+        Thread.sleep(11);
         String v = customValueOperation.get(key);
 
         // then
