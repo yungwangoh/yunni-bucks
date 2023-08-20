@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_PAY_DETAILS;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_REGISTER_CARD;
 
 public class FakeCardRepository implements CardRepository {
 
@@ -24,6 +24,7 @@ public class FakeCardRepository implements CardRepository {
                     .cardPassword(card.getCardPassword())
                     .member(card.getMember())
                     .validThru(card.getValidThru())
+                    .member(card.getMember())
                     .build();
             data.add(buildCard);
             return buildCard;
@@ -36,7 +37,7 @@ public class FakeCardRepository implements CardRepository {
     @Override
     public Card findById(Long id) {
         return data.stream().filter(element -> element.getId().equals(id)).findAny()
-                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
+                .orElseThrow(NOT_FOUND_REGISTER_CARD::cardException);
     }
 
     @Override
@@ -47,6 +48,6 @@ public class FakeCardRepository implements CardRepository {
     @Override
     public Card findByMemberId(Long memberId) {
         return data.stream().filter(element -> element.getMember().getId().equals(memberId)).findAny()
-                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
+                .orElseThrow(NOT_FOUND_REGISTER_CARD::cardException);
     }
 }

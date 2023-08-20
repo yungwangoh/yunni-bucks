@@ -6,8 +6,8 @@ import sejong.coffee.yun.infra.port.TossApiService;
 
 import java.io.IOException;
 
-import static sejong.coffee.yun.dto.CardPaymentDto.Request;
-import static sejong.coffee.yun.dto.CardPaymentDto.Response;
+import static sejong.coffee.yun.dto.pay.CardPaymentDto.Request;
+import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
 
 @Service
 @RequiredArgsConstructor

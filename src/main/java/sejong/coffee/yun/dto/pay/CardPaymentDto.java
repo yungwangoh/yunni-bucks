@@ -1,8 +1,9 @@
-package sejong.coffee.yun.dto;
+package sejong.coffee.yun.dto.pay;
 
 import lombok.Builder;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
+import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.infra.port.UuidHolder;
@@ -34,12 +35,13 @@ public class CardPaymentDto {
             @NotNull(message = "카드 소유자 번호가없습니다.")
             String customerIdentityNumber,
             String customerName,
-            LocalDateTime requestedAt
+            LocalDateTime requestedAt,
+            Order order
     ) {
         public static Request create(Card card, Order order, UuidHolder uuidHolder) {
             return new CardPaymentDto.Request(card.getNumber(), card.getCardPassword(), parsingCardValidDate(card.getValidThru())[0],
                     parsingCardValidDate(card.getValidThru())[1], uuidHolder.random(), order.getName(), order.getOrderPrice().getTotalPrice().toString(),
-                    card.getMember().getEmail(), card.getMember().getName(), LocalDateTime.now());
+                    card.getMember().getEmail(), card.getMember().getName(), LocalDateTime.now(), order);
         }
 
         public static Request from(CardPayment cardPayment) {
@@ -48,7 +50,7 @@ public class CardPaymentDto {
                     cardPayment.getOrderUuid(), cardPayment.getOrder().getName(),
                     cardPayment.getOrder().getOrderPrice().getTotalPrice().toString(),
                     cardPayment.getOrder().getMember().getEmail().split("@")[0],
-                    cardPayment.getOrder().getMember().getName(), LocalDateTime.now());
+                    cardPayment.getOrder().getMember().getName(), LocalDateTime.now(), cardPayment.getOrder());
         }
     }
 
@@ -56,17 +58,29 @@ public class CardPaymentDto {
             String orderUuid,
             String orderName,
             String cardNumber,
+            String cardExpirationYear,
+            String cardExpirationMonth,
             String totalAmount,
             String paymentKey,
             PaymentStatus paymentStatus,
             LocalDateTime requestedAt,
-            LocalDateTime approvedAt
+            LocalDateTime approvedAt,
+            Order order,
+            PaymentCancelReason cancelReason
     ) {
         public Response(CardPayment entity) {
-            this(entity.getOrder().mapOrderName(), entity.getOrder().getName(),
-                    entity.getCardNumber(), entity.getOrder().getOrderPrice().getTotalPrice().toString(),
+            this(entity.getOrderUuid(), entity.getOrder().getName(),
+                    entity.getCardNumber(), entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
+                    entity.getOrder().getOrderPrice().getTotalPrice().toString(),
                     entity.getPaymentKey(), entity.getPaymentStatus(),
-                    entity.getRequestedAt(), entity.getApprovedAt());
+                    entity.getRequestedAt(), entity.getApprovedAt(), entity.getOrder(), null);
+        }
+
+        public static Response cancel(CardPayment entity) {
+            return new Response(entity.getOrderUuid(), entity.getOrder().getName(), entity.getCardNumber(),
+                    entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
+                    entity.getOrder().getOrderPrice().getTotalPrice().toString(), entity.getPaymentKey(), entity.getPaymentStatus(),
+                    entity.getRequestedAt(), entity.getApprovedAt(), entity.getOrder(), entity.getCancelReason());
         }
     }
 }

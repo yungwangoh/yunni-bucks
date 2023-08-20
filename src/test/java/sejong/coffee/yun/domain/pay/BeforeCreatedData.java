@@ -18,6 +18,8 @@ public class BeforeCreatedData {
     protected final Member member;
     protected final Calculator calculator;
     protected final Card card;
+    protected final List<Menu> menuList;
+    protected final Money money;
     public BeforeCreatedData() {
 
         this.calculator = new Calculator(new PercentPolicy(new RankCondition(), new CouponCondition()));
@@ -43,7 +45,7 @@ public class BeforeCreatedData {
         menu3 = new Bread("소라빵", "소라빵",
                 Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
 
-        List<Menu> menuList = List.of(menu1, menu2, menu3);
+        menuList = List.of(menu1, menu2, menu3);
 
         this.member = Member.builder()
                 .address(address)
@@ -56,7 +58,7 @@ public class BeforeCreatedData {
 
         this.card = new Card("1234123443211239", "23/10", "1234", this.member);
 
-        Money money = calculator.calculateMenus(member, menuList);
+        money = calculator.calculateMenus(member, menuList);
         this.order = Order.createOrder(member, menuList, money, LocalDateTime.now());
     }
 }

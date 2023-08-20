@@ -1,15 +1,21 @@
 package sejong.coffee.yun.repository.pay.fake;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.repository.pay.PayRepository;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_PAY_DETAILS;
+import static sejong.coffee.yun.domain.pay.PaymentStatus.CANCEL;
 import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
 
 public class FakePayRepository implements PayRepository {
@@ -45,7 +51,9 @@ public class FakePayRepository implements PayRepository {
 
     @Override
     public CardPayment findById(long id) {
-        return data.stream().filter(element -> element.getId().equals(id)).findAny()
+        return data.stream()
+                .filter(element -> Objects.equals(element.getId(), id))
+                .findAny()
                 .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 
@@ -55,16 +63,50 @@ public class FakePayRepository implements PayRepository {
     }
 
     @Override
-    public CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus status) {
-        return data.stream().filter(element -> element.getOrderUuid().equals(orderUuid)
-                && element.getPaymentStatus().equals(DONE)).findAny()
+    public CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
+        return data.stream()
+                .filter(element -> Objects.equals(element.getOrderUuid(), orderUuid))
+                .filter(element -> Objects.equals(element.getPaymentStatus(), DONE))
+                .findAny()
                 .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 
     @Override
     public CardPayment findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus) {
-        return data.stream().filter(element -> element.getPaymentKey().equals(paymentKey)
-                && element.getPaymentStatus().equals(DONE)).findAny()
+        return data.stream()
+                .filter(element -> Objects.equals(element.getPaymentKey(), paymentKey))
+                .filter(element -> Objects.equals(element.getPaymentStatus(), DONE))
+                .findAny()
                 .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
+    }
+
+    @Override
+    public Page<CardPayment> findAllByUsernameAndPaymentStatus(Pageable pageable, String username) {
+        return getCardPayments(pageable, username, DONE);
+    }
+
+    @Override
+    public Page<CardPayment> findAllByUsernameAndPaymentCancelStatus(Pageable pageable, String username) {
+        return getCardPayments(pageable, username, CANCEL);
+    }
+
+    @NotNull
+    private Page<CardPayment> getCardPayments(Pageable pageable, String username, PaymentStatus paymentStatus) {
+        List<CardPayment> cardPayments = this.data.stream()
+                .filter(element -> Objects.equals(element.getOrder().getMember().getName(), username))
+                .filter(element -> Objects.equals(element.getPaymentStatus(), paymentStatus))
+                .sorted(Comparator.comparing(CardPayment::getApprovedAt))
+                .toList();
+
+        return new PageImpl<>(cardPayments, pageable, cardPayments.size());
+    }
+
+    @Override
+    public Page<CardPayment> findAllOrderByApprovedAtByDesc(Pageable pageable) {
+        List<CardPayment> cardPayments = this.data.stream()
+                .sorted(Comparator.comparing(CardPayment::getApprovedAt))
+                .toList();
+
+        return new PageImpl<>(cardPayments, pageable, data.size());
     }
 }

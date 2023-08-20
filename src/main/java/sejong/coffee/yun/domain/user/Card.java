@@ -20,9 +20,10 @@ public class Card {
     @Column(name = "card_id")
     private Long id;
     @Column(length = 20)
-    @Length(max = 20)
+    @Length(max = 20, message = "카드번호는 20자리 이하로 입력하세요")
     private String number;
     @Column(length = 4)
+    @Length(max = 4, message = "카드 비밀번호는 4자리로 입력하세요")
     private String cardPassword;
     private String validThru;
 
@@ -33,16 +34,16 @@ public class Card {
     @Builder
     public Card(Long id, String number, String validThru, String cardPassword, Member member) {
         this.id = id;
-        this.number = number;
+        this.number = checkCardNumberLength(number);
         this.validThru = checkExpirationDate(validThru);
-        this.cardPassword = cardPassword;
+        this.cardPassword = checkCardPassword(cardPassword);
         this.member = member;
     }
 
     public Card(String number, String validThru, String cardPassword, Member member) {
-        this.number = number;
-        this.validThru = validThru;
-        this.cardPassword = cardPassword;
+        this.number = checkCardNumberLength(number);
+        this.validThru = checkExpirationDate(validThru);
+        this.cardPassword = checkCardPassword(cardPassword);
         this.member = member;
     }
 
@@ -50,9 +51,36 @@ public class Card {
         String[] splitDateTime = parsingCardValidDate(dateTime);
         int year = Integer.parseInt(splitDateTime[0]);
         int month = Integer.parseInt(splitDateTime[1]);
-        if ((year < LocalDateTime.now().getYear() % 100) && (month > 12 || month < 0)) {
+        if ((year < LocalDateTime.now().getYear() % 100) || (month > 12 || month < 1)) {
             throw ExceptionControl.INVALID_CARD_EXPIRATION_DATE.cardException();
         }
         return dateTime;
+    }
+
+    public String checkCardNumberLength(String cardNumber) {
+        if(!cardNumber.matches("^[0-9]*$")) {
+            throw ExceptionControl.INVALID_CARD_NUMBER_LENGTH.cardException();
+        } else if (cardNumber.length() > 20) {
+            throw ExceptionControl.INVALID_CARD_NUMBER_LENGTH.cardException();
+        }
+        return cardNumber;
+    }
+
+    public String checkCardPassword(String cardPassword) {
+        if(!cardPassword.matches("^[0-9]*$")) {
+            throw ExceptionControl.INVALID_CARD_PASSWORD.cardException();
+        } else if (cardPassword.length() != 4) {
+            throw ExceptionControl.INVALID_CARD_PASSWORD.cardException();
+        }
+        return cardPassword;
+    }
+
+    public static Card createCard(String number, String validThru, String cardPassword, Member member) {
+        return Card.builder()
+                .number(number)
+                .cardPassword(cardPassword)
+                .validThru(validThru)
+                .member(member)
+                .build();
     }
 }

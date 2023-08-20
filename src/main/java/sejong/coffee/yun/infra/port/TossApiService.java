@@ -1,6 +1,6 @@
 package sejong.coffee.yun.infra.port;
 
-import sejong.coffee.yun.dto.CardPaymentDto;
+import sejong.coffee.yun.dto.pay.CardPaymentDto;
 
 import java.io.IOException;
 

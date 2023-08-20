@@ -23,6 +23,7 @@ import static sejong.coffee.yun.domain.delivery.QDelivery.delivery;
 import static sejong.coffee.yun.domain.delivery.QReserveDelivery.reserveDelivery;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
 
+
 @Repository
 @Primary
 @RequiredArgsConstructor

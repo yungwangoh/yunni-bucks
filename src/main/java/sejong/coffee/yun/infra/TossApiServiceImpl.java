@@ -2,7 +2,7 @@ package sejong.coffee.yun.infra;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import sejong.coffee.yun.dto.CardPaymentDto;
+import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.port.TossApiService;
 
 import java.io.IOException;

@@ -1,5 +1,7 @@
 package sejong.coffee.yun.repository.pay;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 
@@ -13,7 +15,13 @@ public interface PayRepository {
 
     List<CardPayment> findAll();
 
-    CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus status);
+    CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus);
+
     CardPayment findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus);
 
+    Page<CardPayment> findAllByUsernameAndPaymentStatus(Pageable pageable, String username);
+
+    Page<CardPayment> findAllByUsernameAndPaymentCancelStatus(Pageable pageable, String username);
+
+    Page<CardPayment> findAllOrderByApprovedAtByDesc(Pageable pageable);
 }

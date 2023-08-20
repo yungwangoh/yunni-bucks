@@ -1,5 +1,6 @@
 package sejong.coffee.yun.repository.pay;
 
+import org.junit.After;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
 import sejong.coffee.yun.repository.pay.jpa.JpaPayRepository;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PayJpaRepositoryTest extends BeforeCreatedData {
 
     @Autowired private JpaPayRepository jpaPayRepository;
+    @Autowired private EntityManager entityManager;
 
     private CardPayment cardPayment;
     private String uuid;
@@ -50,7 +53,7 @@ public class PayJpaRepositoryTest extends BeforeCreatedData {
         CardPayment save = jpaPayRepository.save(approvalPayment);
 
         //then
-        assertThat(save.getId()).isEqualTo(1L);
+        assertThat(save).isEqualTo(approvalPayment);
     }
 
     @Test
@@ -105,5 +108,13 @@ public class PayJpaRepositoryTest extends BeforeCreatedData {
 
         //then
         assertThat(paymentList.size()).isEqualTo(3);
+    }
+
+    @After
+    public void teardown() {
+        jpaPayRepository.deleteAll();
+        this.entityManager
+                .createNativeQuery("TRUNCATE TABLE 'card_payment' RESTART IDENTITY;")
+                .executeUpdate();
     }
 }
