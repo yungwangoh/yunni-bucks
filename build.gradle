@@ -52,6 +52,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.squareup.okhttp3:mockwebserver'
 	implementation 'org.modelmapper:modelmapper:3.1.1'
+	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.14'
 
 	// 3. querydsl dependencies 추가
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
