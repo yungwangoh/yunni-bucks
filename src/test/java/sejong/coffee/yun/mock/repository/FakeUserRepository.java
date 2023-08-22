@@ -5,21 +5,23 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @TestComponent
 public class FakeUserRepository implements UserRepository {
 
-    private final List<Member> members = new ArrayList<>();
-    private Long id = 0L;
+    private final List<Member> members = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong id = new AtomicLong(0);
 
     @Override
     public Member save(Member member) {
         if(member.getId() == null || member.getId() == 0L) {
-            Member newMember = Member.from(++id, member);
+            Member newMember = Member.from(id.incrementAndGet(), member);
             members.add(newMember);
 
             return newMember;

@@ -9,26 +9,29 @@ import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_ORDER;
 
 @TestComponent
 public class FakeOrderRepository implements OrderRepository {
 
-    private final List<Order> orders = new ArrayList<>();
-    private Long id = 0L;
+    private final List<Order> orders = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong id = new AtomicLong(0);
 
     @Override
     public Order save(Order order) {
-        Order newOrder = Order.from(++id, order);
+        if(order.getId() == null || order.getId() == 0L) {
+            Order newOrder = Order.from(id.incrementAndGet(), order);
 
-        orders.add(newOrder);
+            orders.add(newOrder);
 
-        return newOrder;
+            return newOrder;
+        }
+        orders.removeIf(o -> Objects.equals(o.getId(), order.getId()));
+        orders.add(order);
+        return order;
     }
 
     @Override

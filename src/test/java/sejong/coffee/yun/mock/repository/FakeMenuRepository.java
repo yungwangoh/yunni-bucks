@@ -7,27 +7,29 @@ import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU;
 
 @TestComponent
 public class FakeMenuRepository implements MenuRepository {
 
-    private final List<Menu> menuList = new ArrayList<>();
-    private Long id = 0L;
+    private final List<Menu> menuList = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong id = new AtomicLong(0);
 
     @Override
     public Menu save(Menu menu) {
         if(menu.getId() == null || menu.getId() == 0L) {
             if (menu instanceof Bread bread) {
-                Bread newBread = Bread.from(++id, bread);
+                Bread newBread = Bread.from(id.incrementAndGet(), bread);
                 menuList.add(newBread);
 
                 return newBread;
             } else if (menu instanceof Beverage beverage) {
-                Beverage newBeverage = Beverage.from(++id, beverage);
+                Beverage newBeverage = Beverage.from(id.incrementAndGet(), beverage);
                 menuList.add(newBeverage);
 
                 return newBeverage;

@@ -7,32 +7,34 @@ import org.springframework.data.domain.Pageable;
 import sejong.coffee.yun.domain.delivery.*;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
 
 @TestComponent
 public class FakeDeliveryRepository implements DeliveryRepository {
 
-    private final List<Delivery> deliveries = new ArrayList<>();
-    private Long id = 0L;
+    private final List<Delivery> deliveries = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong id = new AtomicLong(0);
 
     @Override
     public Delivery save(Delivery delivery) {
-        Delivery newDelivery;
+        if(delivery.getId() == null || delivery.getId() == 0L) {
+            Delivery newDelivery;
 
-        if(delivery instanceof NormalDelivery) {
-            newDelivery = NormalDelivery.from(++id, (NormalDelivery) delivery);
-        } else {
-            newDelivery = ReserveDelivery.from(++id, (ReserveDelivery) delivery);
+            if (delivery instanceof NormalDelivery) {
+                newDelivery = NormalDelivery.from(id.incrementAndGet(), (NormalDelivery) delivery);
+            } else {
+                newDelivery = ReserveDelivery.from(id.incrementAndGet(), (ReserveDelivery) delivery);
+            }
+
+            deliveries.add(newDelivery);
+            return newDelivery;
         }
-
-        deliveries.add(newDelivery);
-
-        return newDelivery;
+        deliveries.removeIf(d -> Objects.equals(d.getId(), delivery.getId()));
+        deliveries.add(delivery);
+        return delivery;
     }
 
     @Override

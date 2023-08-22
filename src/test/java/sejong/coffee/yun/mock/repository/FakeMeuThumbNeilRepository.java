@@ -5,21 +5,23 @@ import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_THUMBNAIL;
 
 @TestComponent
 public class FakeMeuThumbNeilRepository implements ThumbNailRepository {
 
-    private final List<MenuThumbnail> thumbnails = new ArrayList<>();
-    private Long id = 0L;
+    private final List<MenuThumbnail> thumbnails = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong id = new AtomicLong(0);
 
     @Override
     public MenuThumbnail save(MenuThumbnail menuThumbnail) {
         if(menuThumbnail.getId() == null || menuThumbnail.getId() == 0L) {
-            MenuThumbnail newThumbNail = MenuThumbnail.from(++id, menuThumbnail);
+            MenuThumbnail newThumbNail = MenuThumbnail.from(id.incrementAndGet(), menuThumbnail);
 
             thumbnails.add(newThumbNail);
 

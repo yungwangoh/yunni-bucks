@@ -7,23 +7,21 @@ import org.springframework.data.domain.Pageable;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_REVIEW;
 
 @TestComponent
 public class FakeMenuReviewRepository implements MenuReviewRepository {
 
-    private final List<MenuReview> reviews = new ArrayList<>();
-    private Long id = 0L;
+    private final List<MenuReview> reviews = Collections.synchronizedList(new ArrayList<>());
+    private final AtomicLong id = new AtomicLong(0);
 
     @Override
     public MenuReview save(MenuReview menuReview) {
         if(menuReview.getId() == null || menuReview.getId() == 0L) {
-            MenuReview newMenuReview = MenuReview.from(++id, menuReview);
+            MenuReview newMenuReview = MenuReview.from(id.incrementAndGet(), menuReview);
 
             reviews.add(newMenuReview);
 
