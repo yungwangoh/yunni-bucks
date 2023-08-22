@@ -76,13 +76,24 @@ class CartControllerTest {
         );
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-        menu = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
+
+        menu = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
 
         MenuDto.Response menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
                 menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
 
-        cart = new Cart(member, new ArrayList<>());
+        cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
+
         token = "bearer accessToken";
         response = new CartDto.Response(1L, cart.getMember().getId(), List.of(menuResponse));
 

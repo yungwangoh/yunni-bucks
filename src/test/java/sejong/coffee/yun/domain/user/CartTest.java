@@ -44,19 +44,28 @@ class CartTest {
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
 
-        menu1 = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
-        menu2 = new Beverage("아이스티", "복숭아 아이스티",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
-        menu3 = new Bread("소라빵", "소라빵",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
+        Beverage beverage = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
+
+        menu1 = beverage;
+        menu2 = beverage;
+        menu3 = beverage;
 
     }
 
     @Test
     void 카트에_메뉴를_추가한다() {
         // given
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
 
         // when
         cart.addMenu(menu1);
@@ -68,7 +77,10 @@ class CartTest {
     @Test
     void 카트에_추가된_메뉴가_몇개인지_센다() {
         // given
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
 
         // when
         cart.addMenu(menu1);
@@ -80,7 +92,11 @@ class CartTest {
     @Test
     void 카트에_메뉴를_삭제한다() {
         // given
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
+
         cart.addMenu(menu1);
 
         // when
@@ -93,7 +109,11 @@ class CartTest {
     @Test
     void 메뉴를_삭제할때_메뉴를_찾을_수_없을때_예외() {
         // given
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
+
         cart.addMenu(menu1);
 
         // when
@@ -107,7 +127,10 @@ class CartTest {
     @Test
     void 카트는_10개의_메뉴만_담을_수_있다() {
         // given
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
 
         // when
 
@@ -120,7 +143,10 @@ class CartTest {
     @Test
     void 카트에_있는_메뉴를_주문하고_주문한_메뉴와_카트_메뉴들을_비교() {
         // given
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
 
         cart.addMenu(menu1);
         cart.addMenu(menu2);
@@ -136,7 +162,10 @@ class CartTest {
     @Test
     void 카트가_생성되지않고_메뉴를_추가_제거같은_행위를_할_경우() {
         // given
-        Cart cart = new Cart(member, null);
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(null)
+                .build();
 
         // when
 

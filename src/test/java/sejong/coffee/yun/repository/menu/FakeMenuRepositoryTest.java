@@ -25,8 +25,14 @@ class FakeMenuRepositoryTest {
     void save() {
         // given
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-        Menu beverage = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
+        Beverage beverage = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
 
         // when
         Menu save = menuRepository.save(beverage);
@@ -41,10 +47,16 @@ class FakeMenuRepositoryTest {
     void find() {
         // given
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-        Menu menu = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
+        Beverage beverage = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
 
-        Menu save = menuRepository.save(menu);
+        Menu save = menuRepository.save(beverage);
 
         // when
         Menu findMenu = menuRepository.findById(save.getId());

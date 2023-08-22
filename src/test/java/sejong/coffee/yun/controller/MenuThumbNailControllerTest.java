@@ -64,8 +64,15 @@ class MenuThumbNailControllerTest {
         multipartFile = new MockMultipartFile(name, originalFileName, MediaType.IMAGE_JPEG_VALUE, new FileInputStream(fileUrl));
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-        menu = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
+
+        menu = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
 
         String origin = "test.jpeg";
         String stored = UUID.randomUUID() + "_" + origin;

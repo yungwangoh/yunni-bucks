@@ -86,12 +86,22 @@ class OrderControllerTest {
         );
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-        menu = new Beverage("커피", "에티오피아산 커피",
-                Money.initialPrice(new BigDecimal(1000)), nutrients, MenuSize.M, LocalDateTime.now());
+
+        menu = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
 
         token = "bearer accessToken";
 
-        cart = new Cart(member, List.of(menu));
+        cart = Cart.builder()
+                .member(member)
+                .menuList(List.of(menu))
+                .build();
 
         order = Order.from(1L,
                 Order.createOrder(member, cart.getMenuList(), menu.getPrice(), LocalDateTime.now()));
