@@ -8,6 +8,8 @@ public interface ThumbNailRepository {
 
     MenuThumbnail save(MenuThumbnail menuThumbnail);
     List<MenuThumbnail> findAllByMenuId(Long menuId);
+    MenuThumbnail findByMenuId(Long menuId);
     MenuThumbnail findById(Long thumbnailId);
     void delete(Long thumbnailId);
+    void deleteByMenuId(Long menuId);
 }
