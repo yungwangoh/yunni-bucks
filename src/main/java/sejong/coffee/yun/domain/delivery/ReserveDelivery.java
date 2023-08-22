@@ -1,6 +1,7 @@
 package sejong.coffee.yun.domain.delivery;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.Order;
@@ -20,30 +21,36 @@ public class ReserveDelivery extends Delivery {
     @Column(name = "reserve_at")
     private LocalDateTime reserveAt;
 
-    public ReserveDelivery(LocalDateTime reserveAt) {
-        this.reserveAt = reserveAt;
-    }
-
-    private ReserveDelivery(Order order, LocalDateTime now, Address address,
-                            DeliveryType type, DeliveryStatus status, LocalDateTime reserveAt) {
-
-        super(order, now, address, type, status);
-        this.reserveAt = reserveAt;
-    }
-
-    private ReserveDelivery(Long id, Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status, LocalDateTime reserveAt) {
-        super(id, order, createAt, updateAt, address, type, status);
+    @Builder
+    public ReserveDelivery(Long id, Order order, LocalDateTime now, Address address, DeliveryType type, DeliveryStatus status, LocalDateTime reserveAt) {
+        super(id, order, now, address, type, status);
         this.reserveAt = reserveAt;
     }
 
     public static ReserveDelivery create(Order order, LocalDateTime now, Address address,
                                          DeliveryType type, DeliveryStatus status, LocalDateTime reserveAt) {
 
-        return new ReserveDelivery(order, now, address, type, status, reserveAt);
+        return ReserveDelivery.builder()
+                .order(order)
+                .now(now)
+                .address(address)
+                .type(type)
+                .status(status)
+                .reserveAt(reserveAt)
+                .build();
     }
 
     public static ReserveDelivery from(Long id, ReserveDelivery delivery) {
-        return new ReserveDelivery(id, delivery.getOrder(), delivery.getCreateAt(), delivery.getUpdateAt(), delivery.getAddress(), delivery.getType(), delivery.getStatus(), delivery.getReserveAt());
+        return ReserveDelivery.builder()
+                .id(id)
+                .address(delivery.getAddress())
+                .reserveAt(delivery.getReserveAt())
+                .now(delivery.getCreateAt())
+                .address(delivery.getAddress())
+                .status(delivery.getStatus())
+                .order(delivery.getOrder())
+                .type(delivery.getType())
+                .build();
     }
 
     @Override

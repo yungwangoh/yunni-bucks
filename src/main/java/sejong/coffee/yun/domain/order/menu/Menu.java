@@ -28,9 +28,8 @@ public abstract class Menu {
     @Column(name = "update_at")
     private LocalDateTime updateAt;
 
-    public Menu(String title, String description, Money price,
-                Nutrients nutrients, MenuSize menuSize, LocalDateTime now) {
-
+    public Menu(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
@@ -38,17 +37,6 @@ public abstract class Menu {
         this.menuSize = menuSize;
         this.createAt = now;
         this.updateAt = now;
-    }
-
-    protected Menu(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime createAt, LocalDateTime updateAt) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.nutrients = nutrients;
-        this.menuSize = menuSize;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
     }
 
     public void setUpdateAt(LocalDateTime now) {

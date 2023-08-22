@@ -25,7 +25,10 @@ public class CartService {
 
         Member member = userRepository.findById(memberId);
 
-        Cart cart = new Cart(member, new ArrayList<>());
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
 
         return cartRepository.save(cart);
     }

@@ -33,9 +33,8 @@ public class Coupon implements DiscountType {
     private CouponUse couponUse;
 
     @Builder
-    public Coupon(String name, String identityNumber, LocalDateTime createAt,
-                  LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
-
+    public Coupon(Long id, String name, String identityNumber, LocalDateTime createAt, LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
+        this.id = id;
         this.name = name;
         this.identityNumber = checkValidatedCouponIdentityNumber(identityNumber);
         this.createAt = createAt;
@@ -44,18 +43,16 @@ public class Coupon implements DiscountType {
         this.couponUse = couponUse;
     }
 
-    private Coupon(Long id, String name, String identityNumber, LocalDateTime createAt, LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
-        this.id = id;
-        this.name = name;
-        this.identityNumber = identityNumber;
-        this.createAt = createAt;
-        this.expireAt = expireAt;
-        this.discountRate = discountRate;
-        this.couponUse = couponUse;
-    }
-
     public static Coupon from(Long id, Coupon coupon) {
-        return new Coupon(id, coupon.getName(), coupon.getIdentityNumber(), coupon.getCreateAt(), coupon.getExpireAt(), coupon.getDiscountRate(), coupon.couponUse);
+        return Coupon.builder()
+                .id(id)
+                .identityNumber(coupon.getIdentityNumber())
+                .createAt(coupon.getCreateAt())
+                .couponUse(coupon.getCouponUse())
+                .expireAt(coupon.getExpireAt())
+                .name(coupon.getName())
+                .discountRate(coupon.getDiscountRate())
+                .build();
     }
 
     @Override

@@ -35,27 +35,30 @@ public class Member extends DateTimeEntity {
     private Coupon coupon;
 
     @Builder
-    public Member(String email, String name, String password,
-                  UserRank userRank, Address address, Money money,
-                  Integer orderCount, Coupon coupon) {
-
+    public Member(Long id, String name, String password, String email, UserRank userRank, Address address, Money money, Integer orderCount, Coupon coupon) {
+        this.id = id;
         this.name = name;
         this.password = password;
         this.email = email;
         this.userRank = userRank;
         this.address = address;
         this.money = money;
-        this.coupon = coupon;
         this.orderCount = orderCount;
-    }
-
-    private Member(Long id, Member member) {
-        this(member.email, member.name, member.password, member.userRank, member.address, member.money, member.orderCount, member.coupon);
-        this.id = id;
+        this.coupon = coupon;
     }
 
     public static Member from(Long id, Member member) {
-        return new Member(id, member);
+        return Member.builder()
+                .id(id)
+                .name(member.getName())
+                .password(member.getPassword())
+                .orderCount(member.getOrderCount())
+                .email(member.getEmail())
+                .money(member.getMoney())
+                .userRank(member.getUserRank())
+                .address(member.getAddress())
+                .coupon(member.getCoupon())
+                .build();
     }
 
     public void upgradeUserRank(int orderCount) {

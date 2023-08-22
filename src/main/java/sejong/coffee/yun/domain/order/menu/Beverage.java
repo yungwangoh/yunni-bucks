@@ -1,6 +1,7 @@
 package sejong.coffee.yun.domain.order.menu;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.user.Money;
@@ -15,19 +16,21 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("Beverage")
 public class Beverage extends Menu {
 
-    public Beverage(final String title, final String description,
-                    final Money price, final Nutrients nutrients,
-                    final MenuSize menuSize, final LocalDateTime now) {
-
-        super(title, description, price, nutrients, menuSize, now);
-    }
-
-    private Beverage(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now) {
-        super(id, title, description, price, nutrients, menuSize, now, now);
+    @Builder
+    public Beverage(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now) {
+        super(id, title, description, price, nutrients, menuSize, now);
     }
 
     public static Beverage from(Long id, Beverage beverage) {
-        return new Beverage(id, beverage.getTitle(), beverage.getDescription(), beverage.getPrice(), beverage.getNutrients(), beverage.getMenuSize(), beverage.getCreateAt());
+        return Beverage.builder()
+                .id(id)
+                .title(beverage.getTitle())
+                .description(beverage.getDescription())
+                .price(beverage.getPrice())
+                .nutrients(beverage.getNutrients())
+                .menuSize(beverage.getMenuSize())
+                .now(beverage.getCreateAt())
+                .build();
     }
 }
 

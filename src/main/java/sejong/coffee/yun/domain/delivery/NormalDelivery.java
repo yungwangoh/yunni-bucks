@@ -1,6 +1,7 @@
 package sejong.coffee.yun.domain.delivery;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.Order;
@@ -16,22 +17,32 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("N")
 public class NormalDelivery extends Delivery {
 
-    private NormalDelivery(Order order, LocalDateTime now, Address address, DeliveryType type, DeliveryStatus status) {
-        super(order, now, address, type, status);
-    }
-
-    private NormalDelivery(Long id, Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status) {
-        super(id, order, createAt, updateAt, address, type, status);
+    @Builder
+    public NormalDelivery(Long id, Order order, LocalDateTime now, Address address, DeliveryType type, DeliveryStatus status) {
+        super(id, order, now, address, type, status);
     }
 
     public static NormalDelivery create(Order order, LocalDateTime now, Address address,
                                         DeliveryType type, DeliveryStatus status) {
 
-        return new NormalDelivery(order, now, address, type, status);
+        return NormalDelivery.builder()
+                .order(order)
+                .now(now)
+                .address(address)
+                .type(type)
+                .status(status)
+                .build();
     }
 
     public static NormalDelivery from(Long id, NormalDelivery delivery) {
-        return new NormalDelivery(id, delivery.getOrder(), delivery.getCreateAt(), delivery.getUpdateAt(), delivery.getAddress(), delivery.getType(), delivery.getStatus());
+        return NormalDelivery.builder()
+                .id(id)
+                .type(delivery.getType())
+                .now(delivery.getCreateAt())
+                .address(delivery.getAddress())
+                .order(delivery.getOrder())
+                .status(delivery.getStatus())
+                .build();
     }
 
     @Override

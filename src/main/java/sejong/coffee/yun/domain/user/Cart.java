@@ -1,5 +1,6 @@
 package sejong.coffee.yun.domain.user;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -23,19 +24,19 @@ public class Cart {
     @OneToMany
     private List<Menu> menuList;
 
-    public Cart(Member member, List<Menu> menuList) {
-        this.member = member;
-        this.menuList = menuList;
-    }
-
-    private Cart(Long id, Member member, List<Menu> menuList) {
+    @Builder
+    public Cart(Long id, Member member, List<Menu> menuList) {
         this.id = id;
         this.member = member;
         this.menuList = menuList;
     }
 
     public static Cart from(Long id, Cart cart) {
-        return new Cart(id, cart.getMember(), cart.getMenuList());
+        return Cart.builder()
+                .id(id)
+                .member(cart.getMember())
+                .menuList(cart.getMenuList())
+                .build();
     }
 
     public void addMenu(Menu menu) {

@@ -1,6 +1,7 @@
 package sejong.coffee.yun.domain.order.menu;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.user.Member;
@@ -26,15 +27,8 @@ public class MenuReview {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
 
-    private MenuReview(String comments, Member member, Menu menu, LocalDateTime now) {
-        this.comments = comments;
-        this.member = member;
-        this.menu = menu;
-        this.createAt = now;
-        this.updateAt = now;
-    }
-
-    private MenuReview(Long id, String comments, Member member, Menu menu, LocalDateTime now) {
+    @Builder
+    public MenuReview(Long id, String comments, Member member, Menu menu, LocalDateTime now) {
         this.id = id;
         this.comments = comments;
         this.member = member;
@@ -44,11 +38,22 @@ public class MenuReview {
     }
 
     public static MenuReview create(String comments, Member member, Menu menu, LocalDateTime now) {
-        return new MenuReview(comments, member, menu, now);
+        return MenuReview.builder()
+                .comments(comments)
+                .member(member)
+                .menu(menu)
+                .now(now)
+                .build();
     }
 
     public static MenuReview from(Long id, MenuReview menuReview) {
-        return new MenuReview(id, menuReview.getComments(), menuReview.getMember(), menuReview.getMenu(), menuReview.getCreateAt());
+        return MenuReview.builder()
+                .id(id)
+                .comments(menuReview.getComments())
+                .member(menuReview.getMember())
+                .menu(menuReview.getMenu())
+                .now(menuReview.getCreateAt())
+                .build();
     }
 
     public void updateComment(String comments) {

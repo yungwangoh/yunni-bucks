@@ -31,20 +31,11 @@ public abstract class Delivery {
     @Enumerated(value = EnumType.STRING)
     private DeliveryStatus status;
 
-    public Delivery(Order order, LocalDateTime now, Address address, DeliveryType type, DeliveryStatus status) {
+    protected Delivery(Long id, Order order, LocalDateTime now, Address address, DeliveryType type, DeliveryStatus status) {
+        this.id = id;
         this.order = order;
         this.createAt = now;
         this.updateAt = now;
-        this.address = address;
-        this.type = type;
-        this.status = status;
-    }
-
-     Delivery(Long id, Order order, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status) {
-        this.id = id;
-        this.order = order;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
         this.address = address;
         this.type = type;
         this.status = status;

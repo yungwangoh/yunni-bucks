@@ -1,6 +1,7 @@
 package sejong.coffee.yun.domain.order;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -44,32 +45,31 @@ public class Order {
     @Column(name = "update_at")
     private LocalDateTime updateAt;
 
-    private Order(String name, List<Menu> menuList, Member member,
-                  OrderStatus status, Money orderPrice, OrderPayStatus payStatus,
-                  LocalDateTime now) {
-
+    @Builder
+    public Order(Long id, String name, List<Menu> menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus, LocalDateTime createAt, LocalDateTime updateAt) {
+        this.id = id;
         this.name = name;
         this.menuList = menuList;
         this.member = member;
         this.status = status;
         this.orderPrice = orderPrice;
         this.payStatus = payStatus;
-        this.createAt = now;
-        this.updateAt = now;
-    }
-
-    private Order(Long id, String name, List<Menu> menuList,
-                  Member member, OrderStatus status, Money orderPrice,
-                  OrderPayStatus payStatus, LocalDateTime now) {
-
-        this(name, menuList, member, status, orderPrice, payStatus, now);
-        this.id = id;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
     }
 
     public static Order from(Long id, Order order) {
-        return new Order(id, order.getName(), order.getMenuList(), order.getMember(),
-                order.getStatus(), order.getOrderPrice(), order.getPayStatus(),
-                order.getCreateAt());
+        return Order.builder()
+                .id(id)
+                .name(order.getName())
+                .orderPrice(order.getOrderPrice())
+                .createAt(order.getCreateAt())
+                .menuList(order.getMenuList())
+                .member(order.getMember())
+                .updateAt(order.getUpdateAt())
+                .status(order.getStatus())
+                .payStatus(order.getPayStatus())
+                .build();
     }
 
     public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice, LocalDateTime now) {
@@ -79,7 +79,16 @@ public class Order {
             member.getCoupon().convertStatusUsedCoupon();
         }
 
-        return new Order(orderName, menuList, member, ORDER, orderPrice, OrderPayStatus.NO, now);
+        return Order.builder()
+                .name(orderName)
+                .menuList(menuList)
+                .member(member)
+                .status(ORDER)
+                .payStatus(OrderPayStatus.NO)
+                .orderPrice(orderPrice)
+                .createAt(now)
+                .updateAt(now)
+                .build();
     }
 
     public void completePayment() {
