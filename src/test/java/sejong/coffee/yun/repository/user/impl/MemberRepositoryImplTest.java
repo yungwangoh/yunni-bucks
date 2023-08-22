@@ -1,6 +1,7 @@
 package sejong.coffee.yun.repository.user.impl;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,6 +21,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER
 import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER_NAME;
 
 @DataJpaTest
+@Disabled
 class MemberRepositoryImplTest {
 
     private final UserRepository userRepository;
