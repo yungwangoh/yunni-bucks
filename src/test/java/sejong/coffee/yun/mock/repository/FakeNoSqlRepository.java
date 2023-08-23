@@ -1,11 +1,11 @@
 package sejong.coffee.yun.mock.repository;
 
-import org.springframework.boot.test.context.TestComponent;
+import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 
 import java.time.Duration;
 
-@TestComponent
+@Repository
 public class FakeNoSqlRepository implements NoSqlRepository {
     private final CustomValueOperation customValueOperation;
 
@@ -31,5 +31,10 @@ public class FakeNoSqlRepository implements NoSqlRepository {
     @Override
     public void deleteValues(String key) {
         customValueOperation.remove(key);
+    }
+
+    @Override
+    public void clear() {
+        customValueOperation.clear();
     }
 }

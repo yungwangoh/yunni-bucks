@@ -1,9 +1,9 @@
 package sejong.coffee.yun.mock.repository;
 
-import org.springframework.boot.test.context.TestComponent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_REVIEW;
 
-@TestComponent
+@Repository
 public class FakeMenuReviewRepository implements MenuReviewRepository {
 
     private final List<MenuReview> reviews = Collections.synchronizedList(new ArrayList<>());

@@ -1,6 +1,6 @@
 package sejong.coffee.yun.mock.repository;
 
-import org.springframework.boot.test.context.TestComponent;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@TestComponent
+@Repository
 public class CustomValueOperationImpl implements CustomValueOperation {
 
     private final Map<String, String> map = Collections.synchronizedMap(new HashMap<>());
@@ -35,6 +35,11 @@ public class CustomValueOperationImpl implements CustomValueOperation {
     @Override
     public void remove(String key) {
         map.remove(key);
+    }
+
+    @Override
+    public void clear() {
+        map.clear();
     }
 
     private void await(String key, long timeout, TimeUnit timeUnit) {

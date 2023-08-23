@@ -1,6 +1,6 @@
 package sejong.coffee.yun.mock.repository;
 
-import org.springframework.boot.test.context.TestComponent;
+import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_THUMBNAIL;
 
-@TestComponent
+@Repository
 public class FakeMeuThumbNeilRepository implements ThumbNailRepository {
 
     private final List<MenuThumbnail> thumbnails = Collections.synchronizedList(new ArrayList<>());

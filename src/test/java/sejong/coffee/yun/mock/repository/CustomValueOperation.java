@@ -22,4 +22,5 @@ public interface CustomValueOperation {
     }
     String get(String key);
     void remove(String key);
+    void clear();
 }

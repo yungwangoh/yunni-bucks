@@ -1,9 +1,9 @@
 package sejong.coffee.yun.mock.repository;
 
-import org.springframework.boot.test.context.TestComponent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.delivery.*;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
 
-@TestComponent
+@Repository
 public class FakeDeliveryRepository implements DeliveryRepository {
 
     private final List<Delivery> deliveries = Collections.synchronizedList(new ArrayList<>());
