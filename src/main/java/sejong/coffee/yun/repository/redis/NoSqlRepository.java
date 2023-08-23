@@ -8,4 +8,5 @@ public interface NoSqlRepository {
     void setValues(String key, String value, Duration duration);
     String getValues(String key);
     void deleteValues(String key);
+    void clear();
 }
