@@ -1,11 +1,13 @@
 package sejong.coffee.yun.mock.repository;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 
 import java.time.Duration;
 
 @Repository
+@Primary
 public class FakeNoSqlRepository implements NoSqlRepository {
     private final CustomValueOperation customValueOperation;
 

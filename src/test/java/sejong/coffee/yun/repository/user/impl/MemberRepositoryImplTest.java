@@ -4,23 +4,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import sejong.coffee.yun.domain.exception.DuplicatedEmailException;
 import sejong.coffee.yun.domain.exception.DuplicatedNameException;
 import sejong.coffee.yun.domain.user.Address;
-import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.repository.user.jpa.JpaUserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER_EMAIL;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER_NAME;
 
-@DataJpaTest
 @Disabled
 class MemberRepositoryImplTest {
 
