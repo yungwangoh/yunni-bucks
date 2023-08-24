@@ -1,7 +1,6 @@
 package sejong.coffee.yun.repository.redis;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.Duration;
 
 @Repository
-@Primary
+//@Primary
 @RequiredArgsConstructor
 public class RedisRepository implements NoSqlRepository {
 

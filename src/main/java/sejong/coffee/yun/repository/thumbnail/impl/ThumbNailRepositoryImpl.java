@@ -1,6 +1,7 @@
 package sejong.coffee.yun.repository.thumbnail.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
@@ -12,6 +13,7 @@ import java.util.List;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_THUMBNAIL;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class ThumbNailRepositoryImpl implements ThumbNailRepository {
 

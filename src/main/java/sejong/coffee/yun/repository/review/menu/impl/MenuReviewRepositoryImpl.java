@@ -3,6 +3,7 @@ package sejong.coffee.yun.repository.review.menu.impl;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -18,6 +19,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 import static sejong.coffee.yun.domain.order.menu.QMenuReview.menuReview;
 
 @Repository
+@Primary
 @RequiredArgsConstructor
 public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
