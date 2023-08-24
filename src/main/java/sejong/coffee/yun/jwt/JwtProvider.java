@@ -88,7 +88,7 @@ public class JwtProvider {
             log.info("[expireTime] = {}", claims.getExpiration());
             log.info("[subject] = {}", claims.getSubject());
         } catch (JwtException | NullPointerException e) {
-            log.error("token error!!");
+            log.error("token error!! = {} {}", e.getCause(), e.getMessage());
             return false;
         }
 

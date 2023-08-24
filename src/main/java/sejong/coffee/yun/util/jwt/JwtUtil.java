@@ -8,6 +8,7 @@ import java.util.Base64;
 @Slf4j
 public class JwtUtil {
 
+
     public static String getFormatToken(String jwt) {
         // bearer
         return jwt.split(" ")[1];
