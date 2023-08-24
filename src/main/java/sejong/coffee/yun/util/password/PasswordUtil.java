@@ -36,7 +36,7 @@ public class PasswordUtil {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            md.update((password + SALT).getBytes());
+            md.update((password).getBytes());
             byte[] saltedPassword = md.digest();
 
             str = getToHex(saltedPassword);
