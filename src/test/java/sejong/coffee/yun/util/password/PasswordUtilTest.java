@@ -2,8 +2,6 @@ package sejong.coffee.yun.util.password;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class PasswordUtilTest {
 
     @Test
@@ -16,5 +14,6 @@ class PasswordUtilTest {
 
         // then
         System.out.println("pwd : " + s);
+        PasswordUtil.match(s, pwd);
     }
 }
