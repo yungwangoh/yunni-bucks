@@ -11,6 +11,7 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.util.jwt.JwtUtil;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -48,16 +49,20 @@ public class UserController {
     }
 
     @PostMapping("/sign-in")
-    ResponseEntity<UserDto.Sign.In.Response> signIn(@RequestBody @Valid UserDto.Sign.In.Request request) {
+    ResponseEntity<Void> signIn(@RequestBody @Valid UserDto.Sign.In.Request request) {
         String accessToken = userService.signIn(request.email(), request.password());
 
         UserDto.Sign.In.Response response = customMapper.map(accessToken, UserDto.Sign.In.Response.class);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .header(AUTHORIZATION, JwtUtil.getBearerToken(response.accessToken()))
+                .build();
     }
 
-    @GetMapping("/sign-out")
+    @PostMapping("/sign-out")
     ResponseEntity<String> signOut(@RequestHeader(AUTHORIZATION) String accessToken, @MemberId Long memberId) {
+        log.info("log out = {} {}", accessToken, memberId);
+
         String s = userService.signOut(accessToken, memberId);
 
         return ResponseEntity.ok(s);

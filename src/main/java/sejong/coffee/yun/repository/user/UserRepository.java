@@ -17,4 +17,5 @@ public interface UserRepository {
     void duplicateEmail(String email);
     void duplicateName(String name);
     Member findByEmail(String email);
+    void clear();
 }

@@ -78,14 +78,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void duplicateEmail(String email) {
         if(jpaUserRepository.existsByEmail(email)) {
-            throw DUPLICATE_USER_EMAIL.duplicatedEmailException();
+            throw DUPLICATE_USER_EMAIL.duplicatedException();
         }
     }
 
     @Override
     public void duplicateName(String name) {
         if(jpaUserRepository.existsByName(name)) {
-            throw DUPLICATE_USER_NAME.duplicatedNameException();
+            throw DUPLICATE_USER_NAME.duplicatedException();
         }
     }
 
@@ -94,5 +94,8 @@ public class UserRepositoryImpl implements UserRepository {
                 .orElseThrow(NOT_FOUND_USER::notFoundException);
     }
 
-
+    @Override
+    public void clear() {
+        jpaUserRepository.deleteAll();
+    }
 }

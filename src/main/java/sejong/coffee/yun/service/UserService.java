@@ -1,6 +1,7 @@
 package sejong.coffee.yun.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
+import sejong.coffee.yun.util.jwt.JwtUtil;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
 import java.time.Duration;
@@ -25,11 +27,12 @@ import static sejong.coffee.yun.message.SuccessOrFailMessage.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final NoSqlRepository redisRepository;
+    private final NoSqlRepository noSqlRepository;
     private final OrderRepository orderRepository;
 
     @Transactional
@@ -110,6 +113,7 @@ public class UserService {
             accessToken = userCheck(password, member);
 
         } catch (Exception e) {
+            log.error("login error = {} {}", e.getCause(), e.getMessage());
             throw NOT_MATCH_USER.notMatchUserException();
         }
 
@@ -119,13 +123,15 @@ public class UserService {
     @Transactional
     public String signOut(String accessToken, Long memberId) {
 
-        if(jwtProvider.tokenExpiredCheck(accessToken)) {
+        String token = JwtUtil.getFormatToken(accessToken);
 
-            redisRepository.deleteValues(String.valueOf(memberId));
+        if(jwtProvider.tokenExpiredCheck(token)) {
 
-            Long tokenExpireTime = jwtProvider.getTokenExpireTime(accessToken);
+            noSqlRepository.deleteValues(String.valueOf(memberId));
 
-            redisRepository.setValues(accessToken, "blackList", Duration.ofMillis(tokenExpireTime));
+            Long tokenExpireTime = jwtProvider.getTokenExpireTime(token);
+
+            noSqlRepository.setValues(token, "blackList", Duration.ofMillis(tokenExpireTime));
 
             return SUCCESS_SIGN_OUT.getMessage();
         } else {
@@ -157,7 +163,7 @@ public class UserService {
         accessToken = jwtProvider.createAccessToken(member);
         String refreshToken = jwtProvider.createRefreshToken(member);
 
-        redisRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
+        noSqlRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
 
         return accessToken;
     }
