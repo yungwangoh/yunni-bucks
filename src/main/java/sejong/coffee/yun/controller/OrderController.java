@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.order.Order;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
+@Validated
 public class OrderController {
 
     private final CartService cartService;
