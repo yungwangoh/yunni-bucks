@@ -3,6 +3,7 @@ package sejong.coffee.yun.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.order.menu.Menu;
@@ -15,6 +16,7 @@ import sejong.coffee.yun.service.CartService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/carts")
+@Validated
 public class CartController {
 
     private final CartService cartService;
@@ -66,7 +68,7 @@ public class CartController {
 
         Menu menu = cartService.getMenu(memberId, menuIdx);
 
-        MenuDto.Response response = customMapper.map(menu, MenuDto.Response.class);
+        MenuDto.Response response = new MenuDto.Response(menu);
 
         return ResponseEntity.ok(response);
     }
