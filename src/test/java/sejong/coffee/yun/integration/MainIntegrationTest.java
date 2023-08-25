@@ -64,6 +64,7 @@ public class MainIntegrationTest {
 
     public static final String MEMBER_API_PATH = "/api/members";
     public static final String ORDER_API_PATH = "/api/orders";
+    public static final String CART_API_PATH = "/api/carts";
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -176,6 +177,7 @@ public class MainIntegrationTest {
      * @return access token
      * @throws Exception
      */
+
     public String signInModule() throws Exception {
         String s = toJson(signInRequest());
 
@@ -211,7 +213,7 @@ public class MainIntegrationTest {
         );
     }
 
-    protected static List<FieldDescriptor> getUserFailResponses() {
+    protected static List<FieldDescriptor> getFailResponses() {
         return List.of(
                 fieldWithPath("status").type(JsonFieldType.STRING).description("상태 코드"),
                 fieldWithPath("message").type(JsonFieldType.STRING).description("에러 메세지")
