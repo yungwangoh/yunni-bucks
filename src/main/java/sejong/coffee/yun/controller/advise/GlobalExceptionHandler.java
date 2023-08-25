@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sejong.coffee.yun.domain.exception.*;
 import sejong.coffee.yun.dto.error.ErrorResult;
@@ -14,7 +15,7 @@ import sejong.coffee.yun.dto.error.ErrorResult;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(annotations = RestController.class)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
