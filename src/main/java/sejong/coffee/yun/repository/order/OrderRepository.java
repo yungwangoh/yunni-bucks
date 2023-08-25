@@ -18,4 +18,5 @@ public interface OrderRepository {
     Page<Order> findAllByMemberId(Pageable pageable, Long memberId);
     Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status);
     Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status);
+    void clear();
 }
