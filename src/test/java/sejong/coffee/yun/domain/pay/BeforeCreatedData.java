@@ -60,11 +60,18 @@ public class BeforeCreatedData {
                 .userRank(UserRank.BRONZE)
                 .password("19013141")
                 .name("하윤")
+                .orderCount(0)
                 .build();
 
         this.card = new Card("1234123443211239", "23/10", "1234", this.member);
 
         money = calculator.calculateMenus(member, menuList);
-        this.order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+
+        Cart cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
+                .build();
+
+        this.order = Order.createOrder(member, cart, money, LocalDateTime.now());
     }
 }

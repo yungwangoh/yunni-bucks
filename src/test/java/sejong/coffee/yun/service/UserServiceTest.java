@@ -11,10 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.exception.NotMatchUserException;
 import sejong.coffee.yun.domain.order.Order;
-import sejong.coffee.yun.domain.order.menu.Beverage;
-import sejong.coffee.yun.domain.order.menu.Menu;
-import sejong.coffee.yun.domain.order.menu.MenuSize;
-import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
@@ -25,8 +21,6 @@ import sejong.coffee.yun.repository.redis.RedisRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,21 +62,6 @@ class UserServiceTest {
                 .email("qwer123@naver.com")
                 .orderCount(1)
                 .build();
-
-        Nutrients nutrients = new Nutrients(80, 80, 80, 80);
-
-        Menu menu1 = Beverage.builder()
-                .description("에티오피아산 커피")
-                .title("커피")
-                .price(Money.initialPrice(new BigDecimal(1000)))
-                .nutrients(nutrients)
-                .menuSize(MenuSize.M)
-                .now(LocalDateTime.now())
-                .build();
-
-        List<Menu> menuList = List.of(menu1);
-
-        order = Order.createOrder(member, menuList, null, LocalDateTime.now());
     }
 
     @Test

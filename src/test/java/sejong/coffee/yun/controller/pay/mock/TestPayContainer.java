@@ -9,6 +9,8 @@ import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
+import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
@@ -26,6 +28,7 @@ public class TestPayContainer {
     public final ApiService apiService;
     public final CardService cardService;
     public final UserRepository userRepository;
+    public final CartRepository cartRepository;
 
     @Builder
     public TestPayContainer(String uuid, String paymentKey) {
@@ -33,6 +36,7 @@ public class TestPayContainer {
         this.orderRepository = new FakeOrderRepository();
         this.cardRepository = new FakeCardRepository();
         this.userRepository = new FakeUserRepository();
+        this.cartRepository = new FakeCartRepository();
         this.uuidHolder = new FakeUuidHolder(uuid);
         this.apiService = new ApiService(new FakeApiService(paymentKey));
         this.payService = new PayService(

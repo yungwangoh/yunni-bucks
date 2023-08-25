@@ -18,14 +18,13 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
-import sejong.coffee.yun.domain.user.Address;
-import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mock.repository.FakeDeliveryRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
+import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.DeliveryService;
@@ -47,6 +46,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
         FakeUserRepository.class,
         FakeOrderRepository.class,
         FakeDeliveryRepository.class,
+        FakeCartRepository.class,
         JwtProvider.class
 })
 @TestPropertySource(properties = {
@@ -69,6 +69,10 @@ public class DeliveryServiceTest {
     private OrderRepository orderRepository;
     @Autowired
     private FakeOrderRepository fakeOrderRepository;
+    @Autowired
+    private FakeCartRepository fakeCartRepository;
+    @Autowired
+    private CartRepository cartRepository;
 
     Order order;
     Menu menu;
@@ -101,7 +105,9 @@ public class DeliveryServiceTest {
                 .build();
 
         menuList.add(menu);
-        order = Order.createOrder(saveMember, menuList, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
+
+        Cart cart = cartRepository.save(Cart.builder().member(saveMember).menuList(menuList).build());
+        order = Order.createOrder(saveMember, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
     }
 
     @AfterEach
@@ -109,6 +115,7 @@ public class DeliveryServiceTest {
         fakeDeliveryRepository.clear();
         fakeUserRepository.clear();
         fakeOrderRepository.clear();
+        fakeCartRepository.clear();
     }
 
     @Test

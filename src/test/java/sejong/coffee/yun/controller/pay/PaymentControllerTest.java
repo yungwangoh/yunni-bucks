@@ -9,6 +9,7 @@ import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
+import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.card.CardDto;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
@@ -34,7 +35,9 @@ class PaymentControllerTest extends CreatePaymentData {
         Member saveMember = testPayContainer.userRepository.save(this.member);
         testPayContainer.cardService.create(1L, new CardDto.Request(this.card.getNumber(),
                 this.card.getCardPassword(), this.card.getValidThru()));
-        testPayContainer.orderRepository.save(Order.createOrder(saveMember, menuList, money, LocalDateTime.now()));
+
+        Cart cart = testPayContainer.cartRepository.save(Cart.builder().member(member).menuList(menuList).build());
+        testPayContainer.orderRepository.save(Order.createOrder(saveMember, cart, money, LocalDateTime.now()));
     }
 
     @Test

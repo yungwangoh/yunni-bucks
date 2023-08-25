@@ -119,7 +119,7 @@ public class MainIntegrationTest {
     }
 
     public Order order(Member member, Cart cart) {
-        return Order.createOrder(member, cart.getMenuList(), Money.ZERO, LocalDateTime.now());
+        return Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
     }
 
     public Cart cart(Member member) {

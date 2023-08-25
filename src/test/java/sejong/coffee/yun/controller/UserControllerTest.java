@@ -243,7 +243,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").value(accessToken));
+                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "bearer " + accessToken));
     }
 
     @Test
@@ -272,7 +272,7 @@ class UserControllerTest extends BaseUserControllerTest {
         String accessToken = "token";
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/members/sign-out")
+        ResultActions resultActions = mockMvc.perform(post("/api/members/sign-out")
                 .header(HttpHeaders.AUTHORIZATION, accessToken));
 
         // then
@@ -287,7 +287,7 @@ class UserControllerTest extends BaseUserControllerTest {
         given(userService.signOut(anyString(), any())).willThrow(TOKEN_EXPIRED.tokenExpiredException());
 
         // when
-        ResultActions resultActions = mockMvc.perform(get("/api/members/sign-out")
+        ResultActions resultActions = mockMvc.perform(post("/api/members/sign-out")
                 .header(HttpHeaders.AUTHORIZATION, accessToken));
 
         // then

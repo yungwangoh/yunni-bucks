@@ -21,14 +21,13 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
-import sejong.coffee.yun.domain.user.Address;
-import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mock.repository.FakeMenuRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
+import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.OrderService;
@@ -51,6 +50,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
         Calculator.class,
         PercentPolicy.class,
         RankCondition.class,
+        FakeCartRepository.class,
         FakeMenuRepository.class
 })
 @TestPropertySource(properties = {
@@ -73,8 +73,13 @@ public class OrderServiceTest {
     private MenuRepository menuRepository;
     @Autowired
     private FakeMenuRepository fakeMenuRepository;
+    @Autowired
+    private FakeCartRepository fakeCartRepository;
+    @Autowired
+    private CartRepository cartRepository;
 
     Member member;
+    Cart cart;
     List<Menu> menuList = new ArrayList<>();
 
     @BeforeEach
@@ -100,7 +105,7 @@ public class OrderServiceTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        menuList.add(menu1);
+        menuList.add(menuRepository.save(menu1));
     }
 
     @AfterEach
@@ -108,29 +113,33 @@ public class OrderServiceTest {
         fakeOrderRepository.clear();
         fakeUserRepository.clear();
         fakeMenuRepository.clear();
+        fakeCartRepository.clear();
     }
 
     @Test
     void 주문() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         // when
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(order.getMember()).isEqualTo(save);
-        assertThat(order.getMenuList()).isEqualTo(menuList);
+        assertThat(order.getCart().getMenuList()).isEqualTo(menuList);
     }
 
     @Test
     void 유저가_주문한_시간() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
+
         LocalDateTime orderTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
         // when
-        Order order = orderService.order(save.getId(), menuList, orderTime);
+        Order order = orderService.order(save.getId(), orderTime);
 
         // then
         assertThat(order.getCreateAt()).isEqualTo(orderTime);
@@ -140,7 +149,9 @@ public class OrderServiceTest {
     void 주문을_조회한다() {
         // given
         Member save = userRepository.save(member);
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
+
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         // when
         Order findOrder = orderService.findOrder(order.getId());
@@ -154,8 +165,9 @@ public class OrderServiceTest {
         // given
         int size = 10;
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
-        IntStream.range(0, size).forEach(i -> orderService.order(save.getId(), menuList, LocalDateTime.now()));
+        IntStream.range(0, size).forEach(i -> orderService.order(save.getId(), LocalDateTime.now()));
 
         // when
         List<Order> orders = orderService.findAll();
@@ -168,9 +180,10 @@ public class OrderServiceTest {
     void 주문_수정_시간() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         LocalDateTime initTime = LocalDateTime.now();
-        Order order = orderService.order(save.getId(), menuList, initTime);
+        Order order = orderService.order(save.getId(), initTime);
 
         LocalDateTime updateTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
@@ -185,9 +198,10 @@ public class OrderServiceTest {
     void 주문_총_금액_확인() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         // when
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(order.fetchTotalOrderPrice()).isEqualTo(menuList.get(0).getPrice().getTotalPrice());
@@ -197,9 +211,10 @@ public class OrderServiceTest {
     void 주문명_확인() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         // when
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(order.getName()).isEqualTo(menuList.get(0).getTitle() + " 외 " + menuList.size() + "개");
@@ -209,9 +224,10 @@ public class OrderServiceTest {
     void 유저가_주문_하고_주문_개수_확인() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         // when
-        orderService.order(save.getId(), menuList, LocalDateTime.now());
+        orderService.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(save.getOrderCount()).isEqualTo(1);
@@ -221,8 +237,9 @@ public class OrderServiceTest {
     void 유저가_주문취소된_상태에서_메뉴_수정할_때_예외() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         Menu menu = menuRepository.save(menuList.get(0));
 
@@ -239,8 +256,9 @@ public class OrderServiceTest {
     void 유저가_결제가된_상태에서_메뉴_수정할_때_예외() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         Menu menu = menuRepository.save(menuList.get(0));
 
@@ -257,8 +275,9 @@ public class OrderServiceTest {
     void 유저가_주문을_변경한다_메뉴추가() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         Menu menu = menuRepository.save(menuList.get(0));
 
@@ -266,15 +285,16 @@ public class OrderServiceTest {
         Order addMenu = orderService.updateAddMenu(save.getId(), menu.getId(), LocalDateTime.now());
 
         // then
-        assertThat(order.getMenuList().size()).isEqualTo(2);
+        assertThat(order.getCart().getMenuList().size()).isEqualTo(2);
     }
 
     @Test
     void 유저가_주문을_변경한다_메뉴삭제() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
-        Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+        Order order = orderService.order(save.getId(), LocalDateTime.now());
 
         Menu menu = menuRepository.save(menuList.get(0));
 
@@ -282,15 +302,16 @@ public class OrderServiceTest {
         Order removeMenu = orderService.updateRemoveMenu(save.getId(), 0, LocalDateTime.now());
 
         // then
-        assertThat(removeMenu.getMenuList().size()).isEqualTo(0);
+        assertThat(removeMenu.getCart().getMenuList().size()).isEqualTo(0);
     }
 
     @Test
     void 유저가_주문한_내역() {
         // given
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
-        orderService.order(save.getId(), menuList, LocalDateTime.now());
+        orderService.order(save.getId(), LocalDateTime.now());
 
         PageRequest pr = PageRequest.of(0,10);
 
@@ -309,15 +330,16 @@ public class OrderServiceTest {
         // given
         int statusCount = 10;
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         IntStream.range(0, statusCount).forEach(i -> {
-            Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+            Order order = orderService.order(save.getId(), LocalDateTime.now());
 
             order.cancel();
         });
 
         IntStream.range(0, statusCount).forEach(i -> {
-            orderService.order(save.getId(), menuList, LocalDateTime.now());
+            orderService.order(save.getId(), LocalDateTime.now());
         });
 
         PageRequest pr = PageRequest.of(0, 10);
@@ -335,15 +357,16 @@ public class OrderServiceTest {
         // given
         int statusCount = 10;
         Member save = userRepository.save(member);
+        cartRepository.save(Cart.builder().member(save).menuList(menuList).build());
 
         IntStream.range(0, statusCount).forEach(i -> {
-            Order order = orderService.order(save.getId(), menuList, LocalDateTime.now());
+            Order order = orderService.order(save.getId(), LocalDateTime.now());
 
             order.completePayment();
         });
 
         IntStream.range(0, statusCount).forEach(i -> {
-            orderService.order(save.getId(), menuList, LocalDateTime.now());
+            orderService.order(save.getId(), LocalDateTime.now());
         });
 
         PageRequest pr = PageRequest.of(0, 10);

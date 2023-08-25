@@ -42,7 +42,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order findByMemberId(Long memberId) {
-        return jpaOrderRepository.findByMemberId(memberId)
+        return jpaOrderRepository.findByCartMemberId(memberId)
                 .orElseThrow(NOT_FOUND_ORDER::notFoundException);
     }
 
@@ -60,7 +60,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
         List<Order> orders = jpaQueryFactory.selectFrom(order)
-                .where(order.member.id.eq(memberId))
+                .where(order.cart.member.id.eq(memberId))
                 .orderBy(order.createAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -75,7 +75,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status) {
         List<Order> orders = jpaQueryFactory.selectFrom(order)
-                .where(order.member.id.eq(memberId))
+                .where(order.cart.member.id.eq(memberId))
                 .where(order.status.eq(status))
                 .orderBy(order.createAt.desc())
                 .offset(pageable.getOffset())
@@ -91,7 +91,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status) {
         List<Order> orders = jpaQueryFactory.selectFrom(order)
-                .where(order.member.id.eq(memberId))
+                .where(order.cart.member.id.eq(memberId))
                 .where(order.payStatus.eq(status))
                 .orderBy(order.createAt.desc())
                 .offset(pageable.getOffset())

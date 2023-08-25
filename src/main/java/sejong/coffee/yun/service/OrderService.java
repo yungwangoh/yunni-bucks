@@ -10,11 +10,11 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.domain.order.menu.Menu;
-import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Money;
+import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,19 +25,17 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final Calculator calculator;
-    private final UserRepository userRepository;
     private final MenuRepository menuRepository;
+    private final CartRepository cartRepository;
 
     @Transactional
-    public Order order(Long memberId, List<Menu> menuList, LocalDateTime now) {
+    public Order order(Long memberId, LocalDateTime now) {
 
-        Member member = userRepository.findById(memberId);
+        Cart cart = cartRepository.findByMember(memberId);
 
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(cart.getMember(), cart.getMenuList());
 
-        member.addOrderCount();
-
-        Order order = Order.createOrder(member, menuList, money, now);
+        Order order = Order.createOrder(cart.getMember(), cart, money, now);
 
         return orderRepository.save(order);
     }
@@ -66,7 +64,7 @@ public class OrderService {
 
             order.addMenu(menu);
 
-            Money money = calculator.calculateMenus(order.getMember(), order.getMenuList());
+            Money money = calculator.calculateMenus(order.getCart().getMember(), order.getCart().getMenuList());
 
             order.updatePrice(money);
 
@@ -86,7 +84,7 @@ public class OrderService {
         if(order.getStatus() == OrderStatus.ORDER && order.getPayStatus() == OrderPayStatus.NO) {
             order.removeMenu(menuIdx);
 
-            Money money = calculator.calculateMenus(order.getMember(), order.getMenuList());
+            Money money = calculator.calculateMenus(order.getCart().getMember(), order.getCart().getMenuList());
 
             order.updatePrice(money);
 

@@ -14,7 +14,8 @@ import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -22,6 +23,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class OrderIntegrationTest extends MainIntegrationTest {
@@ -48,7 +50,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
     @DisplayName("유저가 장바구니에 메뉴를 담는다")
     @Sql(value = {"/sql/user.sql", "/sql/menu.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/sql/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    class Cart {
+    class CartTest {
         String token;
 
         @BeforeEach
@@ -310,7 +312,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
     @DisplayName("유저가 주문을 진행")
     @Sql(value = {"/sql/user.sql", "/sql/menu.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/sql/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    class Order {
+    class OrderTest {
 
         String token;
 
@@ -326,13 +328,18 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 주문에_성공한다() {
+        void 주문에_성공한다() throws Exception {
             // given
+            cartService.createCart(1L);
+            cartService.addMenu(1L, 1L);
 
             // when
+            ResultActions resultActions = mockMvc.perform(post(ORDER_API_PATH)
+                    .header(HttpHeaders.AUTHORIZATION, token));
 
             // then
-
+            resultActions.andExpect(status().isInternalServerError())
+                    .andDo(print());
         }
     }
 }

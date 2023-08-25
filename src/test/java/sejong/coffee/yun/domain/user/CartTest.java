@@ -40,6 +40,7 @@ class CartTest {
             .userRank(UserRank.BRONZE)
             .password("qwer1234")
             .name("윤광오")
+            .orderCount(0)
             .build();
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
@@ -153,10 +154,10 @@ class CartTest {
         cart.addMenu(menu3);
 
         // when
-        Order order = Order.createOrder(member, cart.getMenuList(), Money.ZERO, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
 
         // then
-        assertThat(order.getMenuList()).isEqualTo(cart.getMenuList());
+        assertThat(order.getCart().getMenuList()).isEqualTo(cart.getMenuList());
     }
 
     @Test

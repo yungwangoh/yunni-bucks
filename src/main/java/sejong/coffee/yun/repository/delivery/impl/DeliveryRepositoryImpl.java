@@ -57,7 +57,7 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Page<Delivery> findByMemberId(Pageable pageable, Long memberId) {
         List<Delivery> deliveries = jpaQueryFactory.selectFrom(delivery)
-                .where(delivery.order.member.id.eq(memberId)).fetchJoin()
+                .where(delivery.order.cart.member.id.eq(memberId)).fetchJoin()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(delivery.createAt.desc())
@@ -72,7 +72,7 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Page<Delivery> findDeliveryTypeByMemberId(Pageable pageable, Long memberId, DeliveryType type) {
         List<Delivery> deliveries = jpaQueryFactory.selectFrom(delivery)
-                .where(delivery.order.member.id.eq(memberId)).fetchJoin()
+                .where(delivery.order.cart.member.id.eq(memberId)).fetchJoin()
                 .where(delivery.type.eq(type))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -88,7 +88,7 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Page<Delivery> findDeliveryStatusByMemberId(Pageable pageable, Long memberId, DeliveryStatus status) {
         List<Delivery> deliveries = jpaQueryFactory.selectFrom(delivery)
-                .where(delivery.order.member.id.eq(memberId)).fetchJoin()
+                .where(delivery.order.cart.member.id.eq(memberId)).fetchJoin()
                 .where(delivery.status.eq(status))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

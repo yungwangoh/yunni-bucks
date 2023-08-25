@@ -11,9 +11,14 @@ import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
-import sejong.coffee.yun.domain.order.menu.*;
+import sejong.coffee.yun.domain.order.menu.Beverage;
+import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.order.menu.MenuSize;
+import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
+import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.math.BigDecimal;
@@ -26,10 +31,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FakeOrderRepositoryTest {
 
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
     private final Calculator calculator;
 
     public FakeOrderRepositoryTest() {
         this.orderRepository = new FakeOrderRepository();
+        this.cartRepository = new FakeCartRepository();
         calculator = new Calculator(new PercentPolicy(new RankCondition(), new CouponCondition()));
     }
 
@@ -39,6 +46,7 @@ class FakeOrderRepositoryTest {
     private Menu menu2;
     private Menu menu3;
     private List<Menu> menuList;
+    private Cart cart;
 
     @BeforeEach
     void init() {
@@ -74,9 +82,17 @@ class FakeOrderRepositoryTest {
                 .address(null)
                 .coupon(coupon)
                 .email("qwer1234@naver.com")
+                .orderCount(0)
                 .build());
 
         menuList = List.of(menu1, menu2, menu3);
+
+        cart = cartRepository.save(
+                Cart.builder()
+                .member(member)
+                .menuList(menuList)
+                .build()
+        );
     }
 
     @Test
@@ -84,7 +100,7 @@ class FakeOrderRepositoryTest {
         // given
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
 
         // when
         Order save = orderRepository.save(order);
@@ -98,7 +114,7 @@ class FakeOrderRepositoryTest {
         // given
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
         Order save = orderRepository.save(order);
 
         // when
@@ -113,7 +129,7 @@ class FakeOrderRepositoryTest {
         // given
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
         orderRepository.save(order);
 
         // when
@@ -130,7 +146,7 @@ class FakeOrderRepositoryTest {
 
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money, localDateTime);
+        Order order = Order.createOrder(member, cart, money, localDateTime);
 
         // when
         Order save = orderRepository.save(order);
@@ -146,7 +162,7 @@ class FakeOrderRepositoryTest {
 
         Money money = calculator.calculateMenus(member, menuList);
 
-        Order order = Order.createOrder(member, menuList, money, localDateTime);
+        Order order = Order.createOrder(member, cart, money, localDateTime);
 
         // when
         LocalDateTime updateTime = LocalDateTime.of(2023, 9, 11, 5, 11);
@@ -159,7 +175,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 유저가_주문한_내역() {
         // given
-        Order order = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
 
         IntStream.range(0, 20).forEach(i -> orderRepository.save(order));
 
@@ -176,7 +192,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 유저가_주문_취소한_내역() {
         // given
-        Order order = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
         order.cancel();
 
         IntStream.range(0, 20).forEach(i -> orderRepository.save(order));
@@ -194,7 +210,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 유저가_주문하고_결제한_내역() {
         // given
-        Order order = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
         order.completePayment();
 
         IntStream.range(0, 20).forEach(i -> orderRepository.save(order));

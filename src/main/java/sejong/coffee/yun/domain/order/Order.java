@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.CartControl;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
@@ -30,11 +31,9 @@ public class Order {
     private Long id;
     @Column(name = "order_name")
     private String name;
-    @OneToMany
-    private List<Menu> menuList;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus status;
     private Money orderPrice;
@@ -46,11 +45,10 @@ public class Order {
     private LocalDateTime updateAt;
 
     @Builder
-    public Order(Long id, String name, List<Menu> menuList, Member member, OrderStatus status, Money orderPrice, OrderPayStatus payStatus, LocalDateTime createAt, LocalDateTime updateAt) {
+    public Order(Long id, String name, Cart cart, OrderStatus status, Money orderPrice, OrderPayStatus payStatus, LocalDateTime createAt, LocalDateTime updateAt) {
         this.id = id;
         this.name = name;
-        this.menuList = menuList;
-        this.member = member;
+        this.cart = cart;
         this.status = status;
         this.orderPrice = orderPrice;
         this.payStatus = payStatus;
@@ -64,25 +62,25 @@ public class Order {
                 .name(order.getName())
                 .orderPrice(order.getOrderPrice())
                 .createAt(order.getCreateAt())
-                .menuList(order.getMenuList())
-                .member(order.getMember())
+                .cart(order.getCart())
                 .updateAt(order.getUpdateAt())
                 .status(order.getStatus())
                 .payStatus(order.getPayStatus())
                 .build();
     }
 
-    public static Order createOrder(Member member, List<Menu> menuList, Money orderPrice, LocalDateTime now) {
-        String orderName = makeOrderName(menuList);
+    public static Order createOrder(Member member, Cart cart, Money orderPrice, LocalDateTime now) {
+        String orderName = makeOrderName(cart.getMenuList());
 
         if(member.getCoupon() != null) {
             member.getCoupon().convertStatusUsedCoupon();
         }
 
+        cart.getMember().addOrderCount();
+
         return Order.builder()
                 .name(orderName)
-                .menuList(menuList)
-                .member(member)
+                .cart(cart)
                 .status(ORDER)
                 .payStatus(OrderPayStatus.NO)
                 .orderPrice(orderPrice)
@@ -104,14 +102,14 @@ public class Order {
     }
 
     public void addMenu(Menu menu) {
-        if(this.menuList.size() >= CartControl.SIZE.getSize())
+        if(this.cart.getMenuList().size() >= CartControl.SIZE.getSize())
             throw new RuntimeException("카트는 메뉴를 " + SIZE + "개만 담을 수 있습니다.");
 
-        this.menuList.add(menu);
+        this.cart.getMenuList().add(menu);
     }
 
     public void removeMenu(int idx) {
-        this.menuList.remove(idx);
+        this.cart.getMenuList().remove(idx);
     }
 
     private static String makeOrderName(List<Menu> menus) {
@@ -140,5 +138,9 @@ public class Order {
         if(!Objects.equals(this.payStatus, OrderPayStatus.YES)) {
             throw new IllegalArgumentException(DO_NOT_PAID.getMessage());
         }
+    }
+
+    public Member getMember() {
+        return this.cart.getMember();
     }
 }

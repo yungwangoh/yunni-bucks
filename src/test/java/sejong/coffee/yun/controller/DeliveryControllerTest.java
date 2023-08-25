@@ -1,5 +1,4 @@
 package sejong.coffee.yun.controller;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,10 +19,7 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
-import sejong.coffee.yun.domain.user.Address;
-import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.dto.delivery.DeliveryDto;
 import sejong.coffee.yun.dto.delivery.DeliveryPageDto;
 import sejong.coffee.yun.jwt.JwtProvider;
@@ -92,7 +88,14 @@ class DeliveryControllerTest {
                 .build();
 
         menuList.add(menu);
-        order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
+
+        Cart cart = Cart.builder()
+                .id(1L)
+                .member(member)
+                .menuList(menuList)
+                .build();
+
+        order = Order.createOrder(member, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
 
         reserveDelivery = ReserveDelivery.create(
                 order,

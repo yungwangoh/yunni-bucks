@@ -20,10 +20,7 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
-import sejong.coffee.yun.domain.user.Address;
-import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -58,6 +55,7 @@ class OrderServiceTest {
     private Order order;
     private List<Menu> menuList = new ArrayList<>();
     private Menu menu1;
+    private Cart cart;
 
     @BeforeEach
     void init() {
@@ -83,7 +81,13 @@ class OrderServiceTest {
                 .build();
 
         menuList.add(menu1);
-        order = Order.createOrder(member, menuList, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
+
+        cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
+                .build();
+
+        order = Order.createOrder(member, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
     }
 
     @Test
@@ -93,7 +97,7 @@ class OrderServiceTest {
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
+        Order saveOrder = orderService.order(1L, LocalDateTime.now());
 
         // then
         assertThat(saveOrder).isEqualTo(order);
@@ -102,14 +106,14 @@ class OrderServiceTest {
     @Test
     void 유저가_주문한_시간() {
         // given
-        Order order1 = Order.createOrder(member, menuList, Money.ZERO,
+        Order order1 = Order.createOrder(member, cart, Money.ZERO,
                 LocalDateTime.of(2023, 8, 11, 5, 11));
 
         given(orderRepository.save(any())).willReturn(order1);
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order order2 = orderService.order(1L, menuList, LocalDateTime.of(2023, 8, 11, 5, 11));
+        Order order2 = orderService.order(1L, LocalDateTime.of(2023, 8, 11, 5, 11));
 
         // then
         assertThat(order2.getCreateAt()).isEqualTo(order1.getCreateAt());
@@ -162,7 +166,7 @@ class OrderServiceTest {
         given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal("10000")));
 
         // when
-        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
+        Order saveOrder = orderService.order(1L, LocalDateTime.now());
 
         // then
         assertThat(saveOrder.fetchTotalOrderPrice()).isEqualTo(new BigDecimal("10000"));
@@ -175,7 +179,7 @@ class OrderServiceTest {
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
+        Order saveOrder = orderService.order(1L, LocalDateTime.now());
 
         // then
         assertThat(saveOrder.getName()).isEqualTo("커피 외 1개");
@@ -188,7 +192,7 @@ class OrderServiceTest {
         given(userRepository.findById(any())).willReturn(member);
 
         // when
-        Order saveOrder = orderService.order(1L, menuList, LocalDateTime.now());
+        Order saveOrder = orderService.order(1L, LocalDateTime.now());
 
         // then
         assertThat(saveOrder.getMember().getOrderCount()).isEqualTo(1);
@@ -233,7 +237,7 @@ class OrderServiceTest {
         Order updateAddMenu = orderService.updateAddMenu(1L, 1L, LocalDateTime.now());
 
         // then
-        assertThat(updateAddMenu.getMenuList().size()).isEqualTo(2);
+        assertThat(updateAddMenu.getCart().getMenuList().size()).isEqualTo(2);
         assertThat(updateAddMenu.getOrderPrice().getTotalPrice())
                 .isEqualTo(Money.initialPrice(new BigDecimal(2000)).getTotalPrice());
     }
@@ -248,7 +252,7 @@ class OrderServiceTest {
         Order updateRemoveMenu = orderService.updateRemoveMenu(1L, 0, LocalDateTime.now());
 
         // then
-        assertThat(updateRemoveMenu.getMenuList().size()).isEqualTo(0);
+        assertThat(updateRemoveMenu.getCart().getMenuList().size()).isEqualTo(0);
         assertThat(updateRemoveMenu.getOrderPrice().getTotalPrice())
                 .isEqualTo(Money.initialPrice(new BigDecimal(0)).getTotalPrice());
     }
@@ -258,7 +262,7 @@ class OrderServiceTest {
     void 유저가_주문한_내역_주문_상태(OrderStatus status) {
         // given
         PageRequest pr = PageRequest.of(0, 10);
-        Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        Order order1 = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
         List<Order> orders = List.of(order1);
 
         PageImpl<Order> orderPage = new PageImpl<>(orders, pr, orders.size());
@@ -278,7 +282,7 @@ class OrderServiceTest {
     void 유저가_주문하고_결제한_내역_결제_상태(OrderPayStatus status) {
         // given
         PageRequest pr = PageRequest.of(0, 10);
-        Order order1 = Order.createOrder(member, menuList, Money.ZERO, LocalDateTime.now());
+        Order order1 = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
         order1.completePayment();
 
         List<Order> orders = List.of(order1);

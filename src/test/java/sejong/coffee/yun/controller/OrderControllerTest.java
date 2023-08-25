@@ -39,7 +39,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 
 @WebMvcTest(OrderController.class)
 class OrderControllerTest {
@@ -82,6 +81,7 @@ class OrderControllerTest {
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
                 .address(address)
+                .orderCount(0)
                 .build()
         );
 
@@ -104,7 +104,7 @@ class OrderControllerTest {
                 .build();
 
         order = Order.from(1L,
-                Order.createOrder(member, cart.getMenuList(), menu.getPrice(), LocalDateTime.now()));
+                Order.createOrder(member, cart, menu.getPrice(), LocalDateTime.now()));
 
         MenuDto.Response menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
                 menu.getMenuSize());
@@ -123,7 +123,7 @@ class OrderControllerTest {
     void 주문() throws Exception {
         // given
         given(cartService.findCartByMember(anyLong())).willReturn(cart);
-        given(orderService.order(anyLong(), any(), any())).willReturn(order);
+        given(orderService.order(anyLong(), any())).willReturn(order);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -177,19 +177,6 @@ class OrderControllerTest {
         // then
         resultActions.andExpect(status().isOk())
                 .andExpect(content().json(toJson(response)));
-    }
-
-    @Test
-    void 빈_장바구니로_주문을_할_경우() throws Exception {
-        // given
-        given(cartService.findCartByMember(anyLong())).willThrow(NOT_FOUND_CART.notFoundException());
-
-        // when
-        ResultActions resultActions = mockMvc.perform(post("/api/orders")
-                .header(HttpHeaders.AUTHORIZATION, token));
-
-        // then
-        resultActions.andExpect(status().isNotFound());
     }
 
     @Test

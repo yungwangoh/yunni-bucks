@@ -10,6 +10,7 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.user.Card;
+import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
@@ -19,6 +20,8 @@ import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
+import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
@@ -40,6 +43,7 @@ public class PayServiceTest extends CreatePaymentData {
     private OrderRepository orderRepository;
     private UserRepository userRepository;
     private CardRepository cardRepository;
+    private CartRepository cartRepository;
 
     @BeforeEach
     void init() {
@@ -48,6 +52,7 @@ public class PayServiceTest extends CreatePaymentData {
         orderRepository = new FakeOrderRepository();
         cardRepository = new FakeCardRepository();
         userRepository = new FakeUserRepository();
+        cartRepository = new FakeCartRepository();
 
         this.payService = PayService.builder()
                 .payRepository(payRepository)
@@ -67,7 +72,8 @@ public class PayServiceTest extends CreatePaymentData {
                 .build();
 
         cardRepository.save(buildCard);
-        Order saveOrder = Order.createOrder(saveMember, menuList, money, LocalDateTime.now());
+        Cart cart = cartRepository.save(Cart.builder().member(member).menuList(menuList).build());
+        Order saveOrder = Order.createOrder(saveMember, cart, money, LocalDateTime.now());
         orderRepository.save(saveOrder);
     }
 

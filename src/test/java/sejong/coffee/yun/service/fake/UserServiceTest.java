@@ -161,7 +161,7 @@ public class UserServiceTest {
         String token = userService.signIn(email, pwd);
 
         // when
-        String signOut = userService.signOut(token, member.getId());
+        String signOut = userService.signOut("bearer " + token, member.getId());
 
         // then
         assertThat(signOut).isEqualTo(SUCCESS_SIGN_OUT.getMessage());

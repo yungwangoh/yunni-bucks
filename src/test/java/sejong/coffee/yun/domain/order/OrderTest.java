@@ -6,12 +6,14 @@ import sejong.coffee.yun.domain.discount.condition.CouponCondition;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.exception.MenuException;
-import sejong.coffee.yun.domain.order.menu.*;
+import sejong.coffee.yun.domain.order.menu.Beverage;
+import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.order.menu.MenuSize;
+import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +22,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
 
 class OrderTest {
 
-    private Calculator calculator;
+    private final Calculator calculator;
 
     public OrderTest() {
         this.calculator = new Calculator(new PercentPolicy(new RankCondition(), new CouponCondition()));
@@ -31,6 +33,8 @@ class OrderTest {
     private Menu menu3;
     private Coupon coupon;
     private List<Menu> menuList;
+    private Cart cart;
+    private Member member;
 
     @BeforeEach
     void init() {
@@ -59,18 +63,25 @@ class OrderTest {
             .build();
 
         menuList = List.of(menu1, menu2, menu3);
+
+        member = Member.builder()
+                .name("윤광오")
+                .userRank(UserRank.SILVER)
+                .money(Money.ZERO)
+                .password("qwer1234")
+                .address(null)
+                .email("qwer1234@naver.com")
+                .orderCount(0)
+                .coupon(coupon)
+                .build();
     }
 
     @Test
     void 주문_총_금액() {
         // given
-        Member member = Member.builder()
-                .name("윤광오")
-                .userRank(UserRank.BRONZE)
-                .money(Money.ZERO)
-                .password("qwer1234")
-                .address(null)
-                .email("qwer1234@naver.com")
+        cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
                 .build();
 
         Money money = calculator.calculateMenus(member, menuList);
@@ -78,29 +89,25 @@ class OrderTest {
         money.mapBigDecimalToLong();
 
         // when
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
 
         // then
-        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("3000");
+        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("2400");
         assertThat(order.getStatus()).isEqualTo(OrderStatus.ORDER);
     }
 
     @Test
     void 주문명_확인() {
         // given
-        Member member = Member.builder()
-                .name("윤광오")
-                .userRank(UserRank.BRONZE)
-                .money(Money.ZERO)
-                .password("qwer1234")
-                .address(null)
-                .email("qwer1234@naver.com")
+        cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
                 .build();
 
         Money money = calculator.calculateMenus(member, menuList);
 
         // when
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
         String orderName = menuList.get(0).getTitle() + " 외 " + menuList.size() + "개";
 
         // then
@@ -111,20 +118,15 @@ class OrderTest {
     @Test
     void 메뉴가_비어있을_때_주문명을_만들지_못함() {
         // given
-        Member member = Member.builder()
-                .name("윤광오")
-                .userRank(UserRank.BRONZE)
-                .money(Money.ZERO)
-                .password("qwer1234")
-                .address(null)
-                .email("qwer1234@naver.com")
-                .build();
 
         // when
-        List<Menu> emptyMenuList = new ArrayList<>();
+        cart = Cart.builder()
+                .member(member)
+                .menuList(List.of())
+                .build();
 
         // then
-        assertThatThrownBy(() -> Order.createOrder(member, emptyMenuList, Money.ZERO, LocalDateTime.now()))
+        assertThatThrownBy(() -> Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now()))
                 .isInstanceOf(MenuException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }
@@ -132,17 +134,13 @@ class OrderTest {
     @Test
     void 주문_취소_했을때_상태_주문취소로_변경() {
         // given
-        Member member = Member.builder()
-                .name("윤광오")
-                .userRank(UserRank.BRONZE)
-                .money(Money.ZERO)
-                .password("qwer1234")
-                .address(null)
-                .email("qwer1234@naver.com")
+        cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
                 .build();
 
         Money money = calculator.calculateMenus(member, menuList);
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
 
         // when
         order.cancel();
@@ -154,20 +152,15 @@ class OrderTest {
     @Test
     void 주문하고_쿠폰사용_상태_확인() {
         // given
-        Member member = Member.builder()
-                .name("윤광오")
-                .userRank(UserRank.BRONZE)
-                .money(Money.ZERO)
-                .password("qwer1234")
-                .address(null)
-                .coupon(coupon)
-                .email("qwer1234@naver.com")
+        cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
                 .build();
 
         Money money = calculator.calculateMenus(member, menuList);
 
         // when
-        Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order.createOrder(member, cart, money, LocalDateTime.now());
 
         // then
         assertThat(member.getCoupon().getCouponUse()).isEqualTo(CouponUse.YES);
@@ -176,14 +169,9 @@ class OrderTest {
     @Test
     void 다양한_할인_적용_후_주문_총_금액_확인() {
         // given
-        Member member = Member.builder()
-                .name("윤광오")
-                .userRank(UserRank.SILVER)
-                .money(Money.ZERO)
-                .password("qwer1234")
-                .address(null)
-                .coupon(coupon)
-                .email("qwer1234@naver.com")
+        cart = Cart.builder()
+                .member(member)
+                .menuList(menuList)
                 .build();
 
         Money money = calculator.calculateMenus(member, menuList);
@@ -191,7 +179,7 @@ class OrderTest {
         money.mapBigDecimalToLong();
 
         // when
-        Order order = Order.createOrder(member, menuList, money, LocalDateTime.now());
+        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
 
         // then
         assertThat(order.fetchTotalOrderPrice()).isEqualTo("2400");

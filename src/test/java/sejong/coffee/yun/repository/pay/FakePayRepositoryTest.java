@@ -9,10 +9,13 @@ import sejong.coffee.yun.domain.pay.BeforeCreatedData;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
+import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
+import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -28,6 +31,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
     private final PayRepository payRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
     private CardPayment cardPayment;
     private String uuid;
 
@@ -35,6 +39,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         payRepository = new FakePayRepository();
         userRepository = new FakeUserRepository();
         orderRepository = new FakeOrderRepository();
+        cartRepository = new FakeCartRepository();
     }
 
     @BeforeEach
@@ -48,7 +53,8 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
 //                .validThru(card.getValidThru())
 //                .build();
 
-        Order saveOrder = Order.createOrder(saveMember, menuList, money, LocalDateTime.now());
+        Cart cart = cartRepository.save(Cart.builder().member(member).menuList(menuList).build());
+        Order saveOrder = Order.createOrder(saveMember, cart, money, LocalDateTime.now());
         orderRepository.save(saveOrder);
 
         uuid = new FakeUuidHolder("asdfasdfasdf").random();

@@ -11,7 +11,6 @@ import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
-import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.dto.order.OrderPageDto;
 import sejong.coffee.yun.mapper.CustomMapper;
@@ -33,9 +32,7 @@ public class OrderController {
     @PostMapping("")
     ResponseEntity<OrderDto.Response> order(@MemberId Long memberId) {
 
-        Cart cart = cartService.findCartByMember(memberId);
-
-        Order order = orderService.order(memberId, cart.getMenuList(), LocalDateTime.now());
+        Order order = orderService.order(memberId, LocalDateTime.now());
 
         OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
 

@@ -58,7 +58,7 @@ public class PayRepositoryImpl implements PayRepository {
     public Page<CardPayment> findAllByUsernameAndPaymentStatus(Pageable pageable, String username) {
         List<CardPayment> cardPayments = jpaQueryFactory.selectFrom(cardPayment)
                 .leftJoin(cardPayment.order, order)
-                .leftJoin(order.member, member)
+                .leftJoin(order.cart.member, member)
                 .where(
                         member.name.eq(username)
                                 .and(cardPayment.paymentStatus.eq(PaymentStatus.DONE))
@@ -78,7 +78,7 @@ public class PayRepositoryImpl implements PayRepository {
     public Page<CardPayment> findAllByUsernameAndPaymentCancelStatus(Pageable pageable, String username) {
         List<CardPayment> cardPayments = jpaQueryFactory.selectFrom(cardPayment)
                 .join(cardPayment.order, order).fetchJoin()
-                .join(order.member, member).fetchJoin()
+                .join(order.cart.member, member).fetchJoin()
                 .where(
                         member.name.eq(username)
                                 .and(cardPayment.paymentStatus.eq(PaymentStatus.CANCEL))
