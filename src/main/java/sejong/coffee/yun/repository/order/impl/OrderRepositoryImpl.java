@@ -103,4 +103,9 @@ public class OrderRepositoryImpl implements OrderRepository {
 
         return PageableExecutionUtils.getPage(orders, pageable, jpaQuery::fetchOne);
     }
+
+    @Override
+    public void clear() {
+        jpaOrderRepository.deleteAll();
+    }
 }
