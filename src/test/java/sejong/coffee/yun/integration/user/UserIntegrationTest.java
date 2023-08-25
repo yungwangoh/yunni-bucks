@@ -91,7 +91,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     getUserRequests()
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                     ));
         }
@@ -116,7 +116,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     getUserRequests()
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                     ));
         }
@@ -140,7 +140,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     parameterWithName("email").description("유저 이메일")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                             ));
         }
@@ -164,7 +164,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     parameterWithName("name").description("유저 이름")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                             ));
         }
@@ -222,7 +222,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     fieldWithPath("password").type(JsonFieldType.STRING).description("유저 비밀번호")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                     ));
         }
@@ -248,7 +248,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     fieldWithPath("password").type(JsonFieldType.STRING).description("유저 비밀번호")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                     ));
         }
@@ -383,7 +383,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                      fieldWithPath("updateName").type(JsonFieldType.STRING).description("이메일, 이름, 비밀번호 공통되는 사항 에러")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                             ));
 
@@ -444,7 +444,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                     ));
         }
@@ -503,7 +503,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                             ),
                             responseFields(
-                                    getUserFailResponses()
+                                    getFailResponses()
                             )
                     ));
         }
