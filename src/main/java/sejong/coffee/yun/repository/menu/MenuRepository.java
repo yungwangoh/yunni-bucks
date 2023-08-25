@@ -10,4 +10,5 @@ public interface MenuRepository {
     Menu findById(Long id);
     List<Menu> findAll();
     void delete(Long id);
+    void clear();
 }

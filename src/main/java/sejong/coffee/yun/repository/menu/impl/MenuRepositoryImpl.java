@@ -41,4 +41,9 @@ public class MenuRepositoryImpl implements MenuRepository {
     public void delete(Long id) {
         jpaMenuRepository.deleteById(id);
     }
+
+    @Override
+    public void clear() {
+        jpaMenuRepository.deleteAll();
+    }
 }
