@@ -86,8 +86,8 @@ class CartControllerTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        MenuDto.Response menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
-                menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
+        MenuDto.Response menuResponse = new MenuDto.Response(menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
+                menu.getMenuSize());
 
         cart = Cart.builder()
                 .member(member)
@@ -97,8 +97,8 @@ class CartControllerTest {
         token = "bearer accessToken";
         response = new CartDto.Response(1L, cart.getMember().getId(), List.of(menuResponse));
 
-        CartControllerTest.menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(),
-                menu.getPrice(), menu.getNutrients(), menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
+        CartControllerTest.menuResponse = new MenuDto.Response(menu.getTitle(), menu.getDescription(),
+                menu.getPrice(), menu.getNutrients(), menu.getMenuSize());
     }
 
     @Test
