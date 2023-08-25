@@ -58,6 +58,7 @@ public class FakeMenuRepository implements MenuRepository {
         menuList.remove(Math.toIntExact(id));
     }
 
+    @Override
     public void clear() {
         menuList.clear();
     }

@@ -92,6 +92,7 @@ public class FakeOrderRepository implements OrderRepository {
         return new PageImpl<>(orders, pageable, orders.size());
     }
 
+    @Override
     public void clear() {
         orders.clear();
     }
