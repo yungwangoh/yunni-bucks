@@ -107,7 +107,7 @@ class OrderControllerTest {
                 Order.createOrder(member, cart.getMenuList(), menu.getPrice(), LocalDateTime.now()));
 
         MenuDto.Response menuResponse = new MenuDto.Response(1L, menu.getTitle(), menu.getDescription(), menu.getPrice(), menu.getNutrients(),
-                menu.getMenuSize(), menu.getCreateAt(), menu.getUpdateAt());
+                menu.getMenuSize());
 
         response = new OrderDto.Response(1L, order.getName(), List.of(menuResponse),
                 order.getStatus(), order.getOrderPrice(), order.getPayStatus());
