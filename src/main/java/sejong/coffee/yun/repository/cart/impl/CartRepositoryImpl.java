@@ -42,4 +42,14 @@ public class CartRepositoryImpl implements CartRepository {
     public void delete(Cart cart) {
         jpaCartRepository.delete(cart);
     }
+
+    @Override
+    public boolean existByMemberId(Long memberId) {
+        return jpaCartRepository.existsByMemberId(memberId);
+    }
+
+    @Override
+    public void clear() {
+        jpaCartRepository.deleteAll();
+    }
 }

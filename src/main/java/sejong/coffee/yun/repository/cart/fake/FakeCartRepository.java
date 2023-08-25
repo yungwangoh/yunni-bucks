@@ -7,6 +7,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 
@@ -28,6 +29,14 @@ public class FakeCartRepository implements CartRepository {
         carts.removeIf(c -> Objects.equals(c.getId(), cart.getId()));
         carts.add(cart);
         return cart;
+    }
+
+    @Override
+    public boolean existByMemberId(Long memberId) {
+        Optional<Cart> c = carts.stream().filter(cart -> Objects.equals(cart.getMember().getId(), memberId))
+                    .findFirst();
+
+        return c.isPresent();
     }
 
     @Override
@@ -61,6 +70,7 @@ public class FakeCartRepository implements CartRepository {
         carts.remove(cart);
     }
 
+    @Override
     public void clear() {
         carts.clear();
     }

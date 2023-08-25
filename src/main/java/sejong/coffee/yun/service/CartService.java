@@ -12,6 +12,8 @@ import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.util.ArrayList;
 
+import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE;
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
@@ -22,6 +24,8 @@ public class CartService {
 
     @Transactional
     public Cart createCart(Long memberId) {
+
+        if(cartRepository.existByMemberId(memberId)) throw DUPLICATE.duplicatedException();
 
         Member member = userRepository.findById(memberId);
 
