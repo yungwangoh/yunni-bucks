@@ -6,16 +6,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
+import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.order.OrderPayStatus;
+import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import java.time.LocalDateTime;
+
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -23,7 +25,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class OrderIntegrationTest extends MainIntegrationTest {
@@ -32,10 +33,6 @@ public class OrderIntegrationTest extends MainIntegrationTest {
     private OrderService orderService;
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private CartService cartService;
     @Autowired
@@ -328,7 +325,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 주문에_성공한다() throws Exception {
+        void 주문에_성공한다_201() throws Exception {
             // given
             cartService.createCart(1L);
             cartService.addMenu(1L, 1L);
@@ -338,8 +335,162 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                     .header(HttpHeaders.AUTHORIZATION, token));
 
             // then
+            resultActions.andExpect(status().isCreated())
+                    .andDo(document("order",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            responseFields(
+                                    getOrderResponse()
+                            )
+                    ));
+        }
+
+        @Test
+        void 빈_장바구니_실패한다_500() throws Exception {
+            // given
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post(ORDER_API_PATH)
+                    .header(HttpHeaders.AUTHORIZATION, token));
+
+            // then
             resultActions.andExpect(status().isInternalServerError())
-                    .andDo(print());
+                    .andDo(document("order-fail",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            responseFields(
+                                    getFailResponses()
+                            )
+                    ));
+        }
+
+        @Test
+        void 주문을_취소한다() throws Exception {
+            // given
+            cartService.createCart(1L);
+            cartService.addMenu(1L, 1L);
+            Order order = orderService.order(1L, LocalDateTime.now());
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(ORDER_API_PATH + "/cancel")
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("orderId", order.getId().toString()));
+
+            // then
+            resultActions.andExpect(status().isNoContent())
+                    .andDo(document("order-cancel",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            requestParameters(
+                                    parameterWithName("orderId").description("주문 ID")
+                            )
+                            ));
+        }
+
+        @Test
+        void 주문을_하지_않고_취소할_경우_500() throws Exception {
+            // given
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(ORDER_API_PATH + "/cancel")
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("orderId", "100"));
+
+            // then
+            resultActions.andExpect(status().isInternalServerError())
+                    .andDo(document("order-cancel-fail",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            requestParameters(
+                                    parameterWithName("orderId").description("주문 ID")
+                            ),
+                            responseFields(
+                                    getFailResponses()
+                            )
+                    ));
+        }
+
+        @Test
+        void 주문한_내역_조회에_성공한다_200() throws Exception {
+            // given
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(ORDER_API_PATH + "/{pageNum}", 0)
+                    .header(HttpHeaders.AUTHORIZATION, token));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                    .andDo(document("order-find",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("pageNum").description("페이지 번호"),
+                                    fieldWithPath("responses").type(JsonFieldType.ARRAY).description("주문 내역")
+                            )
+                            ));
+        }
+
+        @Test
+        void 주문_상태_기준으로_내역_조회_성공한다_200() throws Exception {
+            // given
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(ORDER_API_PATH + "/{pageNum}/order-status", 0)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("status", OrderStatus.ORDER.name()));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                    .andDo(document("order-status-find",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("pageNum").description("페이지 번호"),
+                                    fieldWithPath("responses").type(JsonFieldType.ARRAY).description("주문 내역")
+                            )
+                            ));
+        }
+
+        @Test
+        void 결제_상태_기준으로_내역_조회_성공한다_200() throws Exception {
+            // given
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(ORDER_API_PATH + "/{pageNum}/paid-status", 0)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("status", OrderPayStatus.YES.name()));
+
+            // then
+            resultActions.andExpect(status().isOk())
+                    .andDo(document("order-paid-status-find",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            responseFields(
+                                    fieldWithPath("pageNum").description("페이지 번호"),
+                                    fieldWithPath("responses").type(JsonFieldType.ARRAY).description("주문 내역")
+                            )
+                    ));
         }
     }
 }
