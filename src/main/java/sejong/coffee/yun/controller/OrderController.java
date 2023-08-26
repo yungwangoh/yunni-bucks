@@ -14,7 +14,6 @@ import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.dto.order.OrderPageDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
 import java.time.LocalDateTime;
@@ -24,8 +23,6 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/orders")
 @Validated
 public class OrderController {
-
-    private final CartService cartService;
     private final OrderService orderService;
     private final CustomMapper customMapper;
 
@@ -45,28 +42,6 @@ public class OrderController {
         orderService.cancel(orderId);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @PatchMapping("/update/add")
-    ResponseEntity<OrderDto.Response> updateAddMenu(@MemberId Long memberId,
-                                                    @RequestParam("menuId") Long menuId) {
-
-        Order order = orderService.updateAddMenu(memberId, menuId, LocalDateTime.now());
-
-        OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/update/remove")
-    ResponseEntity<OrderDto.Response> updateRemoveMenu(@MemberId Long memberId,
-                                                       @RequestParam("menuIdx") int menuIdx) {
-
-        Order order = orderService.updateRemoveMenu(memberId, menuIdx, LocalDateTime.now());
-
-        OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{pageNum}")
