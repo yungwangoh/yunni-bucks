@@ -61,6 +61,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
         List<Order> orders = jpaQueryFactory.selectFrom(order)
                 .where(order.cart.member.id.eq(memberId))
+                .join(order.cart).fetchJoin()
                 .orderBy(order.createAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -77,6 +78,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<Order> orders = jpaQueryFactory.selectFrom(order)
                 .where(order.cart.member.id.eq(memberId))
                 .where(order.status.eq(status))
+                .join(order.cart).fetchJoin()
                 .orderBy(order.createAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -93,6 +95,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         List<Order> orders = jpaQueryFactory.selectFrom(order)
                 .where(order.cart.member.id.eq(memberId))
                 .where(order.payStatus.eq(status))
+                .join(order.cart).fetchJoin()
                 .orderBy(order.createAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
