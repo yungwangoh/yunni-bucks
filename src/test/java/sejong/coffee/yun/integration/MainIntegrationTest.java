@@ -231,4 +231,40 @@ public class MainIntegrationTest {
                 fieldWithPath("address.zipCode").type(JsonFieldType.STRING).description("우편 번호")
         );
     }
+
+    protected static List<FieldDescriptor> getOrderResponse() {
+        return List.of(
+                fieldWithPath("orderId").description("주문 ID"),
+                fieldWithPath("name").description("주문 이름"),
+                fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("메뉴 리스트"),
+                fieldWithPath("menuList[]").description("메뉴 리스트"),
+                fieldWithPath("menuList[].menuId").description("메뉴 ID"),
+                fieldWithPath("menuList[].title").description("메뉴 제목"),
+                fieldWithPath("menuList[].description").description("메뉴 설명"),
+                fieldWithPath("menuList[].price.totalPrice").description("메뉴 가격"),
+                fieldWithPath("menuList[].nutrients").description("영양 정보"),
+                fieldWithPath("menuList[].menuSize").description("메뉴 크기"),
+                fieldWithPath("status").description("주문 상태"),
+                fieldWithPath("money.totalPrice").description("총 주문 가격"),
+                fieldWithPath("payStatus").description("결제 상태")
+        );
+    }
+
+    protected static List<FieldDescriptor> getOrderPageResponse() {
+        return List.of(
+                fieldWithPath("orderId").description("주문 ID"),
+                fieldWithPath("name").description("주문 이름"),
+                fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("메뉴 리스트"),
+                fieldWithPath("menuList[]").description("메뉴 리스트"),
+                fieldWithPath("menuList[].menuId").description("메뉴 ID"),
+                fieldWithPath("menuList[].title").description("메뉴 제목"),
+                fieldWithPath("menuList[].description").description("메뉴 설명"),
+                fieldWithPath("menuList[].price.totalPrice").description("메뉴 가격"),
+                fieldWithPath("menuList[].nutrients").description("영양 정보"),
+                fieldWithPath("menuList[].menuSize").description("메뉴 크기"),
+                fieldWithPath("status").description("주문 상태"),
+                fieldWithPath("money.totalPrice").description("총 주문 가격"),
+                fieldWithPath("payStatus").description("결제 상태")
+        );
+    }
 }
