@@ -65,10 +65,10 @@ class CalculatorTest {
         // when
         Money money = calculator.calculateMenus(member, menuList);
 
-        money.mapBigDecimalToLong();
+        Money decimalToLong = money.mapBigDecimalToLong();
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo(bigDecimal);
+        assertThat(decimalToLong.getTotalPrice()).isEqualTo(bigDecimal);
     }
 
     @Test

@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import sejong.coffee.yun.domain.exception.DuplicatedException;
 import sejong.coffee.yun.domain.exception.NotFoundException;
-import sejong.coffee.yun.domain.order.menu.*;
+import sejong.coffee.yun.domain.order.menu.Beverage;
+import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.order.menu.MenuSize;
+import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
@@ -25,6 +29,7 @@ import sejong.coffee.yun.service.CartService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -111,6 +116,31 @@ public class CartServiceTest {
     }
 
     @Test
+    void 카트가_중복일_경우() {
+        // given
+        Member save = userRepository.save(member);
+
+        // when
+        cartService.createCart(save.getId());
+
+        // then
+        assertThatThrownBy(() -> cartService.createCart(save.getId()))
+                .isInstanceOf(DuplicatedException.class);
+    }
+
+    @Test
+    void 없는_유저_ID로_카트를_생성_하려고_할_경우() {
+        // given
+        Long invalidUser = 100L;
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> cartService.createCart(invalidUser))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
     void 메뉴_추가() {
         // given
         Member save = userRepository.save(member);
@@ -125,6 +155,23 @@ public class CartServiceTest {
         // then
         assertThat(cart.getMember()).isEqualTo(save);
         assertThat(cart.getMenuList()).isEqualTo(List.of(menu));
+    }
+
+    @Test
+    void 메뉴_추가할때_장바구니_사이즈를_넘은_경우() {
+        // given
+        Member save = userRepository.save(member);
+
+        Menu menu = menuRepository.save(menu1);
+
+        cartService.createCart(save.getId());
+
+        // when
+        IntStream.range(0, 10).forEach(i -> cartService.addMenu(save.getId(), menu.getId()));
+
+        // then
+        assertThatThrownBy(() -> cartService.addMenu(save.getId(), menu.getId()))
+                .isInstanceOf(RuntimeException.class);
     }
 
     @Test

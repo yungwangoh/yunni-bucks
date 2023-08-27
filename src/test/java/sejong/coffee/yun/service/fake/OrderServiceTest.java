@@ -79,8 +79,7 @@ public class OrderServiceTest {
     private CartRepository cartRepository;
 
     Member member;
-    Cart cart;
-    List<Menu> menuList = new ArrayList<>();
+체    List<Menu> menuList = new ArrayList<>();
 
     @BeforeEach
     void init() {
@@ -105,6 +104,11 @@ public class OrderServiceTest {
                 .now(LocalDateTime.now())
                 .build();
 
+        Cart c = Cart.builder()
+                .member(member)
+                .menuList(new ArrayList<>())
+                .build();
+
         menuList.add(menuRepository.save(menu1));
     }
 
@@ -125,9 +129,12 @@ public class OrderServiceTest {
         // when
         Order order = orderService.order(save.getId(), LocalDateTime.now());
 
+        int sum = menuList.stream().mapToInt(menu -> menu.getPrice().getTotalPrice().intValue()).sum();
+
         // then
         assertThat(order.getMember()).isEqualTo(save);
         assertThat(order.getCart().getMenuList()).isEqualTo(menuList);
+        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo(String.valueOf(sum));
     }
 
     @Test

@@ -28,10 +28,10 @@ public class MoneyTest {
         Money money = Money.initialPrice(new BigDecimal(10000));
 
         // when
-        money.plus(Money.initialPrice(new BigDecimal(10000)));
+        Money plus = money.plus(Money.initialPrice(new BigDecimal(10000)));
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo("20000");
+        assertThat(plus.getTotalPrice()).isEqualTo("20000");
     }
 
     @Test
@@ -40,10 +40,10 @@ public class MoneyTest {
         Money money = Money.initialPrice(new BigDecimal(10000));
 
         // when
-        money.minus(Money.initialPrice(new BigDecimal(5000)));
+        Money minus = money.minus(Money.initialPrice(new BigDecimal(5000)));
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo("5000");
+        assertThat(minus.getTotalPrice()).isEqualTo("5000");
     }
 
     @Test
@@ -65,10 +65,10 @@ public class MoneyTest {
         Money money = Money.initialPrice(new BigDecimal(10000));
 
         // when
-        money.discount(new BigDecimal("0.1"));
+        Money discount = money.discount(new BigDecimal("0.1"));
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo("9000.0");
+        assertThat(discount.getTotalPrice()).isEqualTo("9000.0");
     }
 
     @ParameterizedTest
@@ -91,12 +91,12 @@ public class MoneyTest {
         Money money = Money.initialPrice(new BigDecimal(10000));
 
         // when
-        money.discount(new BigDecimal("0.1"));
+        Money discount = money.discount(new BigDecimal("0.1"));
 
-        money.mapBigDecimalToLong();
+        Money m = discount.mapBigDecimalToLong();
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo("9000");
+        assertThat(m.getTotalPrice()).isEqualTo("9000");
     }
 
     @Test
@@ -105,12 +105,12 @@ public class MoneyTest {
         Money money = Money.initialPrice(new BigDecimal(10000));
 
         // when
-        money.plus(Money.initialPrice(new BigDecimal(1000)));
+        Money plus = money.plus(Money.initialPrice(new BigDecimal(1000)));
 
-        money.mapBigDecimalToInt();
+        Money m = plus.mapBigDecimalToInt();
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo("11000");
+        assertThat(m.getTotalPrice()).isEqualTo("11000");
     }
 
     @Test
@@ -119,11 +119,11 @@ public class MoneyTest {
         Money money = Money.initialPrice(new BigDecimal(10000));
 
         // when
-        money.discount(new BigDecimal("0.1"));
+        Money discount = money.discount(new BigDecimal("0.1"));
 
-        money.mapBigDecimalToLong();
+        Money m = discount.mapBigDecimalToLong();
 
         // then
-        assertThat(money.getTotalPrice()).isEqualTo("9000");
+        assertThat(m.getTotalPrice()).isEqualTo("9000");
     }
 }

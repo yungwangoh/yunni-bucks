@@ -16,8 +16,10 @@ import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -25,6 +27,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class OrderIntegrationTest extends MainIntegrationTest {
@@ -158,6 +161,31 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                                     fieldWithPath("menuList[].menuSize").description("메뉴 크기")
                             )
                             ));
+        }
+
+        @Test
+        void 카트에_메뉴를_담는데_수량이_초과한_경우_500() throws Exception {
+            // given
+            cartService.createCart(1L);
+
+            IntStream.range(0, 10).forEach(i -> {
+                try {
+                    mockMvc.perform(post(CART_API_PATH + "/menu")
+                            .header(HttpHeaders.AUTHORIZATION, token)
+                            .param("menuId", "1"));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post(CART_API_PATH + "/menu")
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("menuId", "1"));
+
+            // then
+            resultActions.andExpect(status().isInternalServerError())
+                    .andDo(print());
         }
 
         @Test
@@ -466,7 +494,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                                     fieldWithPath("pageNum").description("페이지 번호"),
                                     fieldWithPath("responses").type(JsonFieldType.ARRAY).description("주문 내역")
                             )
-                            ));
+                    ));
         }
 
         @Test

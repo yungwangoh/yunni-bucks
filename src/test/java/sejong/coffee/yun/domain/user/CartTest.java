@@ -46,6 +46,7 @@ class CartTest {
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
 
         Beverage beverage = Beverage.builder()
+                .id(1L)
                 .description("에티오피아산 커피")
                 .title("커피")
                 .price(Money.initialPrice(new BigDecimal(1000)))
@@ -55,8 +56,6 @@ class CartTest {
                 .build();
 
         menu1 = beverage;
-        menu2 = beverage;
-        menu3 = beverage;
 
     }
 

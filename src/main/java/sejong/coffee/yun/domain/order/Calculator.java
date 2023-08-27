@@ -18,19 +18,15 @@ public class Calculator {
 
     public Money calculateMenus(Member member, List<Menu> menus) {
 
-        Money initialPrice = Money.initialPrice(new BigDecimal(0));
-
-        if(checkEmptyMenuList(menus.size())) return initialPrice;
+        if(checkEmptyMenuList(menus.size())) return Money.ZERO;
 
         double discount = discountPolicy.calculateDiscount(member);
 
-        menus.forEach(menu -> initialPrice.plus(menu.getPrice()));
+        Money money = menus.stream().map(Menu::getPrice).reduce(Money::plus).orElse(Money.ZERO);
 
-        initialPrice.discount(BigDecimal.valueOf(discount));
+        Money discountMoney = money.discount(BigDecimal.valueOf(discount));
 
-        initialPrice.mapBigDecimalToLong();
-
-        return initialPrice;
+        return discountMoney.mapBigDecimalToLong();
     }
 
     private boolean checkEmptyMenuList(int size) {
