@@ -79,7 +79,7 @@ public class OrderServiceTest {
     private CartRepository cartRepository;
 
     Member member;
-체    List<Menu> menuList = new ArrayList<>();
+    List<Menu> menuList = new ArrayList<>();
 
     @BeforeEach
     void init() {
