@@ -15,10 +15,10 @@ public class CartItem {
 
     @Id @GeneratedValue
     private Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private Cart cart;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manu_id")
     private Menu menu;
 
@@ -27,5 +27,17 @@ public class CartItem {
         this.id = id;
         this.cart = cart;
         this.menu = menu;
+    }
+
+    public static CartItem from(Long id, CartItem cartItem) {
+        return CartItem.builder()
+                .id(id)
+                .cart(cartItem.getCart())
+                .menu(cartItem.getMenu())
+                .build();
+    }
+
+    void setCart(Cart cart) {
+        this.cart = cart;
     }
 }

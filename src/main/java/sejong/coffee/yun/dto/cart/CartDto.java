@@ -12,8 +12,8 @@ public class CartDto {
             this(
                     cart.getId(),
                     cart.getMember().getId(),
-                    cart.getMenuList().stream()
-                            .map(MenuDto.Response::new)
+                    cart.getCartItems().stream()
+                            .map(cartItem -> new MenuDto.Response(cartItem.getMenu()))
                             .toList()
             );
         }

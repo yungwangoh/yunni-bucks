@@ -91,7 +91,7 @@ class CartControllerTest {
 
         cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         token = "bearer accessToken";

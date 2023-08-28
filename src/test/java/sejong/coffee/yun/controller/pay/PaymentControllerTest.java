@@ -36,7 +36,7 @@ class PaymentControllerTest extends CreatePaymentData {
         testPayContainer.cardService.create(1L, new CardDto.Request(this.card.getNumber(),
                 this.card.getCardPassword(), this.card.getValidThru()));
 
-        Cart cart = testPayContainer.cartRepository.save(Cart.builder().member(member).menuList(menuList).build());
+        Cart cart = testPayContainer.cartRepository.save(Cart.builder().member(member).cartItems(menuList).build());
         testPayContainer.orderRepository.save(Order.createOrder(saveMember, cart, money, LocalDateTime.now()));
     }
 

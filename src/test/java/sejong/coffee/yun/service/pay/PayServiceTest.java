@@ -72,7 +72,7 @@ public class PayServiceTest extends CreatePaymentData {
                 .build();
 
         cardRepository.save(buildCard);
-        Cart cart = cartRepository.save(Cart.builder().member(member).menuList(menuList).build());
+        Cart cart = cartRepository.save(Cart.builder().member(member).cartItems(menuList).build());
         Order saveOrder = Order.createOrder(saveMember, cart, money, LocalDateTime.now());
         orderRepository.save(saveOrder);
     }

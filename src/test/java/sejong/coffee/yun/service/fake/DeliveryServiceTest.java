@@ -76,7 +76,7 @@ public class DeliveryServiceTest {
 
     Order order;
     Menu menu;
-    List<Menu> menuList = new ArrayList<>();
+    List<CartItem> menuList = new ArrayList<>();
     Member saveMember;
 
     @BeforeEach
@@ -104,9 +104,13 @@ public class DeliveryServiceTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        menuList.add(menu);
+        CartItem cartItem = CartItem.builder()
+                .menu(menu)
+                .build();
 
-        Cart cart = cartRepository.save(Cart.builder().member(saveMember).menuList(menuList).build());
+        menuList.add(cartItem);
+
+        Cart cart = cartRepository.save(Cart.builder().member(saveMember).cartItems(menuList).build());
         order = Order.createOrder(saveMember, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
     }
 

@@ -9,11 +9,9 @@ import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
-import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.time.LocalDateTime;
@@ -25,7 +23,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final Calculator calculator;
-    private final MenuRepository menuRepository;
     private final CartRepository cartRepository;
 
     @Transactional
@@ -33,7 +30,7 @@ public class OrderService {
 
         Cart cart = cartRepository.findByMember(memberId);
 
-        Money money = calculator.calculateMenus(cart.getMember(), cart.getMenuList());
+        Money money = calculator.calculateMenus(cart.getMember(), cart.convertToMenus());
 
         Order order = Order.createOrder(cart.getMember(), cart, money, now);
 
@@ -53,48 +50,6 @@ public class OrderService {
 
     public Order findOrder(Long orderId) {
         return orderRepository.findById(orderId);
-    }
-
-    @Transactional
-    public Order updateAddMenu(Long memberId, Long menuId, LocalDateTime now) {
-        Order order = orderRepository.findByMemberId(memberId);
-
-        if(order.getStatus() == OrderStatus.ORDER && order.getPayStatus() == OrderPayStatus.NO) {
-            Menu menu = menuRepository.findById(menuId);
-
-            order.addMenu(menu);
-
-            Money money = calculator.calculateMenus(order.getCart().getMember(), order.getCart().getMenuList());
-
-            order.updatePrice(money);
-
-            order.setUpdateAt(now);
-
-        } else {
-            throw new IllegalArgumentException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
-        }
-
-        return order;
-    }
-
-    @Transactional
-    public Order updateRemoveMenu(Long memberId, int menuIdx, LocalDateTime now) {
-        Order order = orderRepository.findByMemberId(memberId);
-
-        if(order.getStatus() == OrderStatus.ORDER && order.getPayStatus() == OrderPayStatus.NO) {
-            order.removeMenu(menuIdx);
-
-            Money money = calculator.calculateMenus(order.getCart().getMember(), order.getCart().getMenuList());
-
-            order.updatePrice(money);
-
-            order.setUpdateAt(now);
-
-        } else {
-            throw new IllegalArgumentException("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
-        }
-
-        return order;
     }
 
     public List<Order> findAll() {

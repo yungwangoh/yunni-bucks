@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -53,7 +52,7 @@ class OrderServiceTest {
 
     private Member member;
     private Order order;
-    private List<Menu> menuList = new ArrayList<>();
+    private List<CartItem> menuList = new ArrayList<>();
     private Menu menu1;
     private Cart cart;
 
@@ -80,11 +79,11 @@ class OrderServiceTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        menuList.add(menu1);
+        menuList.add(CartItem.builder().menu(menu1).build());
 
         cart = Cart.builder()
                 .member(member)
-                .menuList(menuList)
+                .cartItems(menuList)
                 .build();
 
         order = Order.createOrder(member, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());
@@ -144,21 +143,6 @@ class OrderServiceTest {
     }
 
     @Test
-    void 주문_수정_시간() {
-        // given
-        given(orderRepository.findByMemberId(anyLong())).willReturn(order);
-        given(menuRepository.findById(anyLong())).willReturn(menu1);
-        given(calculator.calculateMenus(any(), any())).willReturn(Money.ZERO);
-
-        // when
-        LocalDateTime updateTime = LocalDateTime.of(2023, 8, 11, 5, 11);
-        Order updateAddMenu = orderService.updateAddMenu(1L, 1L, updateTime);
-
-        // then
-        assertThat(updateAddMenu.getUpdateAt()).isEqualTo(updateTime);
-    }
-
-    @Test
     void 주문_총_금액_확인() {
         // given
         given(orderRepository.save(any())).willReturn(order);
@@ -196,65 +180,6 @@ class OrderServiceTest {
 
         // then
         assertThat(saveOrder.getMember().getOrderCount()).isEqualTo(1);
-    }
-
-    @Test
-    void 유저가_주문취소된_상태에서_메뉴_수정할_때_예외() {
-        // given
-        order.cancel();
-        given(orderRepository.findByMemberId(any())).willReturn(order);
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L, LocalDateTime.now()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
-    }
-
-    @Test
-    void 유저가_결제가된_상태에서_메뉴_수정할_때_예외() {
-        // given
-        order.completePayment();
-        given(orderRepository.findByMemberId(any())).willReturn(order);
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> orderService.updateAddMenu(1L, 1L, LocalDateTime.now()))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("주문 취소하거나 결제가 된 상태에선 수정할 수 없습니다.");
-    }
-
-    @Test
-    void 유저가_주문을_변경한다_메뉴추가() {
-        // given
-        given(orderRepository.findByMemberId(any())).willReturn(order);
-        given(menuRepository.findById(any())).willReturn(menu1);
-        given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal(2000)));
-
-        // when
-        Order updateAddMenu = orderService.updateAddMenu(1L, 1L, LocalDateTime.now());
-
-        // then
-        assertThat(updateAddMenu.getCart().getMenuList().size()).isEqualTo(2);
-        assertThat(updateAddMenu.getOrderPrice().getTotalPrice())
-                .isEqualTo(Money.initialPrice(new BigDecimal(2000)).getTotalPrice());
-    }
-
-    @Test
-    void 유저가_주문을_변경한다_메뉴삭제() {
-        // given
-        given(orderRepository.findByMemberId(any())).willReturn(order);
-        given(calculator.calculateMenus(any(), any())).willReturn(Money.initialPrice(new BigDecimal(0)));
-
-        // when
-        Order updateRemoveMenu = orderService.updateRemoveMenu(1L, 0, LocalDateTime.now());
-
-        // then
-        assertThat(updateRemoveMenu.getCart().getMenuList().size()).isEqualTo(0);
-        assertThat(updateRemoveMenu.getOrderPrice().getTotalPrice())
-                .isEqualTo(Money.initialPrice(new BigDecimal(0)).getTotalPrice());
     }
 
     @ParameterizedTest

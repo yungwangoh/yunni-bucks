@@ -16,9 +16,11 @@ import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
+import sejong.coffee.yun.mock.repository.FakeCartItemRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
+import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.math.BigDecimal;
@@ -32,27 +34,27 @@ class FakeOrderRepositoryTest {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final Calculator calculator;
 
     public FakeOrderRepositoryTest() {
         this.orderRepository = new FakeOrderRepository();
         this.cartRepository = new FakeCartRepository();
+        this.cartItemRepository = new FakeCartItemRepository();
         calculator = new Calculator(new PercentPolicy(new RankCondition(), new CouponCondition()));
     }
 
     private Coupon coupon;
     private Member member;
     private Menu menu1;
-    private Menu menu2;
-    private Menu menu3;
-    private List<Menu> menuList;
+    private List<CartItem> menuList;
     private Cart cart;
 
     @BeforeEach
     void init() {
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
 
-        Beverage beverage = Beverage.builder()
+        menu1 = Beverage.builder()
                 .description("에티오피아산 커피")
                 .title("커피")
                 .price(Money.initialPrice(new BigDecimal(1000)))
@@ -60,10 +62,6 @@ class FakeOrderRepositoryTest {
                 .menuSize(MenuSize.M)
                 .now(LocalDateTime.now())
                 .build();
-
-        menu1 = beverage;
-        menu2 = beverage;
-        menu3 = beverage;
 
         coupon = Coupon.builder()
             .createAt(LocalDateTime.of(2023, 7, 29, 10, 10))
@@ -85,20 +83,22 @@ class FakeOrderRepositoryTest {
                 .orderCount(0)
                 .build());
 
-        menuList = List.of(menu1, menu2, menu3);
+        CartItem save = cartItemRepository.save(CartItem.builder().menu(menu1).build());
 
-        cart = cartRepository.save(
-                Cart.builder()
+        menuList = List.of(save);
+
+        Cart c = Cart.builder()
                 .member(member)
-                .menuList(menuList)
-                .build()
-        );
+                .cartItems(menuList)
+                .build();
+
+        cart = cartRepository.save(c);
     }
 
     @Test
     void 주문_저장() {
         // given
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
 
@@ -112,7 +112,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 주문_찾기() {
         // given
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
         Order save = orderRepository.save(order);
@@ -127,7 +127,7 @@ class FakeOrderRepositoryTest {
     @Test
     void 주문_리스트() {
         // given
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
         orderRepository.save(order);
@@ -144,7 +144,7 @@ class FakeOrderRepositoryTest {
         // given
         LocalDateTime localDateTime = LocalDateTime.of(2023, 8, 11, 5, 30);
 
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         Order order = Order.createOrder(member, cart, money, localDateTime);
 
@@ -160,7 +160,7 @@ class FakeOrderRepositoryTest {
         // given
         LocalDateTime localDateTime = LocalDateTime.of(2023, 8, 11, 5, 30);
 
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         Order order = Order.createOrder(member, cart, money, localDateTime);
 

@@ -9,10 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.order.menu.*;
-import sejong.coffee.yun.domain.user.Cart;
-import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -63,7 +60,7 @@ class CartServiceTest {
 
         cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
@@ -81,8 +78,8 @@ class CartServiceTest {
         menu2 = beverage;
         menu3 = beverage;
 
-        cart.addMenu(menu1);
-        cart.addMenu(menu2);
+        cart.addMenu(CartItem.builder().menu(menu1).build());
+        cart.addMenu(CartItem.builder().menu(menu2).build());
     }
 
     @Test
@@ -110,7 +107,7 @@ class CartServiceTest {
         cartService.addMenu(1L, 1L);
 
         // then
-        then(cart1).should().addMenu(menu1);
+        then(cart1).should().addMenu(CartItem.builder().menu(menu1).build());
     }
 
     @Test

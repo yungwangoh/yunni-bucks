@@ -22,7 +22,7 @@ public class OrderDto {
             this(
                     order.getId(),
                     order.getName(),
-                    order.getCart().getMenuList().stream().map(MenuDto.Response::new).toList(),
+                    order.getCart().getCartItems().stream().map(cartItem -> new MenuDto.Response(cartItem.getMenu())).toList(),
                     order.getStatus(),
                     order.getOrderPrice(),
                     order.getPayStatus()

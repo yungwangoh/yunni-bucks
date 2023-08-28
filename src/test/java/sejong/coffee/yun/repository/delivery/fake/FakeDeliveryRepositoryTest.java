@@ -28,7 +28,7 @@ class FakeDeliveryRepositoryTest {
 
     static Order order;
     static Menu menu;
-    static List<Menu> menuList = new ArrayList<>();
+    static List<CartItem> menuList = new ArrayList<>();
     static Member member;
     static ReserveDelivery reserveDelivery;
     static NormalDelivery normalDelivery;
@@ -57,11 +57,11 @@ class FakeDeliveryRepositoryTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        menuList.add(menu);
+        menuList.add(CartItem.builder().menu(menu).build());
 
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(menuList)
+                .cartItems(menuList)
                 .build();
 
         order = Order.createOrder(member, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());

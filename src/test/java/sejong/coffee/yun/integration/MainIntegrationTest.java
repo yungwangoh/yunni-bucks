@@ -124,7 +124,7 @@ public class MainIntegrationTest {
 
     public Cart cart(Member member) {
         return Cart.builder()
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .member(member)
                 .build();
     }

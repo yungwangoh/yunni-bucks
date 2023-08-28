@@ -5,7 +5,10 @@ import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.order.Calculator;
 import sejong.coffee.yun.domain.order.Order;
-import sejong.coffee.yun.domain.order.menu.*;
+import sejong.coffee.yun.domain.order.menu.Beverage;
+import sejong.coffee.yun.domain.order.menu.Menu;
+import sejong.coffee.yun.domain.order.menu.MenuSize;
+import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
@@ -18,7 +21,7 @@ public class BeforeCreatedData {
     protected final Member member;
     protected final Calculator calculator;
     protected final Card card;
-    protected final List<Menu> menuList;
+    protected final List<CartItem> menuList;
     protected final Money money;
     public BeforeCreatedData() {
 
@@ -51,8 +54,6 @@ public class BeforeCreatedData {
         menu2 = beverage;
         menu3 = beverage;
 
-        menuList = List.of(menu1, menu2, menu3);
-
         this.member = Member.builder()
                 .address(address)
                 .email("hy97@sju.ac.kr")
@@ -65,12 +66,26 @@ public class BeforeCreatedData {
 
         this.card = new Card("1234123443211239", "23/10", "1234", this.member);
 
-        money = calculator.calculateMenus(member, menuList);
+        CartItem c1 = CartItem.builder()
+                .menu(menu1)
+                .build();
+
+        CartItem c2 = CartItem.builder()
+                .menu(menu1)
+                .build();
+
+        CartItem c3 = CartItem.builder()
+                .menu(menu1)
+                .build();
+
+        menuList = List.of(c1, c2, c3);
 
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(menuList)
+                .cartItems(menuList)
                 .build();
+
+        money = calculator.calculateMenus(member, cart.convertToMenus());
 
         this.order = Order.createOrder(member, cart, money, LocalDateTime.now());
     }

@@ -14,6 +14,7 @@ import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +33,7 @@ class OrderTest {
     private Menu menu2;
     private Menu menu3;
     private Coupon coupon;
-    private List<Menu> menuList;
+    private List<CartItem> menuList;
     private Cart cart;
     private Member member;
 
@@ -62,7 +63,11 @@ class OrderTest {
             .expireAt(LocalDateTime.of(2024, 7, 29, 10, 10))
             .build();
 
-        menuList = List.of(menu1, menu2, menu3);
+        menuList = List.of(
+                CartItem.builder().menu(menu1).build(),
+                CartItem.builder().menu(menu2).build(),
+                CartItem.builder().menu(menu3).build()
+        );
 
         member = Member.builder()
                 .name("윤광오")
@@ -74,17 +79,17 @@ class OrderTest {
                 .orderCount(0)
                 .coupon(coupon)
                 .build();
+
+        cart = Cart.builder()
+                .member(member)
+                .cartItems(menuList)
+                .build();
     }
 
     @Test
     void 주문_총_금액() {
         // given
-        cart = Cart.builder()
-                .member(member)
-                .menuList(menuList)
-                .build();
-
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         money.mapBigDecimalToLong();
 
@@ -99,16 +104,11 @@ class OrderTest {
     @Test
     void 주문명_확인() {
         // given
-        cart = Cart.builder()
-                .member(member)
-                .menuList(menuList)
-                .build();
-
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         // when
         Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
-        String orderName = menuList.get(0).getTitle() + " 외 " + menuList.size() + "개";
+        String orderName = menuList.get(0).getMenu().getTitle() + " 외 " + menuList.size() + "개";
 
         // then
         assertThat(order.getName()).isEqualTo(orderName);
@@ -118,15 +118,15 @@ class OrderTest {
     @Test
     void 메뉴가_비어있을_때_주문명을_만들지_못함() {
         // given
-
-        // when
-        cart = Cart.builder()
+        Cart c = Cart.builder()
                 .member(member)
-                .menuList(List.of())
+                .cartItems(new ArrayList<>())
                 .build();
 
+        // when
+
         // then
-        assertThatThrownBy(() -> Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now()))
+        assertThatThrownBy(() -> Order.createOrder(member, c, Money.ZERO, LocalDateTime.now()))
                 .isInstanceOf(MenuException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }
@@ -134,12 +134,7 @@ class OrderTest {
     @Test
     void 주문_취소_했을때_상태_주문취소로_변경() {
         // given
-        cart = Cart.builder()
-                .member(member)
-                .menuList(menuList)
-                .build();
-
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
         Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
 
         // when
@@ -152,12 +147,7 @@ class OrderTest {
     @Test
     void 주문하고_쿠폰사용_상태_확인() {
         // given
-        cart = Cart.builder()
-                .member(member)
-                .menuList(menuList)
-                .build();
-
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         // when
         Order.createOrder(member, cart, money, LocalDateTime.now());
@@ -169,12 +159,7 @@ class OrderTest {
     @Test
     void 다양한_할인_적용_후_주문_총_금액_확인() {
         // given
-        cart = Cart.builder()
-                .member(member)
-                .menuList(menuList)
-                .build();
-
-        Money money = calculator.calculateMenus(member, menuList);
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         money.mapBigDecimalToLong();
 

@@ -21,33 +21,34 @@ public class Cart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-    @OneToMany
-    private List<Menu> menuList;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems;
 
     @Builder
-    public Cart(Long id, Member member, List<Menu> menuList) {
+    public Cart(Long id, Member member, List<CartItem> cartItems) {
         this.id = id;
         this.member = member;
-        this.menuList = menuList;
+        this.cartItems = cartItems;
     }
 
     public static Cart from(Long id, Cart cart) {
         return Cart.builder()
                 .id(id)
                 .member(cart.getMember())
-                .menuList(cart.getMenuList())
+                .cartItems(cart.getCartItems())
                 .build();
     }
 
-    public void addMenu(Menu menu) {
-        if(this.menuList.size() >= SIZE.getSize()) throw new RuntimeException("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다.");
+    public void addMenu(CartItem cartItem) {
+        if(this.cartItems.size() >= SIZE.getSize()) throw new RuntimeException("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다.");
 
-        this.menuList.add(menu);
+        this.cartItems.add(cartItem);
+        cartItem.setCart(this);
     }
 
     public Menu getMenu(int idx) {
         try {
-            return this.menuList.get(idx);
+            return this.cartItems.get(idx).getMenu();
         } catch (Exception e) {
             throw NOT_FOUND_MENU.notFoundException();
         }
@@ -55,13 +56,17 @@ public class Cart {
 
     public void removeMenu(int idx) {
         try {
-            this.menuList.remove(idx);
+            this.cartItems.remove(idx);
         } catch (Exception e) {
             throw NOT_FOUND_MENU.notFoundException();
         }
     }
 
-    public void clearMenuList() {
-        this.menuList.clear();
+    public void clearCartItems() {
+        this.cartItems.clear();
+    }
+
+    public List<Menu> convertToMenus() {
+        return getCartItems().stream().map(CartItem::getMenu).toList();
     }
 }

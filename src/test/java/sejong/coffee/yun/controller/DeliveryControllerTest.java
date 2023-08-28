@@ -56,7 +56,7 @@ class DeliveryControllerTest {
     static String token;
     static Order order;
     static Menu menu;
-    static List<Menu> menuList = new ArrayList<>();
+    static List<CartItem> menuList = new ArrayList<>();
     static Member member;
     static Delivery reserveDelivery;
     static Delivery normalDelivery;
@@ -87,12 +87,12 @@ class DeliveryControllerTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        menuList.add(menu);
+        menuList.add(CartItem.builder().menu(menu).build());
 
         Cart cart = Cart.builder()
                 .id(1L)
                 .member(member)
-                .menuList(menuList)
+                .cartItems(menuList)
                 .build();
 
         order = Order.createOrder(member, cart, Money.initialPrice(new BigDecimal("10000")), LocalDateTime.now());

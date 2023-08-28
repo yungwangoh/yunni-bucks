@@ -13,15 +13,14 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
-import sejong.coffee.yun.domain.user.Cart;
-import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.domain.user.Money;
-import sejong.coffee.yun.domain.user.UserRank;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.jwt.JwtProvider;
+import sejong.coffee.yun.mock.repository.FakeCartItemRepository;
 import sejong.coffee.yun.mock.repository.FakeMenuRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
+import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CartService;
@@ -43,7 +42,8 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
         FakeOrderRepository.class,
         FakeCartRepository.class,
         FakeMenuRepository.class,
-        JwtProvider.class
+        JwtProvider.class,
+        FakeCartItemRepository.class
 })
 @TestPropertySource(properties = {
         "jwt.key=applicationKey",
@@ -63,11 +63,16 @@ public class CartServiceTest {
     private MenuRepository menuRepository;
     @Autowired
     private FakeMenuRepository fakeMenuRepository;
+    @Autowired
+    private FakeCartItemRepository fakeCartItemRepository;
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     private Member member;
     private Menu menu1;
     private Menu menu2;
     private Menu menu3;
+    private CartItem cartItem;
 
     @BeforeEach
     void init() {
@@ -94,12 +99,17 @@ public class CartServiceTest {
         menu1 = beverage;
         menu2 = beverage;
         menu3 = beverage;
+
+        cartItem = CartItem.builder()
+                .menu(menu1)
+                .build();
     }
 
     @AfterEach
     void initDB() {
         fakeCartRepository.clear();
         fakeMenuRepository.clear();
+        fakeCartItemRepository.clear();
     }
 
     @Test
@@ -154,7 +164,7 @@ public class CartServiceTest {
 
         // then
         assertThat(cart.getMember()).isEqualTo(save);
-        assertThat(cart.getMenuList()).isEqualTo(List.of(menu));
+        assertThat(cart.getCartItems().get(0).getMenu()).isEqualTo(menu);
     }
 
     @Test
@@ -214,7 +224,7 @@ public class CartServiceTest {
         Cart cart = cartService.removeMenu(save.getId(), 0);
 
         // then
-        assertThat(cart.getMenuList()).isEqualTo(List.of());
+        assertThat(cart.getCartItems()).isEqualTo(List.of());
     }
 
     @Test

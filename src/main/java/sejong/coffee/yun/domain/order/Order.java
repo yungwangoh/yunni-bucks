@@ -4,9 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Cart;
-import sejong.coffee.yun.domain.user.CartControl;
+import sejong.coffee.yun.domain.user.CartItem;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 
@@ -20,7 +19,6 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.DO_NOT_PAID;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.EMPTY_MENUS;
 import static sejong.coffee.yun.domain.order.OrderStatus.CANCEL;
 import static sejong.coffee.yun.domain.order.OrderStatus.ORDER;
-import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 
 @Entity
 @Getter
@@ -70,7 +68,7 @@ public class Order {
     }
 
     public static Order createOrder(Member member, Cart cart, Money orderPrice, LocalDateTime now) {
-        String orderName = makeOrderName(cart.getMenuList());
+        String orderName = makeOrderName(cart.getCartItems());
 
         if(member.getCoupon() != null) {
             member.getCoupon().convertStatusUsedCoupon();
@@ -101,24 +99,13 @@ public class Order {
         return this.orderPrice.getTotalPrice();
     }
 
-    public void addMenu(Menu menu) {
-        if(this.cart.getMenuList().size() >= CartControl.SIZE.getSize())
-            throw new RuntimeException("카트는 메뉴를 " + SIZE + "개만 담을 수 있습니다.");
-
-        this.cart.getMenuList().add(menu);
-    }
-
-    public void removeMenu(int idx) {
-        this.cart.getMenuList().remove(idx);
-    }
-
-    private static String makeOrderName(List<Menu> menus) {
-        if(menus.size() == 0) {
+    private static String makeOrderName(List<CartItem> cartItems) {
+        if(cartItems.size() == 0) {
             throw EMPTY_MENUS.throwException();
         } else {
-            String title = menus.get(0).getTitle();
+            String title = cartItems.get(0).getMenu().getTitle();
 
-            return title + " 외" + " " + menus.size() + "개";
+            return title + " 외" + " " + cartItems.size() + "개";
         }
     }
 

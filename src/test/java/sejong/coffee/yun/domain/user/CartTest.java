@@ -19,9 +19,7 @@ import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 class CartTest {
 
     private Member member;
-    private Menu menu1;
-    private Menu menu2;
-    private Menu menu3;
+    private CartItem menu1;
 
     @BeforeEach
     void init() {
@@ -45,7 +43,7 @@ class CartTest {
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
 
-        Beverage beverage = Beverage.builder()
+        Menu menu = Beverage.builder()
                 .id(1L)
                 .description("에티오피아산 커피")
                 .title("커피")
@@ -55,8 +53,7 @@ class CartTest {
                 .now(LocalDateTime.now())
                 .build();
 
-        menu1 = beverage;
-
+        menu1 = CartItem.builder().menu(menu).build();
     }
 
     @Test
@@ -64,14 +61,14 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         // when
         cart.addMenu(menu1);
 
         // then
-        assertThat(cart.getMenu(0)).isEqualTo(menu1);
+        assertThat(cart.getCartItems().get(0)).isEqualTo(menu1);
     }
 
     @Test
@@ -79,14 +76,14 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         // when
         cart.addMenu(menu1);
 
         // then
-        assertThat(cart.getMenuList().size()).isEqualTo(1);
+        assertThat(cart.getCartItems().size()).isEqualTo(1);
     }
 
     @Test
@@ -94,7 +91,7 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         cart.addMenu(menu1);
@@ -103,7 +100,7 @@ class CartTest {
         cart.removeMenu(0);
 
         // then
-        assertThat(cart.getMenuList().size()).isEqualTo(0);
+        assertThat(cart.getCartItems().size()).isEqualTo(0);
     }
 
     @Test
@@ -111,7 +108,7 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         cart.addMenu(menu1);
@@ -129,7 +126,7 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         // when
@@ -145,18 +142,16 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         cart.addMenu(menu1);
-        cart.addMenu(menu2);
-        cart.addMenu(menu3);
 
         // when
         Order order = Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
 
         // then
-        assertThat(order.getCart().getMenuList()).isEqualTo(cart.getMenuList());
+        assertThat(order.getCart().getCartItems()).isEqualTo(cart.getCartItems());
     }
 
     @Test
@@ -164,7 +159,7 @@ class CartTest {
         // given
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(null)
+                .cartItems(null)
                 .build();
 
         // when

@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Cart;
+import sejong.coffee.yun.domain.user.CartItem;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
@@ -21,6 +23,7 @@ public class CartService {
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Transactional
     public Cart createCart(Long memberId) {
@@ -31,7 +34,7 @@ public class CartService {
 
         Cart cart = Cart.builder()
                 .member(member)
-                .menuList(new ArrayList<>())
+                .cartItems(new ArrayList<>())
                 .build();
 
         return cartRepository.save(cart);
@@ -46,7 +49,14 @@ public class CartService {
         Menu menu = menuRepository.findById(menuId);
         Cart cart = cartRepository.findByMember(memberId);
 
-        cart.addMenu(menu);
+        CartItem cartItem = CartItem.builder()
+                .cart(cart)
+                .menu(menu)
+                .build();
+
+        CartItem saveCartItem = cartItemRepository.save(cartItem);
+
+        cart.addMenu(saveCartItem);
 
         return cart;
     }
@@ -61,7 +71,7 @@ public class CartService {
     public void clearCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId);
 
-        cart.clearMenuList();
+        cart.clearCartItems();
     }
 
     @Transactional

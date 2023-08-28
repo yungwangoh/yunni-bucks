@@ -98,9 +98,11 @@ class OrderControllerTest {
 
         token = "bearer accessToken";
 
+        CartItem cartItem = CartItem.builder().menu(menu).build();
+
         cart = Cart.builder()
                 .member(member)
-                .menuList(List.of(menu))
+                .cartItems(List.of(cartItem))
                 .build();
 
         order = Order.from(1L,
