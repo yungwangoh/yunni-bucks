@@ -100,4 +100,10 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
 
         return PageableExecutionUtils.getPage(deliveries, pageable, jpaQuery::fetchOne);
     }
+
+    @Override
+    @Transactional
+    public void clear() {
+        jpaDeliveryRepository.deleteAll();
+    }
 }

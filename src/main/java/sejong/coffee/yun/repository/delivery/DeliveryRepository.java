@@ -16,4 +16,5 @@ public interface DeliveryRepository {
     Page<Delivery> findByMemberId(Pageable pageable, Long memberId);
     Page<Delivery> findDeliveryTypeByMemberId(Pageable pageable, Long memberId, DeliveryType type);
     Page<Delivery> findDeliveryStatusByMemberId(Pageable pageable, Long memberId, DeliveryStatus status);
+    void clear();
 }
