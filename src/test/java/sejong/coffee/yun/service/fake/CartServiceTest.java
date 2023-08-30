@@ -96,9 +96,27 @@ public class CartServiceTest {
                 .now(LocalDateTime.now())
                 .build();
 
+        Beverage beverage1 = Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
+
+        Beverage beverage2 = Beverage.builder()
+                .description("중국산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .build();
+
         menu1 = beverage;
-        menu2 = beverage;
-        menu3 = beverage;
+        menu2 = beverage1;
+        menu3 = beverage2;
 
         cartItem = CartItem.builder()
                 .menu(menu1)

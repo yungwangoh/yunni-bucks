@@ -114,11 +114,6 @@ public class OrderServiceTest {
                 .menu(menu1)
                 .build();
 
-        Cart c = Cart.builder()
-                .member(member)
-                .cartItems(new ArrayList<>())
-                .build();
-
         menuList.add(cartItemRepository.save(cartItem));
     }
 

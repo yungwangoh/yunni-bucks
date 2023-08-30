@@ -11,6 +11,7 @@ import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
@@ -40,6 +41,8 @@ class CartServiceTest {
     private UserRepository userRepository;
     @Mock
     private MenuRepository menuRepository;
+    @Mock
+    private CartItemRepository cartItemRepository;
 
     private Member member;
     private Menu menu1;

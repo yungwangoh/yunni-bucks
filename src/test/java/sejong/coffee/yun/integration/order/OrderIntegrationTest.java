@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
@@ -28,6 +29,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class OrderIntegrationTest extends MainIntegrationTest {
@@ -185,7 +187,19 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isInternalServerError())
-                    .andDo(print());
+                    .andDo(document("menu-add-fail",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            requestParameters(
+                                    parameterWithName("menuId").description("메뉴 ID")
+                            ),
+                            responseFields(
+                                    getFailResponses()
+                            )
+                            ));
         }
 
         @Test
@@ -364,6 +378,8 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.money.totalPrice").value("1000"))
+                    .andDo(print())
                     .andDo(document("order",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -377,7 +393,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 빈_장바구니_실패한다_500() throws Exception {
+        void 장바구니를_생성하지_않고_주문할_경우_500() throws Exception {
             // given
 
             // when
@@ -399,7 +415,31 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 주문을_취소한다() throws Exception {
+        void 장바구니가_비어있는데_주문_할_경우_400() throws Exception {
+            // given
+            cartService.createCart(1L);
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post(ORDER_API_PATH)
+                    .header(HttpHeaders.AUTHORIZATION, token));
+
+            // then
+            resultActions.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value(ExceptionControl.EMPTY_MENUS.getMessage()))
+                    .andDo(document("order-empty-cart-fail",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            responseFields(
+                                    getFailResponses()
+                            )
+                            ));
+        }
+
+        @Test
+        void 주문을_취소한다_204() throws Exception {
             // given
             cartService.createCart(1L);
             cartService.addMenu(1L, 1L);
