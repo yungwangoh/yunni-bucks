@@ -12,16 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.delivery.Delivery;
 import sejong.coffee.yun.domain.delivery.DeliveryStatus;
 import sejong.coffee.yun.domain.delivery.DeliveryType;
-import sejong.coffee.yun.domain.delivery.ReserveDelivery;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.delivery.jpa.JpaDeliveryRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static sejong.coffee.yun.domain.delivery.QDelivery.delivery;
-import static sejong.coffee.yun.domain.delivery.QReserveDelivery.reserveDelivery;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELIVERY;
+import static sejong.coffee.yun.domain.order.QOrder.order;
+import static sejong.coffee.yun.domain.user.QCart.cart;
 
 
 @Repository
@@ -46,18 +45,20 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
 
     @Override
     public List<Delivery> findAll() {
-        List<ReserveDelivery> deliveryList = jpaQueryFactory.selectFrom(reserveDelivery)
-                .where(reserveDelivery.status.eq(DeliveryStatus.READY))
-                .orderBy(reserveDelivery.reserveAt.asc(), reserveDelivery.createAt.asc())
-                .fetch();
+        return jpaDeliveryRepository.findAll();
+    }
 
-        return new ArrayList<>(deliveryList);
+    @Override
+    public List<Delivery> findAllByReserveType() {
+        return null;
     }
 
     @Override
     public Page<Delivery> findByMemberId(Pageable pageable, Long memberId) {
         List<Delivery> deliveries = jpaQueryFactory.selectFrom(delivery)
-                .where(delivery.order.cart.member.id.eq(memberId)).fetchJoin()
+                .join(delivery.order, order).fetchJoin()
+                .join(order.cart, cart).fetchJoin()
+                .where(cart.member.id.eq(memberId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(delivery.createAt.desc())
@@ -72,7 +73,9 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Page<Delivery> findDeliveryTypeByMemberId(Pageable pageable, Long memberId, DeliveryType type) {
         List<Delivery> deliveries = jpaQueryFactory.selectFrom(delivery)
-                .where(delivery.order.cart.member.id.eq(memberId)).fetchJoin()
+                .join(delivery.order, order).fetchJoin()
+                .join(order.cart, cart).fetchJoin()
+                .where(cart.member.id.eq(memberId))
                 .where(delivery.type.eq(type))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -88,7 +91,9 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public Page<Delivery> findDeliveryStatusByMemberId(Pageable pageable, Long memberId, DeliveryStatus status) {
         List<Delivery> deliveries = jpaQueryFactory.selectFrom(delivery)
-                .where(delivery.order.cart.member.id.eq(memberId)).fetchJoin()
+                .join(delivery.order, order).fetchJoin()
+                .join(order.cart, cart).fetchJoin()
+                .where(cart.member.id.eq(memberId))
                 .where(delivery.status.eq(status))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

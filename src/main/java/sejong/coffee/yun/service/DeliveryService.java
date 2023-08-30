@@ -59,7 +59,7 @@ public class DeliveryService {
 
     @Transactional
     public void reserveDelivery() {
-        List<Delivery> deliveries = deliveryRepository.findAll();
+        List<Delivery> deliveries = deliveryRepository.findAllByReserveType();
 
         deliveries.forEach(Delivery::delivery);
     }

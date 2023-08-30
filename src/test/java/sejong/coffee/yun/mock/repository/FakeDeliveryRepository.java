@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.delivery.*;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -47,11 +48,15 @@ public class FakeDeliveryRepository implements DeliveryRepository {
 
     @Override
     public List<Delivery> findAll() {
+        return deliveries;
+    }
+
+    @Override
+    public List<Delivery> findAllByReserveType() {
         return deliveries.stream()
                 .filter(delivery -> Objects.equals(delivery.getStatus(), DeliveryStatus.READY))
-                .filter(delivery -> delivery instanceof ReserveDelivery)
-                .sorted(Comparator.comparing(delivery -> ((ReserveDelivery) delivery).getReserveAt())
-                        .thenComparing(delivery -> ((ReserveDelivery) delivery).getCreateAt()))
+                .filter(delivery -> Objects.equals(delivery.getType(), DeliveryType.RESERVE))
+                .filter(delivery -> ((ReserveDelivery) delivery).getReserveAt().isBefore(LocalDateTime.now()))
                 .toList();
     }
 
@@ -87,6 +92,7 @@ public class FakeDeliveryRepository implements DeliveryRepository {
         return new PageImpl<>(list, pageable, list.size());
     }
 
+    @Override
     public void clear() {
         deliveries.clear();
     }

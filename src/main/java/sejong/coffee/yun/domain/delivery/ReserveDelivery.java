@@ -64,7 +64,7 @@ public class ReserveDelivery extends Delivery {
 
     @Override
     public void delivery() {
-        if(this.reserveAt.isAfter(LocalDateTime.now())) {
+        if(this.reserveAt.isBefore(LocalDateTime.now())) {
 
             if (getStatus() == DeliveryStatus.READY) {
                 setStatus(DeliveryStatus.DELIVERY);
