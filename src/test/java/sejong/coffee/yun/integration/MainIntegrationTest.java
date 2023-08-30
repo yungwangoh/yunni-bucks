@@ -26,11 +26,9 @@ import sejong.coffee.yun.domain.delivery.DeliveryType;
 import sejong.coffee.yun.domain.delivery.NormalDelivery;
 import sejong.coffee.yun.domain.delivery.ReserveDelivery;
 import sejong.coffee.yun.domain.order.Order;
-import sejong.coffee.yun.domain.order.menu.Beverage;
-import sejong.coffee.yun.domain.order.menu.Bread;
-import sejong.coffee.yun.domain.order.menu.MenuSize;
-import sejong.coffee.yun.domain.order.menu.Nutrients;
+import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
+import sejong.coffee.yun.dto.delivery.DeliveryDto;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 
@@ -47,7 +45,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * 필요한 부분은 상속하여 사용하길 바람.
  * 유저, 주문에 대한 값들이 포함되어있음.
  */
-@SpringBootTest
+@SpringBootTest(properties = "schedules.cron.test=1 * * * * *")
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class})
@@ -65,6 +63,7 @@ public class MainIntegrationTest {
     public static final String MEMBER_API_PATH = "/api/members";
     public static final String ORDER_API_PATH = "/api/orders";
     public static final String CART_API_PATH = "/api/carts";
+    public static final String DELIVERY_API_PATH = "/api/deliveries";
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -105,6 +104,18 @@ public class MainIntegrationTest {
         return new UserDto.Update.Name.Request("gdfg");
     }
 
+    public DeliveryDto.ReserveRequest reserveRequest(Long orderId) {
+        return new DeliveryDto.ReserveRequest(orderId, member().getAddress(), LocalDateTime.now(), LocalDateTime.now(), DeliveryType.RESERVE);
+    }
+
+    public DeliveryDto.NormalRequest normalRequest(Long orderId) {
+        return new DeliveryDto.NormalRequest(orderId, member().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
+    }
+
+    public DeliveryDto.UpdateAddressRequest updateAddressRequest(Long deliveryId, Address address) {
+        return new DeliveryDto.UpdateAddressRequest(deliveryId, address, LocalDateTime.now());
+    }
+
     public Member member() {
         return Member.builder()
                 .name("홍길동")
@@ -126,6 +137,13 @@ public class MainIntegrationTest {
         return Cart.builder()
                 .cartItems(new ArrayList<>())
                 .member(member)
+                .build();
+    }
+
+    public CartItem cartItem(Cart cart, Menu menu) {
+        return CartItem.builder()
+                .cart(cart)
+                .menu(menu)
                 .build();
     }
 
@@ -265,6 +283,64 @@ public class MainIntegrationTest {
                 fieldWithPath("status").description("주문 상태"),
                 fieldWithPath("money.totalPrice").description("총 주문 가격"),
                 fieldWithPath("payStatus").description("결제 상태")
+        );
+    }
+
+    protected static List<FieldDescriptor> getDeliveryPageResponse() {
+        return List.of(
+                fieldWithPath("pageNum").description("페이지 번호"),
+                fieldWithPath("responses").description(JsonFieldType.ARRAY).description("배달 리스트")
+        );
+    }
+
+    protected static List<FieldDescriptor> getDeliveryResponse() {
+        return List.of(
+                fieldWithPath("deliveryId").type(JsonFieldType.NUMBER).description("배달 ID"),
+                fieldWithPath("orderName").description("주문 명"),
+                fieldWithPath("createAt").description("생성일"),
+                fieldWithPath("updateAt").description("수정일"),
+                fieldWithPath("address.city").type(JsonFieldType.STRING).description("시"),
+                fieldWithPath("address.district").type(JsonFieldType.STRING).description("군/구"),
+                fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세 주소"),
+                fieldWithPath("address.zipCode").type(JsonFieldType.STRING).description("우편 번호"),
+                fieldWithPath("type").description("배달 타입"),
+                fieldWithPath("status").description("배달 상태")
+        );
+    }
+
+    protected static List<FieldDescriptor> getDeliveryNormalRequest() {
+        return List.of(
+                fieldWithPath("orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                fieldWithPath("address.city").type(JsonFieldType.STRING).description("시"),
+                fieldWithPath("address.district").type(JsonFieldType.STRING).description("군/구"),
+                fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세 주소"),
+                fieldWithPath("address.zipCode").type(JsonFieldType.STRING).description("우편 번호"),
+                fieldWithPath("now").description("생성/수정일"),
+                fieldWithPath("type").description("배달 타입")
+        );
+    }
+
+    protected static List<FieldDescriptor> getDeliveryReserveRequest() {
+        return List.of(
+                fieldWithPath("orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                fieldWithPath("address.city").type(JsonFieldType.STRING).description("시"),
+                fieldWithPath("address.district").type(JsonFieldType.STRING).description("군/구"),
+                fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세 주소"),
+                fieldWithPath("address.zipCode").type(JsonFieldType.STRING).description("우편 번호"),
+                fieldWithPath("now").description("생성/수정일"),
+                fieldWithPath("reserveDate").description("예약일"),
+                fieldWithPath("type").description("배달 타입")
+        );
+    }
+
+    protected static List<FieldDescriptor> getUpdateAddressRequest() {
+        return List.of(
+                fieldWithPath("deliveryId").type(JsonFieldType.NUMBER).description("배달 ID"),
+                fieldWithPath("address.city").type(JsonFieldType.STRING).description("시"),
+                fieldWithPath("address.district").type(JsonFieldType.STRING).description("군/구"),
+                fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세 주소"),
+                fieldWithPath("address.zipCode").type(JsonFieldType.STRING).description("우편 번호"),
+                fieldWithPath("now").description("수정일")
         );
     }
 }
