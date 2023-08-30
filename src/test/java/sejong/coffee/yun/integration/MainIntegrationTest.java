@@ -29,6 +29,7 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.dto.delivery.DeliveryDto;
+import sejong.coffee.yun.dto.review.menu.MenuReviewDto;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 
@@ -64,6 +65,8 @@ public class MainIntegrationTest {
     public static final String ORDER_API_PATH = "/api/orders";
     public static final String CART_API_PATH = "/api/carts";
     public static final String DELIVERY_API_PATH = "/api/deliveries";
+    public static final String MENU_REVIEW_API_PATH = "/api";
+    public static final String MENU_THUMBNAIL_API_PATH = "/api/";
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -114,6 +117,14 @@ public class MainIntegrationTest {
 
     public DeliveryDto.UpdateAddressRequest updateAddressRequest(Long deliveryId, Address address) {
         return new DeliveryDto.UpdateAddressRequest(deliveryId, address, LocalDateTime.now());
+    }
+
+    public MenuReviewDto.Request menuReviewRequest() {
+        return new MenuReviewDto.Request("맛있어요");
+    }
+
+    public MenuReviewDto.Request menuReviewUpdateRequest() {
+        return new MenuReviewDto.Request("맛없어요");
     }
 
     public Member member() {
@@ -341,6 +352,23 @@ public class MainIntegrationTest {
                 fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세 주소"),
                 fieldWithPath("address.zipCode").type(JsonFieldType.STRING).description("우편 번호"),
                 fieldWithPath("now").description("수정일")
+        );
+    }
+
+
+    protected static List<FieldDescriptor> getMenuReviewResponse() {
+        return List.of(
+                fieldWithPath("id").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                fieldWithPath("userName").type(JsonFieldType.STRING).description("유저 이름"),
+                fieldWithPath("userRank").description("유저 랭크"),
+                fieldWithPath("comment").description("코멘트")
+        );
+    }
+
+    protected static List<FieldDescriptor> getMenuReviewUpdateResponse() {
+        return List.of(
+                fieldWithPath("reviewId").type(JsonFieldType.NUMBER).description("리뷰 ID"),
+                fieldWithPath("comment").type(JsonFieldType.STRING).description("코멘트")
         );
     }
 }
