@@ -32,7 +32,7 @@ public class OrderService {
 
         Money money = calculator.calculateMenus(cart.getMember(), cart.convertToMenus());
 
-        Order order = Order.createOrder(cart.getMember(), cart, money, now);
+        Order order = Order.createOrder(cart, money, now);
 
         return orderRepository.save(order);
     }
@@ -44,6 +44,7 @@ public class OrderService {
         order.cancel();
     }
 
+    @Deprecated
     public Order findOrderByMemberId(Long memberId) {
         return orderRepository.findByMemberId(memberId);
     }

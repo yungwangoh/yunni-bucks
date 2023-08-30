@@ -67,11 +67,32 @@ public class Order {
                 .build();
     }
 
+    @Deprecated
     public static Order createOrder(Member member, Cart cart, Money orderPrice, LocalDateTime now) {
         String orderName = makeOrderName(cart.getCartItems());
 
         if(member.getCoupon() != null) {
             member.getCoupon().convertStatusUsedCoupon();
+        }
+
+        cart.getMember().addOrderCount();
+
+        return Order.builder()
+                .name(orderName)
+                .cart(cart)
+                .status(ORDER)
+                .payStatus(OrderPayStatus.NO)
+                .orderPrice(orderPrice)
+                .createAt(now)
+                .updateAt(now)
+                .build();
+    }
+
+    public static Order createOrder(Cart cart, Money orderPrice, LocalDateTime now) {
+        String orderName = makeOrderName(cart.getCartItems());
+
+        if(cart.getMember().hasCoupon()) {
+            cart.getMember().getCoupon().convertStatusUsedCoupon();
         }
 
         cart.getMember().addOrderCount();
@@ -109,6 +130,7 @@ public class Order {
         }
     }
 
+    @Deprecated
     public void updatePrice(Money money) {
         this.orderPrice = money;
     }
