@@ -33,7 +33,7 @@ public class MenuThumbNailController {
 
         menuThumbNailService.create(multipartFile, menuId, LocalDateTime.now());
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{menuId}/thumbnails")
