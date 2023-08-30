@@ -1,9 +1,6 @@
 package sejong.coffee.yun.dto.delivery;
 
-import sejong.coffee.yun.domain.delivery.Delivery;
-import sejong.coffee.yun.domain.delivery.DeliveryStatus;
-import sejong.coffee.yun.domain.delivery.DeliveryType;
-import sejong.coffee.yun.domain.order.Order;
+import sejong.coffee.yun.domain.delivery.*;
 import sejong.coffee.yun.domain.user.Address;
 
 import javax.validation.constraints.NotNull;
@@ -29,14 +26,38 @@ public class DeliveryDto {
             @NotNull Address address,
             @NotNull LocalDateTime now
     ) {}
-    public record Response(Long deliveryId, Order order, LocalDateTime now,
-                           Address address, DeliveryType type, DeliveryStatus status) {
+    public record Response(Long deliveryId, String orderName, LocalDateTime createAt, LocalDateTime updateAt, Address address, DeliveryType type, DeliveryStatus status) {
 
         public Response(Delivery delivery) {
             this(
                     delivery.getId(),
-                    delivery.getOrder(),
+                    delivery.getOrder().getName(),
                     delivery.getCreateAt(),
+                    delivery.getUpdateAt(),
+                    delivery.getAddress(),
+                    delivery.getType(),
+                    delivery.getStatus()
+            );
+        }
+
+        public Response(NormalDelivery delivery) {
+            this(
+                    delivery.getId(),
+                    delivery.getOrder().getName(),
+                    delivery.getCreateAt(),
+                    delivery.getUpdateAt(),
+                    delivery.getAddress(),
+                    delivery.getType(),
+                    delivery.getStatus()
+            );
+        }
+
+        public Response(ReserveDelivery delivery) {
+            this(
+                    delivery.getId(),
+                    delivery.getOrder().getName(),
+                    delivery.getCreateAt(),
+                    delivery.getUpdateAt(),
                     delivery.getAddress(),
                     delivery.getType(),
                     delivery.getStatus()
