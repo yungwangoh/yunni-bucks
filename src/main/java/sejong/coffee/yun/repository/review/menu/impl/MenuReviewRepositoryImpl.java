@@ -83,4 +83,9 @@ public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
         return PageableExecutionUtils.getPage(menuReviews, pageable, jpaQuery::fetchOne);
     }
+
+    @Override
+    public void clear() {
+        jpaMenuReviewRepository.deleteAll();
+    }
 }

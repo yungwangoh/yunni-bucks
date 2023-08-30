@@ -12,4 +12,5 @@ public interface ThumbNailRepository {
     MenuThumbnail findById(Long thumbnailId);
     void delete(Long thumbnailId);
     void deleteByMenuId(Long menuId);
+    void clear();
 }

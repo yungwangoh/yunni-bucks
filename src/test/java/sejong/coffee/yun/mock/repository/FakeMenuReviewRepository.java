@@ -84,4 +84,9 @@ public class FakeMenuReviewRepository implements MenuReviewRepository {
 
         return new PageImpl<>(menuReviews, pageable, menuReviews.size());
     }
+
+    @Override
+    public void clear() {
+        reviews.clear();
+    }
 }

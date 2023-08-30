@@ -15,4 +15,5 @@ public interface MenuReviewRepository {
     void delete(Long reviewId);
     void delete(Long memberId, Long reviewId);
     Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId);
+    void clear();
 }

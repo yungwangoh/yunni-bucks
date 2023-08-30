@@ -54,4 +54,9 @@ public class ThumbNailRepositoryImpl implements ThumbNailRepository {
     public void deleteByMenuId(Long menuId) {
         jpaThumbNailRepository.deleteByMenuId(menuId);
     }
+
+    @Override
+    public void clear() {
+        jpaThumbNailRepository.deleteAll();
+    }
 }
