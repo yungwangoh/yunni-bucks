@@ -29,6 +29,7 @@ public class FakeCartItemRepository implements CartItemRepository {
         return cartItem;
     }
 
+    @Override
     public void clear() {
         cartItems.clear();
     }
