@@ -51,6 +51,8 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.squareup.okhttp3:mockwebserver'
+	// https://mvnrepository.com/artifact/org.awaitility/awaitility
+	testImplementation 'org.awaitility:awaitility:4.2.0'
 	implementation 'org.modelmapper:modelmapper:3.1.1'
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.14'
 
