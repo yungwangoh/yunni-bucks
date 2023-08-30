@@ -101,6 +101,8 @@ class MenuReviewControllerTest {
         pageResponse = new MenuReviewPageDto.Response(page);
 
         token = "bearer accessToken";
+
+        updateResponse = new MenuReviewDto.Update.Response(1L, "맛있어요");
     }
 
     @Test
@@ -179,9 +181,8 @@ class MenuReviewControllerTest {
     void 메뉴_리뷰_수정_200() throws Exception {
         // given
         String comment = "맛있다";
-        given(menuReviewService.updateComment(anyLong(), anyLong(), anyString(), any())).willReturn(comment);
-
-        updateResponse = new MenuReviewDto.Update.Response(1L, comment);
+        given(menuReviewService.updateComment(anyLong(), anyLong(), anyString(), any())).willReturn(menuReview);
+        given(customMapper.map(any(), any())).willReturn(updateResponse);
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/reviews/{reviewId}", 1L)

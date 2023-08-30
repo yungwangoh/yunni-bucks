@@ -7,7 +7,11 @@ import javax.validation.constraints.NotBlank;
 
 public class MenuReviewDto {
     public static class Update {
-        public record Response(Long reviewId, String comment) {}
+        public record Response(Long reviewId, String comment) {
+            public Response(MenuReview review) {
+                this(review.getId(), review.getComments());
+            }
+        }
     }
 
     public record Request(@NotBlank String comment) {}

@@ -179,10 +179,10 @@ public class MenuReviewServiceTest {
         LocalDateTime updateTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
         // when
-        String updateComment = menuReviewService.updateComment(saveMember.getId(), menuReview.getId(), updateReview, updateTime);
+        MenuReview updateComment = menuReviewService.updateComment(saveMember.getId(), menuReview.getId(), updateReview, updateTime);
 
         // then
-        assertThat(updateComment).isEqualTo(updateReview);
+        assertThat(updateComment.getComments()).isEqualTo(updateReview);
         assertThat(menuReview.getUpdateAt()).isEqualTo(updateTime);
     }
 

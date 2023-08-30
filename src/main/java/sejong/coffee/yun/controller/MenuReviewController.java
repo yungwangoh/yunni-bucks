@@ -53,12 +53,12 @@ public class MenuReviewController {
 
     @PatchMapping("/reviews/{reviewId}")
     ResponseEntity<MenuReviewDto.Update.Response> updateComment(@PathVariable Long reviewId,
-                                         @RequestParam("comment") String comment,
-                                         @MemberId Long memberId) {
+                                                                @RequestBody @Valid MenuReviewDto.Request request,
+                                                                @MemberId Long memberId) {
 
-        String updateComment = menuReviewService.updateComment(memberId, reviewId, comment, LocalDateTime.now());
+        MenuReview menuReview = menuReviewService.updateComment(memberId, reviewId, request.comment(), LocalDateTime.now());
 
-        MenuReviewDto.Update.Response response = new MenuReviewDto.Update.Response(reviewId, updateComment);
+        MenuReviewDto.Update.Response response = customMapper.map(menuReview, MenuReviewDto.Update.Response.class);
 
         return ResponseEntity.ok(response);
     }

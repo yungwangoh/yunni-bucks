@@ -57,13 +57,13 @@ public class MenuReviewService {
     }
 
     @Transactional
-    public String updateComment(Long memberId, Long reviewId, String comments, LocalDateTime now) {
+    public MenuReview updateComment(Long memberId, Long reviewId, String comments, LocalDateTime now) {
         MenuReview menuReview = menuReviewRepository.findByMemberIdAndId(memberId, reviewId);
 
         menuReview.updateComment(comments);
 
         menuReview.setUpdateAt(now);
 
-        return comments;
+        return menuReview;
     }
 }
