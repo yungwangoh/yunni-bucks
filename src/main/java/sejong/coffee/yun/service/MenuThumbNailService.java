@@ -13,7 +13,6 @@ import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -33,14 +32,14 @@ public class MenuThumbNailService {
 
         File file = new File(PATH.getPath());
 
-        checkImageFileFormat(file);
+        checkImageFileFormat(multipartFile);
 
         mkdir(file);
 
         String originFileName = Objects.requireNonNull(multipartFile.getOriginalFilename(), "file is null!!");
-        String storedFilename = UUID.randomUUID() + "_" + originFileName;
+        String storedFilename = PATH.getPath() + UUID.randomUUID() + getFileExtension(originFileName);
 
-        uploadFile(multipartFile,PATH.getPath() + UUID.randomUUID() + getFileExtension(originFileName));
+        uploadFile(multipartFile, storedFilename);
 
         Menu menu = menuRepository.findById(menuId);
 
@@ -61,6 +60,14 @@ public class MenuThumbNailService {
         return thumbNailRepository.findByMenuId(menuId);
     }
 
+    public void updateThumbnail(MultipartFile multipartFile, Long menuId, LocalDateTime updateAt) {
+        MenuThumbnail menuThumbnail = thumbNailRepository.findByMenuId(menuId);
+
+        uploadFile(multipartFile, menuThumbnail.getStoredFileName());
+
+        menuThumbnail.setUpdateAt(updateAt);
+    }
+
     @Transactional
     public void delete(Long thumbNailId) {
         thumbNailRepository.delete(thumbNailId);
@@ -73,7 +80,7 @@ public class MenuThumbNailService {
 
     private void uploadFile(MultipartFile multipartFile, String uploadFilePath) {
 
-        try(FileOutputStream fileOutputStream = new FileOutputStream(uploadFilePath)) {
+        try(FileOutputStream fileOutputStream = new FileOutputStream(uploadFilePath, false)) {
 
             Thumbnailator.createThumbnail(multipartFile.getInputStream(), fileOutputStream, 100, 100);
 
@@ -104,16 +111,17 @@ public class MenuThumbNailService {
         }
     }
 
-    private void checkImageFileFormat(File file) {
+    private void checkImageFileFormat(MultipartFile multipartFile) {
         try {
-            String contentType = Files.probeContentType(file.toPath());
+            String contentType = multipartFile.getContentType();
 
-            if(!contentType.startsWith("image")) {
+            if(contentType == null || !contentType.startsWith("image")) {
                 throw new RuntimeException("not image");
             }
 
         } catch (Exception e) {
             log.error("image error = {} ", e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

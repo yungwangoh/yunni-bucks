@@ -28,7 +28,7 @@ public class MenuThumbNailController {
 
     private final MenuThumbNailService menuThumbNailService;
 
-    @PostMapping("/{menuId}/thumbnails")
+    @PostMapping("/{menuId}/thumbnails-upload")
     ResponseEntity<Void> upload(@RequestPart("image") MultipartFile multipartFile, @PathVariable Long menuId) {
 
         menuThumbNailService.create(multipartFile, menuId, LocalDateTime.now());
@@ -46,6 +46,14 @@ public class MenuThumbNailController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
+    }
+
+    @PostMapping("/{menuId}/thumbnails-edit")
+    ResponseEntity<Void> updateMenuThumbnail(@RequestPart("image") MultipartFile multipartFile, @PathVariable Long menuId) {
+
+        menuThumbNailService.updateThumbnail(multipartFile, menuId, LocalDateTime.now());
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/thumbnails/{thumbnailId}")
