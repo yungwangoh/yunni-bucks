@@ -66,7 +66,7 @@ public class MainIntegrationTest {
     public static final String CART_API_PATH = "/api/carts";
     public static final String DELIVERY_API_PATH = "/api/deliveries";
     public static final String MENU_REVIEW_API_PATH = "/api";
-    public static final String MENU_THUMBNAIL_API_PATH = "/api/";
+    public static final String MENU_THUMBNAIL_API_PATH = "/api";
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -135,13 +135,13 @@ public class MainIntegrationTest {
                 .money(Money.ZERO)
                 .coupon(null)
                 .email("qwer1234@naver.com")
-                .address(new Address("서울시", "광진구", "능동로 110 세종대학교", "100- 100"))
+                .address(new Address("서울시", "광진구", "능동로 110 세종대학교", "100-100"))
                 .orderCount(0)
                 .build();
     }
 
-    public Order order(Member member, Cart cart) {
-        return Order.createOrder(member, cart, Money.ZERO, LocalDateTime.now());
+    public Order order(Cart cart) {
+        return Order.createOrder(cart, Money.ZERO, LocalDateTime.now());
     }
 
     public Cart cart(Member member) {
