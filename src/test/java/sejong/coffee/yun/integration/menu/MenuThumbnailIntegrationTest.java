@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.integration.MainIntegrationTest;
@@ -15,10 +16,8 @@ import java.time.LocalDateTime;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
@@ -59,7 +58,7 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
             // given
 
             // when
-            ResultActions resultActions = mockMvc.perform(multipart(MENU_THUMBNAIL_API_PATH + "/{menuId}/thumbnails", 1L)
+            ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.multipart(MENU_THUMBNAIL_API_PATH + "/{menuId}/thumbnails", 1L)
                     .file(multipartFile));
 
             // then
@@ -82,11 +81,18 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
             menuThumbNailService.create(multipartFile, 1L, LocalDateTime.now());
 
             // when
-            ResultActions resultActions = mockMvc.perform(get(MENU_THUMBNAIL_API_PATH + "/{menuId}/thumbnails", 1L));
+            ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(MENU_THUMBNAIL_API_PATH + "/{menuId}/thumbnails", 1L));
 
             // then
             resultActions.andExpect(status().isOk())
-                    .andDo(print());
+                    .andDo(document("file-download",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("menuId").description("메뉴 ID")
+                            ),
+                            responseBody()
+                    ));
         }
     }
 }
