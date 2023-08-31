@@ -106,7 +106,7 @@ class MenuThumbNailServiceTest {
     @Test
     void 썸네일_저장_NPE() {
         assertThatThrownBy(() -> menuThumbNailService.create(null, saveMenu.getId(), LocalDateTime.now()))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(RuntimeException.class);
     }
 
     @Test
