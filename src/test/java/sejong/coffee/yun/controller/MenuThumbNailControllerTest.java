@@ -86,7 +86,7 @@ class MenuThumbNailControllerTest {
         given(menuThumbNailService.create(any(), anyLong(), any())).willReturn(menuThumbnail);
 
         // when
-        ResultActions resultActions = mockMvc.perform(multipart("/api/{menuId}/thumbnails", 1L)
+        ResultActions resultActions = mockMvc.perform(multipart("/api/{menuId}/thumbnails-upload", 1L)
                 .file(multipartFile)
                 .header(HttpHeaders.AUTHORIZATION, token));
 
@@ -107,7 +107,7 @@ class MenuThumbNailControllerTest {
         given(menuThumbNailService.create(any(), anyLong(), any())).willReturn(menuThumbnail);
 
         // when
-        ResultActions resultActions = mockMvc.perform(multipart("/api/{menuId}/thumbnails", 1L)
+        ResultActions resultActions = mockMvc.perform(multipart("/api/{menuId}/thumbnails-upload", 1L)
                 .file(mockMultipartFile)
                 .header(HttpHeaders.AUTHORIZATION, token));
 
