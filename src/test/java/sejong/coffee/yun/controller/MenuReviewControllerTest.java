@@ -102,7 +102,7 @@ class MenuReviewControllerTest {
 
         token = "bearer accessToken";
 
-        updateResponse = new MenuReviewDto.Update.Response(1L, "맛있어요");
+        updateResponse = new MenuReviewDto.Update.Response(menuReview);
     }
 
     @Test
@@ -180,14 +180,17 @@ class MenuReviewControllerTest {
     @Test
     void 메뉴_리뷰_수정_200() throws Exception {
         // given
-        String comment = "맛있다";
         given(menuReviewService.updateComment(anyLong(), anyLong(), anyString(), any())).willReturn(menuReview);
         given(customMapper.map(any(), any())).willReturn(updateResponse);
+
+        String s = toJson(new MenuReviewDto.Request("맛있어요"));
 
         // when
         ResultActions resultActions = mockMvc.perform(patch("/api/reviews/{reviewId}", 1L)
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .param("comment", comment));
+                .content(s)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
 
         // then
         resultActions.andExpect(status().isOk())
