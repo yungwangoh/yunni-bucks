@@ -91,7 +91,7 @@ class MenuThumbNailControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, token));
 
         // then
-        resultActions.andExpect(status().isCreated());
+        resultActions.andExpect(status().isNoContent());
     }
 
     @Test
