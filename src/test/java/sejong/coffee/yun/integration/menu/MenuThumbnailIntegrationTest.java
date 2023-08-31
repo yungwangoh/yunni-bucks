@@ -19,7 +19,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
@@ -167,7 +166,16 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isNoContent())
-                    .andDo(print());
+                    .andDo(document("thumbnail-update",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            pathParameters(
+                                    parameterWithName("menuId").description("메뉴 ID")
+                            ),
+                            requestParts(
+                                    partWithName("image").description("썸네일 이미지")
+                            )
+                    ));
         }
     }
 }
