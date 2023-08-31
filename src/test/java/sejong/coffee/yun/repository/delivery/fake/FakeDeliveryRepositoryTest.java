@@ -95,6 +95,6 @@ class FakeDeliveryRepositoryTest {
         List<Delivery> deliveries = deliveryRepository.findAll();
 
         // then
-        assertThat(deliveries.size()).isEqualTo(1);
+        assertThat(deliveries.size()).isEqualTo(2);
     }
 }
