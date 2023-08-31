@@ -1,0 +1,28 @@
+[[MENU-REVIEW-API]]
+= MENU REVIEW API
+
+[[Success]]
+== 성공
+
+[[Menu-review-create]]
+=== 메뉴 리뷰 생성
+operation::menu-review[]
+
+[[Menu-review-find]]
+=== 메뉴 리뷰 찾기
+operation::menu-review-find[snippets='curl-request,http-request,path-parameters,request-headers,http-response,response-fields']
+
+[[Menu-review-update]]
+=== 메뉴 리뷰 수정
+operation::menu-review-update[]
+
+[[Menu-review-delete]]
+=== 메뉴 리뷰 삭제
+operation::menu-review-delete[snippets='curl-request,http-request,path-parameters,request-headers,http-response']
+
+[[Failed]]
+== 실패
+
+[[Menu-review-invaild-id]]
+=== 잘못된 리뷰 ID 실패
+operation::invalid-review-id[snippets='http-response,response-body,response-fields']

@@ -1,0 +1,24 @@
+[[MENU-THUMBNAIL-API]]
+= MENU THUMBNAIL API
+
+[[Success]]
+== 성공
+
+[[Menu-thumbnail-upload]]
+=== 썸네일 업로드
+operation::thumbnail-upload[snippets='curl-request,http-request,path-parameters,request-parts,http-response']
+
+[[Menu-thumbnail-download]]
+=== 썸네일 다운로드
+operation::file-download[snippets='curl-request,http-request,path-parameters,request-parameters,http-response']
+
+[[Menu-thumbnail-update]]
+=== 썸네일 수정
+operation::thumbnail-update[snippets='curl-request,http-request,path-parameters,request-parts,http-response']
+
+[[Failed]]
+== 실패
+
+[[Menu-thumbnail-upload-fail]]
+=== 썸네일 업로드 실패
+operation::thumbnail-upload-fail[snippets='curl-request,http-request,path-parameters,request-parts,http-response,response-fields']

@@ -1,0 +1,60 @@
+[[Delivery-API]]
+= Delivery API
+
+[[Success]]
+== 성공
+
+[[Delivery-normal-create]]
+=== 일반 배달
+operation::normal-delivery[]
+
+[[Delivery-reserve-create]]
+=== 예약 배달
+operation::reserve-delivery[]
+
+[[Delivery-update-address]]
+=== 배달 주소 변경
+operation::delivery-update-address[]
+
+[[Delivery-start]]
+=== 배달 시작
+operation::delivery-start[snippets='curl-request,http-request,request-headers,http-response,response-body,response-fields']
+
+[[Delivery-cancel]]
+=== 배달 취소
+operation::delivery-cancel[snippets='curl-request,http-request,request-headers,http-response,response-body,response-fields']
+
+[[Delivery-complete]]
+=== 배달 완료
+operation::delivery-complete[snippets='curl-request,http-request,request-headers,http-response,response-body,response-fields']
+
+[[Delivery-page]]
+=== 배달 조회
+operation::delivery-page-find[snippets='curl-request,http-request,path-parameters,request-headers,http-response,response-body,response-fields']
+
+[[Delivery-page-status]]
+=== 배달 조회 (상태)
+operation::delivery-page-find-status[snippets='curl-request,http-request,path-parameters,request-headers,http-response,response-body,response-fields']
+
+[[Delivery-page-type]]
+=== 배달 조회 (타입)
+operation::delivery-page-find-type[snippets='curl-request,http-request,path-parameters,request-headers,http-response,response-body,response-fields']
+
+[[Failed]]
+== 실패
+
+[[Delivery-request-null]]
+=== 배달 요청 NULL
+operation::delivery-request-fail[snippets='http-response,response-body,response-fields']
+
+[[Delivery-start-fail]]
+=== 배달 시작 실패
+operation::delivery-start-fail[snippets='http-response,response-body,response-fields']
+
+[[Delivery-cancel-fail]]
+=== 배달 취소 실패
+operation::delivery-cancel-fail[snippets='http-response,response-body,response-fields']
+
+[[Delivery-complete-fail]]
+=== 배달 완료 실패
+operation::delivery-complete-fail[snippets='http-response,response-body,response-fields']

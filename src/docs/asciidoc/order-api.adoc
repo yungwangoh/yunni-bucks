@@ -24,6 +24,18 @@ operation::order-update-menu-add[snippets='http-request,request-parameters,http-
 === 주문 수정 (메뉴 제거)
 operation::order-update-menu-remove[snippets='http-request,request-parameters,http-response,response-fields']
 
+[[Order-list]]
+=== 주문 리스트
+operation::order-list[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+[[Order-list-order-status]]
+=== 주문 리스트 (주문 상태)
+operation::order-list-order-status[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
+[[Order-list-paid-status]]
+=== 주문 리스트 (결제 상태)
+operation::order-list-pay-status[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+
 [[Fail]]
 == 실패
 

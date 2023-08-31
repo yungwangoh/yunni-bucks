@@ -10,4 +10,6 @@
 include::member-api.adoc[]
 include::cart-api.adoc[]
 include::order-api.adoc[]
-
+include::delivery-api.adoc[]
+include::menu-review-api.adoc[]
+include::menu-thumbnail-api.adoc[]
