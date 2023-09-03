@@ -3,6 +3,7 @@ package sejong.coffee.yun.controller.pay;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -27,14 +28,14 @@ import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response.cancel;
 @Builder
 public class PaymentController {
 
-    private final PayService payService;
+    private final @Qualifier("tossApiServiceImpl")PayService payService;
     private final CustomMapper customMapper;
 
     @PostMapping("/card-payment/{orderId}")
     public ResponseEntity<Response> keyIn(@PathVariable Long orderId, @MemberId Long memberId) throws IOException, InterruptedException {
         Request request = payService.initPayment(orderId, memberId);
         CardPayment cardPayment = payService.pay(request);
-
+        log.info("body ->" + cardPayment);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(customMapper.map(cardPayment, Response.class));
