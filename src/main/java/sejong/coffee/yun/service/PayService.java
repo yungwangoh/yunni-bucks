@@ -2,6 +2,7 @@ package sejong.coffee.yun.service;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
 @Builder
 public class PayService {
 
-    private final ApiService apiService;
+    private final @Qualifier("tossApiServiceImpl") ApiService apiService;
     private final PayRepository payRepository;
     private final OrderRepository orderRepository;
     private final CardRepository cardRepository;
@@ -39,7 +40,7 @@ public class PayService {
     }
 
     public CardPayment getByOrderId(String orderUuid) {
-        return payRepository.findByOrderIdAnAndPaymentStatus(orderUuid, DONE);
+        return payRepository.findByOrderUuidAnAndPaymentStatus(orderUuid, DONE);
     }
 
     public CardPayment getByPaymentKey(String paymentKey) {
@@ -53,10 +54,18 @@ public class PayService {
     @Transactional
     public CardPayment pay(CardPaymentDto.Request request) throws IOException, InterruptedException {
 
-        Response response = apiService.callApi(request);
+        Response response = apiService.callExternalPayApi(request);
         CardPayment approvalPayment = CardPayment.approvalPayment(CardPayment.fromModel(request), response.paymentKey(), response.approvedAt());
+        changeOrderPayStatus(request);
         approvalPayment = payRepository.save(approvalPayment);
+
         return approvalPayment;
+    }
+
+    private void changeOrderPayStatus(CardPaymentDto.Request request) {
+        Long orderId = request.order().getId();
+        Order order = orderRepository.findById(orderId);
+        order.setPayStatus();
     }
 
     @Transactional

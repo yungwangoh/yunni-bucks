@@ -1,8 +1,11 @@
 package sejong.coffee.yun.service.pay;
 
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import sejong.coffee.yun.controller.pay.CreatePaymentData;
@@ -14,17 +17,12 @@ import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.infra.fake.FakeTossApiService;
-import sejong.coffee.yun.infra.fake.FakeUuidHolder;
-import sejong.coffee.yun.mock.repository.FakeOrderRepository;
-import sejong.coffee.yun.mock.repository.FakeUserRepository;
+import sejong.coffee.yun.infra.port.UuidHolder;
 import sejong.coffee.yun.repository.card.CardRepository;
-import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
+import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.pay.PayRepository;
-import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.PayService;
 
@@ -35,32 +33,37 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
 
-public class PayServiceTest extends CreatePaymentData {
+@SpringBootTest
+public class PayServiceIntegrateTest extends CreatePaymentData {
 
+    @Autowired
     private PayService payService;
-    private FakeTossApiService fakeTossApiService;
+    @Autowired
+    private ApiService apiService;
+    @Autowired
     private PayRepository payRepository;
+    @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private MenuRepository menuRepository;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
     private CardRepository cardRepository;
+    @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    private UuidHolder uuidHolder;
 
     @BeforeEach
     void init() {
-        fakeTossApiService = new FakeTossApiService("paypaypaypay_1234");
-        payRepository = new FakePayRepository();
-        orderRepository = new FakeOrderRepository();
-        cardRepository = new FakeCardRepository();
-        userRepository = new FakeUserRepository();
-        cartRepository = new FakeCartRepository();
-
-        this.payService = PayService.builder()
-                .payRepository(payRepository)
-                .uuidHolder(new FakeUuidHolder("qwerqewrqwer"))
-                .apiService(new ApiService())
-                .orderRepository(orderRepository)
-                .cardRepository(cardRepository)
-                .build();
+//        this.payService = PayService.builder()
+//                .payRepository(payRepository)
+//                .uuidHolder(uuidHolder)
+//                .apiService(apiService)
+//                .orderRepository(orderRepository)
+//                .cardRepository(cardRepository)
+//                .build();
 
         Member saveMember = userRepository.save(member);
 
@@ -72,7 +75,8 @@ public class PayServiceTest extends CreatePaymentData {
                 .build();
 
         cardRepository.save(buildCard);
-        Cart cart = cartRepository.save(Cart.builder().member(member).cartItems(menuList).build());
+//        menuList.forEach(menuRepository::save);
+        Cart cart = cartRepository.save(new Cart(1L, saveMember, menuList));
         Order saveOrder = Order.createOrder(saveMember, cart, money, LocalDateTime.now());
         orderRepository.save(saveOrder);
     }
@@ -82,9 +86,8 @@ public class PayServiceTest extends CreatePaymentData {
 
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPaymentDto.Response response = apiService.callExternalPayApi(request);
         CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
-
         payRepository.save(approvalPayment);
 
         //when
@@ -98,7 +101,7 @@ public class PayServiceTest extends CreatePaymentData {
     void getByOrderId는_결제내역_단건을_조회한다() throws IOException, InterruptedException {
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPaymentDto.Response response = apiService.callExternalPayApi(request);
         CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
@@ -116,7 +119,7 @@ public class PayServiceTest extends CreatePaymentData {
     void getByPaymentKey는_결제내역_단건을_조회한다() throws IOException, InterruptedException {
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPaymentDto.Response response = apiService.callExternalPayApi(request);
         CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
@@ -156,6 +159,7 @@ public class PayServiceTest extends CreatePaymentData {
 
         //when
         CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
+        System.out.println("-> " + request);
         CardPayment cardPayment = payService.pay(request);
 
         //then
@@ -172,7 +176,7 @@ public class PayServiceTest extends CreatePaymentData {
     void cancelPayment는_결제를_취소한다() throws IOException, InterruptedException {
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPaymentDto.Response response = apiService.callExternalPayApi(request);
         CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
@@ -281,5 +285,12 @@ public class PayServiceTest extends CreatePaymentData {
         assertThat(cardPayments.getSize()).isEqualTo(5);
         assertThat(cardPayments.getContent().get(0).getApprovedAt())
                 .isBefore(cardPayments.getContent().get(1).getApprovedAt());
+    }
+
+    @AfterEach
+    void shutDown() {
+        cardRepository.findAll().forEach(card -> cardRepository.delete(card.getId()));
+        userRepository.findAll().forEach(user -> userRepository.delete(user.getId()));
+        menuRepository.findAll().forEach(menu -> menuRepository.delete(menu.getId()));
     }
 }
