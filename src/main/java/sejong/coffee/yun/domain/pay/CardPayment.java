@@ -5,18 +5,21 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.port.UuidHolder;
+import sejong.coffee.yun.util.parse.ParsingUtil;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static sejong.coffee.yun.domain.pay.PaymentStatus.*;
-import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
+import static sejong.coffee.yun.domain.pay.PaymentStatus.CANCEL;
+import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
+import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "cardNumber", "cardPassword", "customerName", "cardExpirationYear", "cardExpirationMonth",
-        "paymentKey", "orderUuid", "requestedAt", "approvedAt", "paymentStatus"})
+//@ToString(of = {"id", "cardNumber", "cardPassword", "customerName", "cardExpirationYear", "cardExpirationMonth",
+//        "paymentKey", "orderId", "requestedAt", "approvedAt", "paymentStatus"})
+@ToString
 @Table(name = "card_payment")
 public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
@@ -95,14 +98,14 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         cardPayment.customerName = cardDomain.customerName();
         cardPayment.cardExpirationYear = cardDomain.cardExpirationYear();
         cardPayment.cardExpirationMonth = cardDomain.cardExpirationMonth();
-        cardPayment.orderUuid = cardDomain.orderUuid();
+        cardPayment.orderUuid = cardDomain.orderId();
         cardPayment.requestedAt = cardDomain.requestedAt();
         cardPayment.order = cardDomain.order();
         return cardPayment;
     }
 
     public static CardPayment approvalPayment(CardPayment cardPayment, String paymentKey,
-                                              LocalDateTime approvedAt) {
+                                              String approvedAt) {
         return CardPayment.builder()
                 .cardNumber(cardPayment.getCardNumber())
                 .cardExpirationYear(cardPayment.getCardExpirationYear())
@@ -113,7 +116,7 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
                 .requestedAt(cardPayment.getRequestedAt())
                 .status(DONE)
                 .paymentKey(paymentKey)
-                .approvedAt(approvedAt)
+                .approvedAt(ParsingUtil.parsingISO8601ToLocalDateTime(approvedAt))
                 .order(cardPayment.getOrder())
                 .orderUuid(cardPayment.getOrderUuid())
                 .build();
