@@ -75,7 +75,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         //given
         String paymentKey = "5zJ4xY7m0kODnyRpQWGrN2xqGlNvLrKwv1M9ENjbeoPaZdL6";
 
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey, LocalDateTime.now());
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey, LocalDateTime.now().toString());
 
         //when
         CardPayment save = payRepository.save(approvalPayment);
@@ -89,12 +89,12 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         //given
         String paymentKey = "5zJ4xY7m0kODnyRpQWGrN2xqGlNvLrKwv1M9ENjbeoPaZdL6";
 
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey, LocalDateTime.now());
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey, LocalDateTime.now().toString());
 
         payRepository.save(approvalPayment);
 
         //when
-        CardPayment result = payRepository.findByOrderIdAnAndPaymentStatus(uuid, PaymentStatus.DONE);
+        CardPayment result = payRepository.findByOrderUuidAnAndPaymentStatus(uuid, PaymentStatus.DONE);
 
         //then
         assertThat(result.getOrderUuid()).isEqualTo("asdfasdfasdf");
@@ -105,7 +105,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         //given
         String paymentKey = "5zJ4xY7m0kODnyRpQWGrN2xqGlNvLrKwv1M9ENjbeoPaZdL6";
 
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey, LocalDateTime.now());
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey, LocalDateTime.now().toString());
 
         payRepository.save(approvalPayment);
 
@@ -123,9 +123,9 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         String paymentKey_2 = "5zJ4xY7m0kODnyRpQWGrN2xqGlNvLrKwv1M9ENjbeoPaZdL7";
         String paymentKey_3 = "5zJ4xY7m0kODnyRpQWGrN2xqGlNvLrKwv1M9ENjbeoPaZdL8";
 
-        CardPayment approvalPayment_1 = CardPayment.approvalPayment(cardPayment, paymentKey_1, LocalDateTime.now());
-        CardPayment approvalPayment_2 = CardPayment.approvalPayment(cardPayment, paymentKey_2, LocalDateTime.now());
-        CardPayment approvalPayment_3 = CardPayment.approvalPayment(cardPayment, paymentKey_3, LocalDateTime.now());
+        CardPayment approvalPayment_1 = CardPayment.approvalPayment(cardPayment, paymentKey_1, LocalDateTime.now().toString());
+        CardPayment approvalPayment_2 = CardPayment.approvalPayment(cardPayment, paymentKey_2, LocalDateTime.now().toString());
+        CardPayment approvalPayment_3 = CardPayment.approvalPayment(cardPayment, paymentKey_3, LocalDateTime.now().toString());
 
         payRepository.save(approvalPayment_1);
         payRepository.save(approvalPayment_2);
@@ -146,7 +146,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
 
         IntStream.range(0, 10).forEach(i ->
         {
-            CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i));
+            CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i).toString());
             payRepository.save(approvalPayment);
         });
 
@@ -175,7 +175,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
 
         IntStream.range(0, 10).forEach(i ->
         {
-            CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i));
+            CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i).toString());
             approvalPayment.cancel(PaymentCancelReason.CHANGE_PRODUCT);
             payRepository.save(approvalPayment);
         });
@@ -201,7 +201,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
 
         IntStream.range(0, 10).forEach(i ->
         {
-            CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i));
+            CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i).toString());
             payRepository.save(approvalPayment);
         });
 
