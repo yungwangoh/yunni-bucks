@@ -44,7 +44,8 @@ public enum ExceptionControl {
     NOT_MATCHED_PAYMENT_KEY("결제 키가 일치하지 않습니다."),
 
     // OCR
-    NOT_FOUND_OCR_RESPONSE_BODY("올바른 OCR 응답을 받을 수 없습니다.");
+    NOT_FOUND_OCR_RESPONSE_BODY("올바른 OCR 응답을 받을 수 없습니다."),
+    INVALID_FILE_EXTENSION_FORMAT("올바른 파일 경로가 아닙니다.");
 
     private final String message;
 
