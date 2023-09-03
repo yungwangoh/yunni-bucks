@@ -2,6 +2,7 @@ package sejong.coffee.yun.repository.card.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.repository.card.CardRepository;
@@ -16,6 +17,7 @@ public class CardRepositoryImpl implements CardRepository {
     private final JpaCardRepository jpaCardRepository;
 
     @Override
+    @Transactional
     public Card save(Card card) {
         return jpaCardRepository.save(card);
     }
@@ -28,8 +30,28 @@ public class CardRepositoryImpl implements CardRepository {
 
     @Override
     public Card findByMemberId(Long memberId) {
-        return jpaCardRepository.findById(memberId)
+        return jpaCardRepository.findByMemberId(memberId)
                 .orElseThrow(ExceptionControl.NOT_FOUND_REGISTER_CARD::cardException);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        jpaCardRepository.delete(getCard(id));
+    }
+
+    private Card getCard(Long id) {
+        return jpaCardRepository.findById(id).orElseThrow(ExceptionControl.NOT_FOUND_REGISTER_CARD::cardException);
+    }
+
+    @Override
+    @Transactional
+    public void clear() {
+        List<Card> cards = jpaCardRepository.findAll();
+        cards.stream()
+                .map(Card::getId)
+                .map(this::getCard)
+                .forEach(jpaCardRepository::delete);
     }
 
     @Override
