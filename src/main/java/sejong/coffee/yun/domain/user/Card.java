@@ -7,7 +7,7 @@ import sejong.coffee.yun.domain.exception.ExceptionControl;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
+import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 
 @Entity
 @Getter
@@ -49,8 +49,8 @@ public class Card {
 
     public String checkExpirationDate(String dateTime) {
         String[] splitDateTime = parsingCardValidDate(dateTime);
-        int year = Integer.parseInt(splitDateTime[0]);
-        int month = Integer.parseInt(splitDateTime[1]);
+        int month = Integer.parseInt(splitDateTime[0]);
+        int year = Integer.parseInt(splitDateTime[1]);
         if ((year < LocalDateTime.now().getYear() % 100) || (month > 12 || month < 1)) {
             throw ExceptionControl.INVALID_CARD_EXPIRATION_DATE.cardException();
         }
