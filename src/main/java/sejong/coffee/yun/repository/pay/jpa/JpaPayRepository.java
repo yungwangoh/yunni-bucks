@@ -14,7 +14,7 @@ public interface JpaPayRepository extends JpaRepository<CardPayment, Long> {
 //    void findCardByOrderWithinMember(@Param("memberId") Long id);
 
     @Query("SELECT cp FROM CardPayment cp WHERE cp.orderUuid = :orderUuid AND cp.paymentStatus = :paymentStatus")
-    Optional<CardPayment> findByOrderIdAnAndPaymentStatus(
+    Optional<CardPayment> findByOrderUuidAnAndPaymentStatus(
             @Param("orderUuid") String orderUuid,
             @Param("paymentStatus") PaymentStatus paymentStatus
     );
@@ -23,4 +23,10 @@ public interface JpaPayRepository extends JpaRepository<CardPayment, Long> {
     Optional<CardPayment> findByPaymentKeyAndPaymentStatus(
             @Param("paymentKey") String paymentKey,
             @Param("paymentStatus") PaymentStatus paymentStatus);
+
+    @Query("SELECT cp FROM CardPayment cp WHERE cp.order.id = :orderId AND cp.paymentStatus = :paymentStatus")
+    Optional<CardPayment> findByOrderIdAnAndPaymentStatus(
+            @Param("orderId") Long orderId,
+            @Param("paymentStatus") PaymentStatus paymentStatus
+    );
 }

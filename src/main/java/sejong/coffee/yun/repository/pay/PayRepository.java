@@ -15,7 +15,10 @@ public interface PayRepository {
 
     List<CardPayment> findAll();
 
-    CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus);
+    void clear();
+
+    CardPayment findByOrderUuidAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus);
+    CardPayment findByOrderIdAnAndPaymentStatus(Long orderId, PaymentStatus paymentStatus);
 
     CardPayment findByPaymentKeyAndPaymentStatus(String paymentKey, PaymentStatus paymentStatus);
 

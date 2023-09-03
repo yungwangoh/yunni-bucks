@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.repository.pay.PayRepository;
@@ -27,6 +28,7 @@ public class PayRepositoryImpl implements PayRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    @Transactional
     public CardPayment save(CardPayment cardPayment) {
         return jpaPayRepository.save(cardPayment);
     }
@@ -43,8 +45,19 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
-        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderUuid, PaymentStatus.DONE)
+    public void clear() {
+        jpaPayRepository.deleteAll();
+    }
+
+    @Override
+    public CardPayment findByOrderUuidAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
+        return jpaPayRepository.findByOrderUuidAnAndPaymentStatus(orderUuid, PaymentStatus.DONE)
+                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
+    }
+
+    @Override
+    public CardPayment findByOrderIdAnAndPaymentStatus(Long orderId, PaymentStatus paymentStatus) {
+        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderId, PaymentStatus.DONE)
                 .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 
