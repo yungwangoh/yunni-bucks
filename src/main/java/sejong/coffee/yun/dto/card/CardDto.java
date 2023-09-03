@@ -13,7 +13,11 @@ public class CardDto {
         String cardPassword,
         @Pattern(regexp = "\"\\\\d{2}/\\\\d{2}\"", message = "유효기간 포맷이 맞지 않습니다.")
         String validThru
-    ) {}
+    ) {
+        public static CardDto.Request create(String number, String cardPassword, String validThru) {
+            return new CardDto.Request(number, cardPassword, validThru);
+        }
+    }
 
     public record Response (
             String number,
