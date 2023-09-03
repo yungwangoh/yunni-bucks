@@ -2,7 +2,8 @@ package sejong.coffee.yun.controller.pay.mock;
 
 import lombok.Builder;
 import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.infra.fake.FakeApiService;
+import sejong.coffee.yun.infra.fake.FakeOcrApiService;
+import sejong.coffee.yun.infra.fake.FakeTossApiService;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
 import sejong.coffee.yun.infra.port.UuidHolder;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
@@ -38,7 +39,7 @@ public class TestPayContainer {
         this.userRepository = new FakeUserRepository();
         this.cartRepository = new FakeCartRepository();
         this.uuidHolder = new FakeUuidHolder(uuid);
-        this.apiService = new ApiService(new FakeApiService(paymentKey));
+        this.apiService = new ApiService(new FakeTossApiService(paymentKey), new FakeOcrApiService());
         this.payService = new PayService(
                 this.apiService, this.payRepository, this.orderRepository
                 ,this.cardRepository, this.uuidHolder);
