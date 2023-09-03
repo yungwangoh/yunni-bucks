@@ -380,7 +380,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
             resultActions.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.money.totalPrice").value("1000"))
                     .andDo(print())
-                    .andDo(document("order",
+                    .andDo(document("orderDto",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -402,7 +402,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isInternalServerError())
-                    .andDo(document("order-fail",
+                    .andDo(document("orderDto-fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -426,7 +426,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
             // then
             resultActions.andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.message").value(ExceptionControl.EMPTY_MENUS.getMessage()))
-                    .andDo(document("order-empty-cart-fail",
+                    .andDo(document("orderDto-empty-cart-fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -452,7 +452,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isNoContent())
-                    .andDo(document("order-cancel",
+                    .andDo(document("orderDto-cancel",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -475,7 +475,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isInternalServerError())
-                    .andDo(document("order-cancel-fail",
+                    .andDo(document("orderDto-cancel-fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -500,7 +500,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isOk())
-                    .andDo(document("order-find",
+                    .andDo(document("orderDto-find",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -524,7 +524,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isOk())
-                    .andDo(document("order-status-find",
+                    .andDo(document("orderDto-status-find",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(
@@ -548,7 +548,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
 
             // then
             resultActions.andExpect(status().isOk())
-                    .andDo(document("order-paid-status-find",
+                    .andDo(document("orderDto-paid-status-find",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
                             requestHeaders(

@@ -171,7 +171,7 @@ class OrderControllerTest {
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/order-status", 0)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{pageNum}/orderDto-status", 0)
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .param("status", OrderStatus.ORDER.name()));
 
