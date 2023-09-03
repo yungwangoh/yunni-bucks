@@ -11,6 +11,8 @@ import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.dto.card.CardDto;
 import sejong.coffee.yun.mapper.CustomMapper;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,7 +45,7 @@ public class CardControllerTest extends BeforeCreatedData {
         assertThat(findCard.getValidThru()).isEqualTo("23/10");
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(result.getBody().number()).isEqualTo("1234123443211239");
+        assertThat(Objects.requireNonNull(result.getBody()).number()).isEqualTo("1234123443211239");
         assertThat(result.getBody().cardPassword()).isEqualTo("1234");
         assertThat(result.getBody().validThru()).isEqualTo("23/10");
     }
