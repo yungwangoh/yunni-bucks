@@ -60,10 +60,9 @@ public class CardPaymentDto {
 
         public static Request from(CardPayment cardPayment) {
             return new Request(cardPayment.getCardNumber(), cardPayment.getCardPassword(),
-                    cardPayment.getCardExpirationYear(), cardPayment.getCardExpirationMonth(),
+                    cardPayment.getCardExpirationMonth(), cardPayment.getCardExpirationYear(),
                     cardPayment.getOrderUuid(), cardPayment.getOrder().getName(),
-                    cardPayment.getOrder().getOrderPrice().getTotalPrice().toString(),
-//                    parsingMemberIdentityNumber(cardPayment.getOrder().getMember().getEmail()),
+                    String.valueOf(cardPayment.getOrder().getOrderPrice().getTotalPrice().intValue()),
                     parsingMemberIdentityNumber("231212"),
                     cardPayment.getOrder().getMember().getName(), LocalDateTime.now(), cardPayment.getOrder());
         }
