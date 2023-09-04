@@ -21,8 +21,8 @@ public class FakeClovaApiServiceTest extends InitializationApiData {
         OcrDto.Response response = JsonParsing.parseOcrObjectByJson(this.jsonBody);
 
         //then
-        assertThat(response.cardNumber()).isEqualTo("4910 2345 6789 0123");
-        assertThat(response.validThru()).isEqualTo("07/22");
+        assertThat(response.cardNumber()).isEqualTo("9446032384143059");
+        assertThat(response.validThru()).isEqualTo("09/23");
 
     }
 

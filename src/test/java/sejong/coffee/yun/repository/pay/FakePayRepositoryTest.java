@@ -176,7 +176,7 @@ public class FakePayRepositoryTest extends BeforeCreatedData {
         IntStream.range(0, 10).forEach(i ->
         {
             CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, paymentKey + i, LocalDateTime.now().plusMinutes(i).toString());
-            approvalPayment.cancel(PaymentCancelReason.CHANGE_PRODUCT);
+            approvalPayment.cancelPayment(PaymentCancelReason.CHANGE_PRODUCT);
             payRepository.save(approvalPayment);
         });
 

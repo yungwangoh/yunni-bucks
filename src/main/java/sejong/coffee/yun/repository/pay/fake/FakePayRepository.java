@@ -38,8 +38,8 @@ public class FakePayRepository implements PayRepository {
                     .approvedAt(cardPayment.getApprovedAt())
                     .order(cardPayment.getOrder())
                     .orderUuid(cardPayment.getOrderUuid())
-                    .status(cardPayment.getPaymentStatus())
-                    .type(cardPayment.getPaymentType())
+                    .paymentStatus(cardPayment.getPaymentStatus())
+                    .paymentType(cardPayment.getPaymentType())
                     .build();
             data.add(buildCardPayment);
             return buildCardPayment;
