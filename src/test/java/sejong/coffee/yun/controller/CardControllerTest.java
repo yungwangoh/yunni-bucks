@@ -42,12 +42,12 @@ public class CardControllerTest extends BeforeCreatedData {
         //then
         assertThat(findCard.getNumber()).isEqualTo("1234123443211239");
         assertThat(findCard.getCardPassword()).isEqualTo("1234");
-        assertThat(findCard.getValidThru()).isEqualTo("23/10");
+        assertThat(findCard.getValidThru()).isEqualTo("10/23");
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(Objects.requireNonNull(result.getBody()).number()).isEqualTo("1234123443211239");
         assertThat(result.getBody().cardPassword()).isEqualTo("1234");
-        assertThat(result.getBody().validThru()).isEqualTo("23/10");
+        assertThat(result.getBody().validThru()).isEqualTo("10/23");
     }
 
     @Test
@@ -111,6 +111,6 @@ public class CardControllerTest extends BeforeCreatedData {
         assertThat(findCard).isNotNull();
         assertThat(findCard.getNumber()).isEqualTo("1234123443211239");
         assertThat(findCard.getCardPassword()).isEqualTo("1234");
-        assertThat(findCard.getValidThru()).isEqualTo("23/10");
+        assertThat(findCard.getValidThru()).isEqualTo("10/23");
     }
 }

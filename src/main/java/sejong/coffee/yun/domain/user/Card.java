@@ -12,7 +12,7 @@ import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "number", "validThru"})
+@ToString
 public class Card {
 
     @Id
