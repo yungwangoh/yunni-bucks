@@ -39,7 +39,11 @@ public class PayService {
         return payRepository.findById(id);
     }
 
-    public CardPayment getByOrderId(String orderUuid) {
+    public CardPayment getByOrderId(Long orderId) {
+        return payRepository.findByOrderIdAnAndPaymentStatus(orderId, DONE);
+    }
+
+    public CardPayment getByOrderUuid(String orderUuid) {
         return payRepository.findByOrderUuidAnAndPaymentStatus(orderUuid, DONE);
     }
 
@@ -49,6 +53,14 @@ public class PayService {
 
     public List<CardPayment> findAll() {
         return payRepository.findAll();
+    }
+
+    @Transactional
+    public CardPaymentDto.Request initPayment(Long orderId, Long memberId){
+        Order order = orderRepository.findById(orderId);
+        Card card = cardRepository.findByMemberId(memberId);
+
+        return CardPaymentDto.Request.create(card, order, uuidHolder);
     }
 
     @Transactional
@@ -62,24 +74,18 @@ public class PayService {
         return approvalPayment;
     }
 
-    private void changeOrderPayStatus(CardPaymentDto.Request request) {
+    @Transactional
+    public void changeOrderPayStatus(CardPaymentDto.Request request) {
         Long orderId = request.order().getId();
         Order order = orderRepository.findById(orderId);
         order.setPayStatus();
     }
 
     @Transactional
-    public CardPaymentDto.Request initPayment(Long orderId, Long memberId){
-        Order order = orderRepository.findById(orderId);
-        Card card = cardRepository.findByMemberId(memberId);
-
-        return CardPaymentDto.Request.create(card, order, uuidHolder);
-    }
-
     public CardPayment cancelPayment(String paymentKey, String cancelCode) {
         CardPayment findCardPayment = payRepository.findByPaymentKeyAndPaymentStatus(paymentKey, DONE);
         PaymentCancelReason byCode = PaymentCancelReason.getByCode(cancelCode);
-        findCardPayment.cancel(byCode);
+        findCardPayment.cancelPayment(byCode);
         return findCardPayment;
     }
 
