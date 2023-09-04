@@ -55,7 +55,7 @@ class PaymentControllerTest extends MainIntegrationTest {
     public CartRepository cartRepository;
 
     @Nested
-    @DisplayName("Pay 통합 테스트")
+    @DisplayName("Pay Controller 통합 테스트")
     @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     class PayTest {

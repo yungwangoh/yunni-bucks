@@ -79,7 +79,7 @@ class PaymentControllerFakeTest extends CreatePaymentData {
                 .payService(testPayContainer.payService)
                 .customMapper(new CustomMapper())
                 .build()
-                .getByOrderId("testUuid");
+                .getByOrderUuid("testUuid");
 
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);

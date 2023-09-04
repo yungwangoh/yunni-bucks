@@ -42,10 +42,17 @@ public class PaymentController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<Response> getByOrderId(@PathVariable String orderId) {
+    public ResponseEntity<Response> getByOrderId(@PathVariable Long orderId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(customMapper.map(payService.getByOrderId(orderId), Response.class));
+    }
+
+    @GetMapping("/{orderUuid}")
+    public ResponseEntity<Response> getByOrderUuid(@PathVariable String orderUuid) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(customMapper.map(payService.getByOrderUuid(orderUuid), Response.class));
     }
 
     @GetMapping("/{paymentKey}")
