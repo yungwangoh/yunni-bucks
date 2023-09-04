@@ -57,7 +57,7 @@ public class PayServiceTest extends CreatePaymentData {
         this.payService = PayService.builder()
                 .payRepository(payRepository)
                 .uuidHolder(new FakeUuidHolder("qwerqewrqwer"))
-                .apiService(new ApiService())
+                .apiService(new ApiService(fakeTossApiService, null))
                 .orderRepository(orderRepository)
                 .cardRepository(cardRepository)
                 .build();
@@ -104,7 +104,7 @@ public class PayServiceTest extends CreatePaymentData {
         payRepository.save(approvalPayment);
 
         //when
-        CardPayment byId = payService.getByOrderId("asdfasdf");
+        CardPayment byId = payService.getByOrderUuid("asdfasdf");
 
         //then
         assertThat(byId.getPaymentStatus()).isEqualTo(DONE);
@@ -231,7 +231,7 @@ public class PayServiceTest extends CreatePaymentData {
                     CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
                     try {
                         CardPayment pay = payService.pay(request);
-                        pay.cancel(PaymentCancelReason.NOT_SATISFIED_SERVICE);
+                        pay.cancelPayment(PaymentCancelReason.NOT_SATISFIED_SERVICE);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
