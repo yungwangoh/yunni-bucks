@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 public class ParsingUtil {
@@ -45,13 +46,14 @@ public class ParsingUtil {
     }
 
     public static LocalDateTime parsingISO8601ToLocalDateTime(String approvedAt) {
-        // ISO 8601 형식에 대한 DateTimeFormatter 생성
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
-        // 문자열을 LocalDateTime으로 파싱
-        OffsetDateTime offsetDateTime = OffsetDateTime.parse(approvedAt, formatter);
-
-        // OffsetDateTime을 LocalDateTime으로 변환
-        return offsetDateTime.toLocalDateTime();
+        try {
+            OffsetDateTime offsetDateTime = OffsetDateTime.parse(approvedAt, formatter);
+            return offsetDateTime.toLocalDateTime();
+        } catch (DateTimeParseException e) {
+            return LocalDateTime.parse(approvedAt);
+        }
     }
 }
