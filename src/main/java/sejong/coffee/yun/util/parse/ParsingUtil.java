@@ -1,6 +1,7 @@
 package sejong.coffee.yun.util.parse;
 
 import sejong.coffee.yun.domain.exception.ExceptionControl;
+import sejong.coffee.yun.util.regex.RegexUtil;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class ParsingUtil {
     public static String parsingFileExtension(String filePath) {
 
         int lastDotIndex = filePath.lastIndexOf(".");
-        if (lastDotIndex != -1 && lastDotIndex < filePath.length() - 1) {
+        if (lastDotIndex != -1 && lastDotIndex < filePath.length() - 1 && filePath.matches(RegexUtil.IMG_FORMAT)) {
             return filePath.substring(lastDotIndex + 1);
         }
         throw ExceptionControl.INVALID_FILE_EXTENSION_FORMAT.ocrException();

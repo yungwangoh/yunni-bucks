@@ -35,7 +35,7 @@ public class PaymentController {
     public ResponseEntity<Response> keyIn(@PathVariable Long orderId, @MemberId Long memberId) throws IOException, InterruptedException {
         Request request = payService.initPayment(orderId, memberId);
         CardPayment cardPayment = payService.pay(request);
-        log.info("body ->" + cardPayment);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(customMapper.map(cardPayment, Response.class));
