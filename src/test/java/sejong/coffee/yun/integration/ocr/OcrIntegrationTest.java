@@ -7,13 +7,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import sejong.coffee.yun.infra.port.UuidHolder;
 import sejong.coffee.yun.integration.SubIntegrationTest;
-import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CardService;
-import sejong.coffee.yun.service.UserService;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -29,22 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class OcrIntegrationTest extends SubIntegrationTest {
 
     @Autowired
-    private CustomMapper customMapper;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private CardRepository cardRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private CardService cardService;
-
-    @Autowired
-    private UuidHolder uuidHolder;
 
     @Nested
     @DisplayName("OCR 통합 테스트")
