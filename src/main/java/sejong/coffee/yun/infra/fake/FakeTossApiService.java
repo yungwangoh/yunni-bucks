@@ -23,7 +23,7 @@ public class FakeTossApiService implements TossApiService {
     @Override
     public Response callExternalApi(Request cardPaymentDto) {
         this.payRequest = cardPaymentDto;
-        this.payResponse = new Response(payRequest.orderId(), payRequest.orderName(), maskingCardNumber(payRequest.cardNumber()),
+        this.payResponse = new Response(1L, payRequest.orderId(), payRequest.orderName(), maskingCardNumber(payRequest.cardNumber()),
                 payRequest.cardExpirationYear(), payRequest.cardExpirationMonth(), payRequest.amount(), this.paymentKey,
                 PaymentStatus.DONE, payRequest.requestedAt().toString(), payRequest.requestedAt().plusSeconds(5).toString(), new OrderDto.Response(cardPaymentDto.order()), null);
 

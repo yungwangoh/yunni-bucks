@@ -57,6 +57,11 @@ public class FakeCardRepository implements CardRepository {
     }
 
     @Override
+    public void delete(Card card) {
+        data.removeIf(element -> Objects.equals(element.getId(), card.getId()));
+    }
+
+    @Override
     public void clear() {
         data.clear();
     }
