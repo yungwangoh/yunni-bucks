@@ -1,0 +1,33 @@
+[[Card-API]]
+= Card API
+
+[[Success]]
+== 성공
+
+[[Card-create]]
+=== 카드 생성
+operation::card-create[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Card-remove]]
+=== 카드 삭제
+operation::card-remove[snippets='http-request,request-headers,request-parameters,http-response']
+
+[[Fail]]
+== 실패
+
+[[Card-Invalid-Number]]
+=== 카드 번호 등록 실패
+operation::card-invalid-number[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Card-Invalid-Password]]
+=== 카드 비밀번호 등록 실패
+operation::card-invalid-password[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Card-Invalid-Date]]
+=== 카드 유효기간 등록 실패
+operation::card-invalid-date[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Card-find]]
+=== 카드 조회
+operation::card-find[snippets='http-request,request-headers,http-response,response-fields']
+

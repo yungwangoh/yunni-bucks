@@ -1,0 +1,16 @@
+[[OCR-API]]
+= OCR API
+
+[[Success]]
+== 성공
+
+[[Ocr-create]]
+=== OCR 생성
+operation::ocr-create[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Fail]]
+== 실패
+
+[[Ocr-Invalid-File-Extension]]
+=== OCR 생성
+operation::invalid-ocr-file-extension[snippets='http-request,request-headers,http-response,response-fields']
