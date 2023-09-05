@@ -112,7 +112,6 @@ public class OcrIntegrationTest extends SubIntegrationTest {
                                     getFailResponses()
                             )
                     ));
-
         }
     }
 }
