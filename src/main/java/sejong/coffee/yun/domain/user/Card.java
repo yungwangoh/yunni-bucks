@@ -2,6 +2,7 @@ package sejong.coffee.yun.domain.user;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import sejong.coffee.yun.domain.DateTimeEntity;
 import sejong.coffee.yun.domain.exception.ExceptionControl;
 
 import javax.persistence.*;
@@ -13,17 +14,17 @@ import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class Card {
+public class Card extends DateTimeEntity {
 
     @Id
     @GeneratedValue
     @Column(name = "card_id")
     private Long id;
     @Column(length = 20)
-    @Length(max = 20, message = "카드번호는 20자리 이하로 입력하세요")
+    @Length(max = 20, message = "카드번호는 20자 이하여야 합니다.")
     private String number;
     @Column(length = 4)
-    @Length(max = 4, message = "카드 비밀번호는 4자리로 입력하세요")
+    @Length(max = 4, message = "비밀번호는 숫자 4자여야 합니다.")
     private String cardPassword;
     private String validThru;
 
