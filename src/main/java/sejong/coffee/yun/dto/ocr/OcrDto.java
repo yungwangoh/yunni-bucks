@@ -3,6 +3,9 @@ package sejong.coffee.yun.dto.ocr;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Getter;
+import sejong.coffee.yun.util.regex.RegexUtil;
+
+import javax.validation.constraints.Pattern;
 
 @Builder
 @Getter
@@ -12,6 +15,7 @@ public class OcrDto {
     public record Request (
         String username,
         String path,
+        @Pattern(regexp = RegexUtil.IMG_FORMAT)
         String format
     ) {
         public static Request create(String username, String path, String format) {

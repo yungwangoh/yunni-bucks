@@ -12,7 +12,6 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.card.CardDto;
 import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.infra.port.UuidHolder;
-import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.CardService;
 import sejong.coffee.yun.service.UserService;
 
@@ -28,7 +27,6 @@ import static sejong.coffee.yun.util.parse.ParsingUtil.parsingFileExtension;
 public class OcrController {
 
     private final @Qualifier("clovaApiServiceImpl") ApiService apiService;
-    private final CustomMapper customMapper;
     private final UserService userService;
     private final CardService cardService;
     private final UuidHolder uuidHolder;

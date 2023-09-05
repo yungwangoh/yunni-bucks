@@ -69,6 +69,7 @@ public class CardPaymentDto {
     }
 
     public record Response(
+            Long paymentId,
             @JsonProperty("orderId")
             String orderUuid,
             String orderName,
@@ -85,7 +86,7 @@ public class CardPaymentDto {
             PaymentCancelReason cancelReason
     ) {
         public Response(CardPayment entity) {
-            this(entity.getOrderUuid(), entity.getOrder().getName(),
+            this(entity.getId(), entity.getOrderUuid(), entity.getOrder().getName(),
                     entity.getCardNumber(), entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
                     entity.getOrder().getOrderPrice().getTotalPrice().toString(),
                     entity.getPaymentKey(), entity.getPaymentStatus(),
@@ -93,7 +94,7 @@ public class CardPaymentDto {
         }
 
         public static Response cancel(CardPayment entity) {
-            return new Response(entity.getOrderUuid(), entity.getOrder().getName(), entity.getCardNumber(),
+            return new Response(entity.getId(), entity.getOrderUuid(), entity.getOrder().getName(), entity.getCardNumber(),
                     entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
                     entity.getOrder().getOrderPrice().getTotalPrice().toString(), entity.getPaymentKey(), entity.getPaymentStatus(),
                     entity.getRequestedAt().toString(), entity.getApprovedAt().toString(), new OrderDto.Response(entity.getOrder()), entity.getCancelReason());
