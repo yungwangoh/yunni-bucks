@@ -1,10 +1,12 @@
-package sejong.coffee.yun.controller.pay;
+package sejong.coffee.yun.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import sejong.coffee.yun.controller.pay.mock.TestPayContainer;
+import sejong.coffee.yun.controller.pay.CreatePaymentData;
+import sejong.coffee.yun.controller.pay.PaymentController;
+import sejong.coffee.yun.controller.mock.TestPayContainer;
 import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.PaymentCancelReason;
@@ -23,7 +25,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class PaymentControllerFakeTest extends CreatePaymentData {
+class PaymentControllerTest extends CreatePaymentData {
 
     private TestPayContainer testPayContainer;
     @BeforeEach

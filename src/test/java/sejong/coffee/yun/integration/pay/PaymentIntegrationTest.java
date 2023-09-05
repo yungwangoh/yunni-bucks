@@ -1,4 +1,4 @@
-package sejong.coffee.yun.controller.pay;
+package sejong.coffee.yun.integration.pay;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-class PaymentControllerTest extends MainIntegrationTest {
+class PaymentIntegrationTest extends MainIntegrationTest {
 
     @Autowired
     public PayRepository payRepository;
