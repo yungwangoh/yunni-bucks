@@ -40,6 +40,11 @@ public class CardRepositoryImpl implements CardRepository {
         jpaCardRepository.delete(getCard(id));
     }
 
+    @Override
+    public void delete(Card card) {
+        jpaCardRepository.delete(card);
+    }
+
     private Card getCard(Long id) {
         return jpaCardRepository.findById(id).orElseThrow(ExceptionControl.NOT_FOUND_REGISTER_CARD::cardException);
     }

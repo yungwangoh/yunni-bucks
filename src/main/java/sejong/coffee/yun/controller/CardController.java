@@ -37,4 +37,10 @@ public class CardController {
                 .status(HttpStatus.OK)
                 .body(customMapper.map(cardService.getByMemberId(memberId), Response.class));
     }
+
+    @DeleteMapping("/")
+    ResponseEntity<Void> removeCard(@MemberId Long memberId) {
+        cardService.removeCard(memberId);
+        return ResponseEntity.noContent().build();
+    }
 }
