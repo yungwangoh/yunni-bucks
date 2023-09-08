@@ -14,9 +14,13 @@ OCR(https://clova.ai/ocr/) ,Payment(https://docs.tosspayments.com/guides/index) 
 
 Unit Test, Integration Test로 Fake Object, Mock를 활용하여 테스트 OOP에 초점, SOLID 원칙 준수
 
+### Architecture
+
+<img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/4881409d-6661-4591-91f0-896ed3c48029">
+
 ### ERD
 
-<img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/aff78566-56fe-42db-83f2-fde016bdbc93">
+<img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/37452648-0c1b-4b6f-aa0a-42a53cbcc9ce">
 
 ### Domain Model
 <img width="757" alt="image" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/35e060e7-dd72-46c7-90f0-b28fc55b36d7">
