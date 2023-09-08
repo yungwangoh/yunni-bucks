@@ -1,0 +1,40 @@
+[[Pay-API]]
+= Pay API
+
+[[Success]]
+== 성공
+
+[[Pay-create]]
+=== 결제 생성
+operation::pay-create[snippets='http-request,path-parameters,request-headers,http-response,response-fields']
+
+[[Pay-create-failed]]
+=== 결제 생성 실패
+operation::pay-create-failed[snippets='http-request,path-parameters,request-headers,http-response,response-fields']
+
+[[Pay-find]]
+=== 결제 단건 조회
+operation::pay-find[snippets='http-request,path-parameters,request-headers,http-response,response-fields']
+
+[[Pay-page-username-find]]
+=== 회원명과 결제 상태로 내역 조회
+operation::pay-page-find-username-status[snippets='http-request,path-parameters,request-parameters,request-headers,http-response,response-fields']
+
+[[Pay-page-username-cancel-find]]
+=== 회원명과 결제 상태로 취소 내역 조회
+operation::pay-page-find-username-cancel-status[snippets='http-request,path-parameters,request-parameters,request-headers,http-response,response-fields']
+
+[[Pay-page-findAll]]
+=== 결제 내역 페이징 전체 조회
+operation::pay-page-findAll[snippets='http-request,request-headers,http-response,response-fields']
+
+[[Pay-cancel]]
+=== 결제 취소
+operation::pay-cancel[snippets='http-request,request-parameters,request-headers,http-response,response-fields']
+
+[[Fail]]
+== 실패
+
+[[Pay-invalid-cancel]]
+=== 결제 취소 실패
+operation::pay-invalid-cancel[snippets='http-request,request-parameters,request-headers,http-response,response-fields']
