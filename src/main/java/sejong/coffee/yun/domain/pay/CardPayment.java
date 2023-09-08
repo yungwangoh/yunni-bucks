@@ -31,11 +31,14 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     private String cardExpirationYear;
     private String paymentKey;
     private String orderUuid;
+    @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
+    @Enumerated(value = EnumType.STRING)
     private PaymentStatus paymentStatus;
     private LocalDateTime requestedAt;
     private LocalDateTime approvedAt;
     private LocalDateTime cancelPaymentAt;
+    @Enumerated(value = EnumType.STRING)
     private PaymentCancelReason cancelReason;
 
     @OneToOne(fetch = FetchType.LAZY)
