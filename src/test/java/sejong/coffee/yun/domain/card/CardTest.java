@@ -41,7 +41,7 @@ public class CardTest extends BeforeCreatedData {
         //given
         //when
         //then
-        assertThatThrownBy(() -> new Card("1234123443211239", "24/13", "1234", this.member))
+        assertThatThrownBy(() -> new Card("1234123443211239", "13/24", "1234", this.member))
                 .isInstanceOf(CardException.class)
                 .hasMessageContaining(ExceptionControl.INVALID_CARD_EXPIRATION_DATE.getMessage());
     }
@@ -60,7 +60,7 @@ public class CardTest extends BeforeCreatedData {
         //given
         //when
         //then
-        assertThatThrownBy(() -> new Card("1234123443211239", "24/11", "123554", this.member))
+        assertThatThrownBy(() -> new Card("1234123443211239", "11/24", "123554", this.member))
                 .isInstanceOf(CardException.class)
                 .hasMessageContaining(ExceptionControl.INVALID_CARD_PASSWORD.getMessage());
     }

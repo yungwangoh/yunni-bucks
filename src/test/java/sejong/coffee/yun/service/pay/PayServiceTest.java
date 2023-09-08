@@ -14,7 +14,7 @@ import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.infra.fake.FakeApiService;
+import sejong.coffee.yun.infra.fake.FakeTossApiService;
 import sejong.coffee.yun.infra.fake.FakeUuidHolder;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
@@ -38,7 +38,7 @@ import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
 public class PayServiceTest extends CreatePaymentData {
 
     private PayService payService;
-    private FakeApiService fakeApiService;
+    private FakeTossApiService fakeTossApiService;
     private PayRepository payRepository;
     private OrderRepository orderRepository;
     private UserRepository userRepository;
@@ -47,7 +47,7 @@ public class PayServiceTest extends CreatePaymentData {
 
     @BeforeEach
     void init() {
-        fakeApiService = new FakeApiService("paypaypaypay_1234");
+        fakeTossApiService = new FakeTossApiService("paypaypaypay_1234");
         payRepository = new FakePayRepository();
         orderRepository = new FakeOrderRepository();
         cardRepository = new FakeCardRepository();
@@ -57,7 +57,7 @@ public class PayServiceTest extends CreatePaymentData {
         this.payService = PayService.builder()
                 .payRepository(payRepository)
                 .uuidHolder(new FakeUuidHolder("qwerqewrqwer"))
-                .apiService(new ApiService(fakeApiService))
+                .apiService(new ApiService(fakeTossApiService, null))
                 .orderRepository(orderRepository)
                 .cardRepository(cardRepository)
                 .build();
@@ -82,8 +82,8 @@ public class PayServiceTest extends CreatePaymentData {
 
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeApiService.callExternalAPI(request);
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt());
+        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
 
@@ -98,13 +98,13 @@ public class PayServiceTest extends CreatePaymentData {
     void getByOrderId는_결제내역_단건을_조회한다() throws IOException, InterruptedException {
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeApiService.callExternalAPI(request);
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt());
+        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
 
         //when
-        CardPayment byId = payService.getByOrderId("asdfasdf");
+        CardPayment byId = payService.getByOrderUuid("asdfasdf");
 
         //then
         assertThat(byId.getPaymentStatus()).isEqualTo(DONE);
@@ -116,8 +116,8 @@ public class PayServiceTest extends CreatePaymentData {
     void getByPaymentKey는_결제내역_단건을_조회한다() throws IOException, InterruptedException {
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeApiService.callExternalAPI(request);
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt());
+        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
 
@@ -142,7 +142,7 @@ public class PayServiceTest extends CreatePaymentData {
         CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
 
         //then
-        assertThat(request.orderUuid()).isEqualTo("qwerqewrqwer");
+        assertThat(request.orderId()).isEqualTo("qwerqewrqwer");
     }
 
     @Test
@@ -172,8 +172,8 @@ public class PayServiceTest extends CreatePaymentData {
     void cancelPayment는_결제를_취소한다() throws IOException, InterruptedException {
         //given
         CardPaymentDto.Request request = CardPaymentDto.Request.from(cardPayment);
-        CardPaymentDto.Response response = fakeApiService.callExternalAPI(request);
-        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt());
+        CardPaymentDto.Response response = fakeTossApiService.callExternalApi(request);
+        CardPayment approvalPayment = CardPayment.approvalPayment(cardPayment, response.paymentKey(), request.requestedAt().toString());
 
         payRepository.save(approvalPayment);
 
@@ -231,7 +231,7 @@ public class PayServiceTest extends CreatePaymentData {
                     CardPaymentDto.Request request = payService.initPayment(orderId, memberId);
                     try {
                         CardPayment pay = payService.pay(request);
-                        pay.cancel(PaymentCancelReason.NOT_SATISFIED_SERVICE);
+                        pay.cancelPayment(PaymentCancelReason.NOT_SATISFIED_SERVICE);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

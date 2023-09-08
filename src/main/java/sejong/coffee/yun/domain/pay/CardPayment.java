@@ -5,18 +5,18 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.port.UuidHolder;
+import sejong.coffee.yun.util.parse.ParsingUtil;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static sejong.coffee.yun.domain.pay.PaymentStatus.*;
-import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
+import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "cardNumber", "cardPassword", "customerName", "cardExpirationYear", "cardExpirationMonth",
-        "paymentKey", "orderUuid", "requestedAt", "approvedAt", "paymentStatus"})
+@ToString(exclude = "order")
 @Table(name = "card_payment")
 public class CardPayment extends PaymentDateTimeEntity implements Pay {
 
@@ -27,15 +27,18 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     private String cardNumber;
     private String cardPassword;
     private String customerName;
-    private String cardExpirationYear;
     private String cardExpirationMonth;
+    private String cardExpirationYear;
     private String paymentKey;
     private String orderUuid;
+    @Enumerated(value = EnumType.STRING)
     private PaymentType paymentType;
+    @Enumerated(value = EnumType.STRING)
     private PaymentStatus paymentStatus;
     private LocalDateTime requestedAt;
     private LocalDateTime approvedAt;
     private LocalDateTime cancelPaymentAt;
+    @Enumerated(value = EnumType.STRING)
     private PaymentCancelReason cancelReason;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -46,18 +49,19 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         this.cardNumber = card.getNumber();
         this.cardPassword = displayTwoDigits(card.getCardPassword());
         this.customerName = order.getMember().getName();
-        this.cardExpirationYear = parsingCardValidDate(card.getValidThru())[0];
-        this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[1];
+        this.cardExpirationMonth = parsingCardValidDate(card.getValidThru())[0];
+        this.cardExpirationYear = parsingCardValidDate(card.getValidThru())[1];
         this.order = order;
         this.paymentType = PaymentType.CARD;
-        this.paymentStatus = DONE;
+        this.paymentStatus = READY;
         this.orderUuid = uuidHolder.random();
+        this.requestedAt = LocalDateTime.now();
     }
 
     @Builder
     public CardPayment(Long id, String cardNumber, String cardPassword, String customerName,
-                       String cardExpirationYear, String cardExpirationMonth, PaymentType type,
-                       PaymentStatus status, LocalDateTime requestedAt, LocalDateTime approvedAt,
+                       String cardExpirationYear, String cardExpirationMonth, PaymentType paymentType,
+                       PaymentStatus paymentStatus, LocalDateTime requestedAt, LocalDateTime approvedAt,
                        String paymentKey, String orderUuid, Order order) {
         this.id = id;
         this.cardNumber = cardNumber;
@@ -65,8 +69,8 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         this.customerName = customerName;
         this.cardExpirationYear = cardExpirationYear;
         this.cardExpirationMonth = cardExpirationMonth;
-        this.paymentType = type;
-        this.paymentStatus = status;
+        this.paymentType = paymentType;
+        this.paymentStatus = paymentStatus;
         this.requestedAt = requestedAt;
         this.approvedAt = approvedAt;
         this.paymentKey = paymentKey;
@@ -77,11 +81,6 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
     @Override
     public void payment() {
         Pay pay = new CardPayment();
-    }
-
-    @Override
-    public void cancelPayment() {
-
     }
 
     public String displayTwoDigits(String carPassword) {
@@ -95,31 +94,32 @@ public class CardPayment extends PaymentDateTimeEntity implements Pay {
         cardPayment.customerName = cardDomain.customerName();
         cardPayment.cardExpirationYear = cardDomain.cardExpirationYear();
         cardPayment.cardExpirationMonth = cardDomain.cardExpirationMonth();
-        cardPayment.orderUuid = cardDomain.orderUuid();
+        cardPayment.orderUuid = cardDomain.orderId();
         cardPayment.requestedAt = cardDomain.requestedAt();
         cardPayment.order = cardDomain.order();
         return cardPayment;
     }
 
     public static CardPayment approvalPayment(CardPayment cardPayment, String paymentKey,
-                                              LocalDateTime approvedAt) {
+                                              String approvedAt) {
         return CardPayment.builder()
                 .cardNumber(cardPayment.getCardNumber())
                 .cardExpirationYear(cardPayment.getCardExpirationYear())
                 .cardExpirationMonth(cardPayment.getCardExpirationMonth())
-                .type(cardPayment.getPaymentType())
+                .paymentType(cardPayment.getPaymentType())
                 .cardPassword(cardPayment.getCardPassword())
                 .customerName(cardPayment.getCustomerName())
                 .requestedAt(cardPayment.getRequestedAt())
-                .status(DONE)
+                .paymentStatus(DONE)
                 .paymentKey(paymentKey)
-                .approvedAt(approvedAt)
+                .approvedAt(ParsingUtil.parsingISO8601ToLocalDateTime(approvedAt))
                 .order(cardPayment.getOrder())
                 .orderUuid(cardPayment.getOrderUuid())
                 .build();
     }
 
-    public void cancel(PaymentCancelReason cancelReason) {
+    @Override
+    public void cancelPayment(PaymentCancelReason cancelReason) {
         this.cancelReason = cancelReason;
         this.paymentStatus = CANCEL;
         this.cancelPaymentAt = LocalDateTime.now();

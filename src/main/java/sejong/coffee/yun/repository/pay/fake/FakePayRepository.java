@@ -38,8 +38,8 @@ public class FakePayRepository implements PayRepository {
                     .approvedAt(cardPayment.getApprovedAt())
                     .order(cardPayment.getOrder())
                     .orderUuid(cardPayment.getOrderUuid())
-                    .status(cardPayment.getPaymentStatus())
-                    .type(cardPayment.getPaymentType())
+                    .paymentStatus(cardPayment.getPaymentStatus())
+                    .paymentType(cardPayment.getPaymentType())
                     .build();
             data.add(buildCardPayment);
             return buildCardPayment;
@@ -63,9 +63,23 @@ public class FakePayRepository implements PayRepository {
     }
 
     @Override
-    public CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
+    public void clear() {
+        data.clear();
+    }
+
+    @Override
+    public CardPayment findByOrderUuidAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
         return data.stream()
                 .filter(element -> Objects.equals(element.getOrderUuid(), orderUuid))
+                .filter(element -> Objects.equals(element.getPaymentStatus(), DONE))
+                .findAny()
+                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
+    }
+
+    @Override
+    public CardPayment findByOrderIdAnAndPaymentStatus(Long orderId, PaymentStatus paymentStatus) {
+        return data.stream()
+                .filter(element -> Objects.equals(element.getOrder().getId(), orderId))
                 .filter(element -> Objects.equals(element.getPaymentStatus(), DONE))
                 .findAny()
                 .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);

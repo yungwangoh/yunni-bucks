@@ -36,7 +36,7 @@ public class FakeCardRepository implements CardRepository {
 
     @Override
     public Card findById(Long id) {
-        return data.stream().filter(element -> element.getId().equals(id)).findAny()
+        return data.stream().filter(element -> Objects.equals(element.getId(), id)).findAny()
                 .orElseThrow(NOT_FOUND_REGISTER_CARD::cardException);
     }
 
@@ -47,7 +47,22 @@ public class FakeCardRepository implements CardRepository {
 
     @Override
     public Card findByMemberId(Long memberId) {
-        return data.stream().filter(element -> element.getMember().getId().equals(memberId)).findAny()
+        return data.stream().filter(element -> Objects.equals(element.getMember().getId(), memberId)).findAny()
                 .orElseThrow(NOT_FOUND_REGISTER_CARD::cardException);
+    }
+
+    @Override
+    public void delete(Long id) {
+        data.removeIf(element -> Objects.equals(element.getId(), id));
+    }
+
+    @Override
+    public void delete(Card card) {
+        data.removeIf(element -> Objects.equals(element.getId(), card.getId()));
+    }
+
+    @Override
+    public void clear() {
+        data.clear();
     }
 }

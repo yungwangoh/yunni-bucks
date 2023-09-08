@@ -2,28 +2,29 @@ package sejong.coffee.yun.domain.user;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import sejong.coffee.yun.domain.DateTimeEntity;
 import sejong.coffee.yun.domain.exception.ExceptionControl;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static sejong.coffee.yun.util.parse.ParsingDateTimeUtil.parsingCardValidDate;
+import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "number", "validThru"})
-public class Card {
+@ToString
+public class Card extends DateTimeEntity {
 
     @Id
     @GeneratedValue
     @Column(name = "card_id")
     private Long id;
     @Column(length = 20)
-    @Length(max = 20, message = "카드번호는 20자리 이하로 입력하세요")
+    @Length(max = 20, message = "카드번호는 20자 이하여야 합니다.")
     private String number;
     @Column(length = 4)
-    @Length(max = 4, message = "카드 비밀번호는 4자리로 입력하세요")
+    @Length(max = 4, message = "비밀번호는 숫자 4자여야 합니다.")
     private String cardPassword;
     private String validThru;
 
@@ -49,8 +50,8 @@ public class Card {
 
     public String checkExpirationDate(String dateTime) {
         String[] splitDateTime = parsingCardValidDate(dateTime);
-        int year = Integer.parseInt(splitDateTime[0]);
-        int month = Integer.parseInt(splitDateTime[1]);
+        int month = Integer.parseInt(splitDateTime[0]);
+        int year = Integer.parseInt(splitDateTime[1]);
         if ((year < LocalDateTime.now().getYear() % 100) || (month > 12 || month < 1)) {
             throw ExceptionControl.INVALID_CARD_EXPIRATION_DATE.cardException();
         }

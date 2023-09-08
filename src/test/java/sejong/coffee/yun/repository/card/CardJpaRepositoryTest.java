@@ -37,9 +37,9 @@ public class CardJpaRepositoryTest extends BeforeCreatedData {
 
         //when
         Optional<Member> findMember = jpaUserRepository.findById(member.getId());
-        Card byMemberId = jpaCardRepository.findByMemberId(findMember.get().getId());
+        Optional<Card> byMemberId = jpaCardRepository.findByMemberId(findMember.get().getId());
 
         //then
-        assertThat(card).isEqualTo(byMemberId);
+        assertThat(card).isEqualTo(byMemberId.get());
     }
 }

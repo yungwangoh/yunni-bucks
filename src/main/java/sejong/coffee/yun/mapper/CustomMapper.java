@@ -17,8 +17,8 @@ public class CustomMapper {
 
         try {
             Constructor<T> constructor = type.getDeclaredConstructor(entity.getClass());
-
             return constructor.newInstance(entity);
+
         } catch (Exception e) {
             log.error("error = {}", e.getMessage());
             throw new RuntimeException(e);

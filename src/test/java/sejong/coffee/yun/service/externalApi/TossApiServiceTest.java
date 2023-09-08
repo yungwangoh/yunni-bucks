@@ -5,7 +5,7 @@ import sejong.coffee.yun.controller.pay.CreatePaymentData;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.infra.fake.FakeApiService;
+import sejong.coffee.yun.infra.fake.FakeTossApiService;
 
 import java.io.IOException;
 
@@ -17,12 +17,12 @@ public class TossApiServiceTest extends CreatePaymentData {
     @Test
     public void 주문과_결제_정보가_제대로_만들어지는지_테스트() throws IOException, InterruptedException {
         //given
-        FakeApiService fakeApiService = new FakeApiService("asdfasdf");
-        ApiService apiService = new ApiService(fakeApiService);
+        FakeTossApiService fakeTossApiService = new FakeTossApiService("asdfasdf");
+        ApiService apiService = new ApiService(fakeTossApiService, null);
         Request request = Request.from(cardPayment);
 
         //when
-        CardPaymentDto.Response response = apiService.callApi(request);
+        CardPaymentDto.Response response = apiService.callExternalPayApi(request);
 
         //then
         assertThat(response.orderName()).isEqualTo("커피 외 3개");

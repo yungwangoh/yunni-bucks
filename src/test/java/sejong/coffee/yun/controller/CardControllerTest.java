@@ -4,12 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import sejong.coffee.yun.controller.pay.mock.TestCardContainer;
+import sejong.coffee.yun.controller.mock.TestCardContainer;
 import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.pay.BeforeCreatedData;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.dto.card.CardDto;
 import sejong.coffee.yun.mapper.CustomMapper;
+
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,12 +42,12 @@ public class CardControllerTest extends BeforeCreatedData {
         //then
         assertThat(findCard.getNumber()).isEqualTo("1234123443211239");
         assertThat(findCard.getCardPassword()).isEqualTo("1234");
-        assertThat(findCard.getValidThru()).isEqualTo("23/10");
+        assertThat(findCard.getValidThru()).isEqualTo("10/23");
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(result.getBody().number()).isEqualTo("1234123443211239");
+        assertThat(Objects.requireNonNull(result.getBody()).number()).isEqualTo("1234123443211239");
         assertThat(result.getBody().cardPassword()).isEqualTo("1234");
-        assertThat(result.getBody().validThru()).isEqualTo("23/10");
+        assertThat(result.getBody().validThru()).isEqualTo("10/23");
     }
 
     @Test
@@ -109,6 +111,6 @@ public class CardControllerTest extends BeforeCreatedData {
         assertThat(findCard).isNotNull();
         assertThat(findCard.getNumber()).isEqualTo("1234123443211239");
         assertThat(findCard.getCardPassword()).isEqualTo("1234");
-        assertThat(findCard.getValidThru()).isEqualTo("23/10");
+        assertThat(findCard.getValidThru()).isEqualTo("10/23");
     }
 }

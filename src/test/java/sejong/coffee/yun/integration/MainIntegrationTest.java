@@ -57,7 +57,7 @@ public class MainIntegrationTest {
     @Autowired
     protected MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
     @Autowired
     protected JwtProvider jwtProvider;
 

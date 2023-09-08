@@ -37,6 +37,7 @@ public enum ExceptionControl {
 
     // Pay
     NOT_FOUND_PAYMENT_TYPE("올바르지 않은 결제 수단입니다."),
+    NOT_FOUND_ORDER_ID_FOR_PAYMENT("결제를 진행할 주문 내역이 없습니다."),
     NOT_MATCHED_CANCEL_STATUS("결제취소 사유가 올바르지 않습니다."),
 
     // PayDetails
@@ -44,7 +45,8 @@ public enum ExceptionControl {
     NOT_MATCHED_PAYMENT_KEY("결제 키가 일치하지 않습니다."),
 
     // OCR
-    NOT_FOUND_OCR_RESPONSE_BODY("올바른 OCR 응답을 받을 수 없습니다.");
+    NOT_FOUND_OCR_RESPONSE_BODY("올바른 OCR 응답을 받을 수 없습니다."),
+    INVALID_FILE_EXTENSION_FORMAT("올바른 파일 경로가 아닙니다.");
 
     private final String message;
 

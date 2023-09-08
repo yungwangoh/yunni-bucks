@@ -1,7 +1,8 @@
 package sejong.coffee.yun.infra;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.port.TossApiService;
 
@@ -14,7 +15,8 @@ import java.net.http.HttpResponse;
 import static sejong.coffee.yun.util.parse.JsonParsing.parsePaymentObjectByJson;
 import static sejong.coffee.yun.util.parse.JsonParsing.parsePaymentStringByJson;
 
-@Component
+@Service("tossApiServiceImpl")
+@Slf4j
 public class TossApiServiceImpl implements TossApiService {
 
     private final String apiUri;
@@ -28,7 +30,8 @@ public class TossApiServiceImpl implements TossApiService {
     }
 
     @Override
-    public CardPaymentDto.Response callExternalAPI(CardPaymentDto.Request cardPaymentDto) throws IOException, InterruptedException {
+    public CardPaymentDto.Response callExternalApi(CardPaymentDto.Request cardPaymentDto) throws IOException, InterruptedException {
+
         // 외부 API 호출하는 로직
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUri))
@@ -38,6 +41,7 @@ public class TossApiServiceImpl implements TossApiService {
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         // 예외처리(토스 커스텀 -> 내부 프로젝트 커스텀) TODO
+        log.info("s -> {}" + response.body());
         return parsePaymentObjectByJson(response.body());
     }
 }

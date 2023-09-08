@@ -1,4 +1,4 @@
-package sejong.coffee.yun.controller.pay.mock;
+package sejong.coffee.yun.controller.mock;
 
 import lombok.Builder;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;

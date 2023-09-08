@@ -1,8 +1,12 @@
 package sejong.coffee.yun.infra;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sejong.coffee.yun.dto.ocr.OcrDto;
+import sejong.coffee.yun.infra.port.ClovaApiService;
 import sejong.coffee.yun.infra.port.TossApiService;
+import sejong.coffee.yun.infra.port.UuidHolder;
 
 import java.io.IOException;
 
@@ -13,9 +17,20 @@ import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
 @RequiredArgsConstructor
 public class ApiService {
 
-    private final TossApiService tossApiService;
+    private TossApiService tossApiService;
+    private ClovaApiService clovaApiService;
 
-    public Response callApi(Request request) throws IOException, InterruptedException {
-        return tossApiService.callExternalAPI(request);
+    @Autowired
+    public ApiService(TossApiService tossApiService, ClovaApiService clovaApiService) {
+        this.tossApiService = tossApiService;
+        this.clovaApiService = clovaApiService;
+    }
+
+    public Response callExternalPayApi(Request request) throws IOException, InterruptedException {
+        return tossApiService.callExternalApi(request);
+    }
+
+    public OcrDto.Response callExternalOcrApi(OcrDto.Request request, UuidHolder uuidHolder) throws IOException, InterruptedException {
+        return clovaApiService.callExternalApi(request, uuidHolder);
     }
 }

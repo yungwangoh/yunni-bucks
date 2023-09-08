@@ -1,5 +1,6 @@
 package sejong.coffee.yun.repository.pay.impl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -7,16 +8,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.pay.jpa.JpaPayRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_PAY_DETAILS;
 import static sejong.coffee.yun.domain.order.QOrder.order;
 import static sejong.coffee.yun.domain.pay.QCardPayment.cardPayment;
+import static sejong.coffee.yun.domain.user.QCart.cart;
 import static sejong.coffee.yun.domain.user.QMember.member;
 
 @Repository
@@ -27,6 +31,7 @@ public class PayRepositoryImpl implements PayRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    @Transactional
     public CardPayment save(CardPayment cardPayment) {
         return jpaPayRepository.save(cardPayment);
     }
@@ -43,8 +48,19 @@ public class PayRepositoryImpl implements PayRepository {
     }
 
     @Override
-    public CardPayment findByOrderIdAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
-        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderUuid, PaymentStatus.DONE)
+    public void clear() {
+        jpaPayRepository.deleteAll();
+    }
+
+    @Override
+    public CardPayment findByOrderUuidAnAndPaymentStatus(String orderUuid, PaymentStatus paymentStatus) {
+        return jpaPayRepository.findByOrderUuidAnAndPaymentStatus(orderUuid, PaymentStatus.DONE)
+                .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
+    }
+
+    @Override
+    public CardPayment findByOrderIdAnAndPaymentStatus(Long orderId, PaymentStatus paymentStatus) {
+        return jpaPayRepository.findByOrderIdAnAndPaymentStatus(orderId, PaymentStatus.DONE)
                 .orElseThrow(NOT_FOUND_PAY_DETAILS::paymentDetailsException);
     }
 
@@ -56,13 +72,16 @@ public class PayRepositoryImpl implements PayRepository {
 
     @Override
     public Page<CardPayment> findAllByUsernameAndPaymentStatus(Pageable pageable, String username) {
-        List<CardPayment> cardPayments = jpaQueryFactory.selectFrom(cardPayment)
-                .leftJoin(cardPayment.order, order)
-                .leftJoin(order.cart.member, member)
+        List<CardPayment> cardPayments = jpaQueryFactory.select(cardPayment)
+                .from(cardPayment)
+                .innerJoin(cardPayment.order, order).fetchJoin()
+                .innerJoin(order.cart, cart).fetchJoin()
+                .innerJoin(cart.member, member).fetchJoin()
                 .where(
                         member.name.eq(username)
                                 .and(cardPayment.paymentStatus.eq(PaymentStatus.DONE))
                 )
+
                 .orderBy(cardPayment.approvedAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -76,17 +95,23 @@ public class PayRepositoryImpl implements PayRepository {
 
     @Override
     public Page<CardPayment> findAllByUsernameAndPaymentCancelStatus(Pageable pageable, String username) {
-        List<CardPayment> cardPayments = jpaQueryFactory.selectFrom(cardPayment)
-                .join(cardPayment.order, order).fetchJoin()
-                .join(order.cart.member, member).fetchJoin()
+        List<Tuple> results = jpaQueryFactory.selectFrom(cardPayment)
+                .innerJoin(cardPayment.order, order)
+                .innerJoin(order.cart, cart)
+                .innerJoin(cart.member, member)
                 .where(
                         member.name.eq(username)
                                 .and(cardPayment.paymentStatus.eq(PaymentStatus.CANCEL))
                 )
                 .orderBy(cardPayment.approvedAt.desc())
+                .select(cardPayment, order, cart, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
+        List<CardPayment> cardPayments = results.stream()
+                .map(result -> result.get(cardPayment))
+                .collect(Collectors.toList());
 
         JPAQuery<Long> jpaQuery = jpaQueryFactory.select(cardPayment.count())
                 .from(cardPayment);

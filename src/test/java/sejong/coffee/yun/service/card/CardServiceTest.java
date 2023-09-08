@@ -2,6 +2,7 @@ package sejong.coffee.yun.service.card;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.pay.BeforeCreatedData;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.domain.user.Member;
@@ -12,6 +13,7 @@ import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CardService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class CardServiceTest extends BeforeCreatedData {
 
@@ -71,6 +73,29 @@ public class CardServiceTest extends BeforeCreatedData {
     }
 
     @Test
+    void findById는_카드_단건_조회를_실패() {
+
+        //given
+        Member findMember = userRepository.findByEmail(this.member.getEmail());
+        Card buildCard = Card.builder()
+                .member(findMember)
+                .number(this.card.getNumber())
+                .cardPassword(this.card.getCardPassword())
+                .validThru(this.card.getValidThru())
+                .build();
+
+        Card card = cardService.create(findMember.getId(), new CardDto.Request(buildCard.getNumber(), buildCard.getCardPassword(), buildCard.getValidThru()));
+
+        //when
+
+        //then
+        assertThatThrownBy(() -> cardService.findById(card.getId() - 100L))
+                .isInstanceOf(ExceptionControl.NOT_FOUND_REGISTER_CARD.cardException().getClass())
+                .hasMessageContaining("등록된 카드가 존재하지 않습니다.");
+
+    }
+
+    @Test
     void getByMemberId는_멤버id로_카드_조회를_한다() {
 
         //given
@@ -90,5 +115,26 @@ public class CardServiceTest extends BeforeCreatedData {
         //then
         assertThat(card.getMember().getName()).isEqualTo(findCard.getMember().getName());
         assertThat(card.getNumber()).isEqualTo(findCard.getNumber());
+    }
+
+    @Test
+    void getByMemberId는_멤버id로_카드_조회를_실패() {
+
+        //given
+        Member findMember = userRepository.findByEmail(this.member.getEmail());
+        Card buildCard = Card.builder()
+                .member(findMember)
+                .number(this.card.getNumber())
+                .cardPassword(this.card.getCardPassword())
+                .validThru(this.card.getValidThru())
+                .build();
+
+        cardService.create(findMember.getId(), new CardDto.Request(buildCard.getNumber(), buildCard.getCardPassword(), buildCard.getValidThru()));
+
+        //when
+        //then
+        assertThatThrownBy(() -> cardService.getByMemberId(findMember.getId() - 100L))
+                .isInstanceOf(ExceptionControl.NOT_FOUND_REGISTER_CARD.cardException().getClass())
+                .hasMessageContaining("등록된 카드가 존재하지 않습니다.");
     }
 }

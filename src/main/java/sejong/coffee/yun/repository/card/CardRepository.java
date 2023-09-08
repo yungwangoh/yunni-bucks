@@ -10,6 +10,9 @@ public interface CardRepository {
 
     Card findById(Long id);
     Card findByMemberId(Long memberId);
+    void delete(Long id);
+    void delete(Card card);
+    void clear();
 
     List<Card> findAll();
 }
