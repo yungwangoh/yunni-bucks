@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentCancelReason;
@@ -56,12 +57,17 @@ public class PayService {
     }
 
     @Transactional
-    public CardPaymentDto.Request initPayment(Long orderId, Long memberId){
+    public CardPaymentDto.Request initPayment(Long orderId, Long memberId) {
         Order order = orderRepository.findById(orderId);
         Card card = cardRepository.findByMemberId(memberId);
 
+        if (order == null) {
+            throw ExceptionControl.NOT_FOUND_ORDER_ID_FOR_PAYMENT.paymentException();
+        }
+
         return CardPaymentDto.Request.create(card, order, uuidHolder);
     }
+
 
     @Transactional
     public CardPayment pay(CardPaymentDto.Request request) throws IOException, InterruptedException {

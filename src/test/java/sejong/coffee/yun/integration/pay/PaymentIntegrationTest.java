@@ -2,6 +2,8 @@ package sejong.coffee.yun.integration.pay;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,7 +14,7 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.infra.port.UuidHolder;
-import sejong.coffee.yun.integration.MainIntegrationTest;
+import sejong.coffee.yun.integration.SubIntegrationTest;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
@@ -25,11 +27,18 @@ import sejong.coffee.yun.service.PayService;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-class PaymentIntegrationTest extends MainIntegrationTest {
+class PaymentIntegrationTest extends SubIntegrationTest {
 
     @Autowired
     public PayRepository payRepository;
@@ -55,9 +64,7 @@ class PaymentIntegrationTest extends MainIntegrationTest {
     public CartRepository cartRepository;
 
     @Nested
-    @DisplayName("Pay Controller 통합 테스트")
-    @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @DisplayName("Pay 통합 테스트")
     class PayTest {
         String token;
 
@@ -76,7 +83,9 @@ class PaymentIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        @DisplayName("유저가 카드결제를 한다")
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @DisplayName("keyIn 유저가 카드 결제를 한다")
         public void testCardPayment() throws Exception {
 
             // given
@@ -85,7 +94,7 @@ class PaymentIntegrationTest extends MainIntegrationTest {
             Order order = orderService.order(1L, LocalDateTime.now());
 
             // when
-            ResultActions resultActions = mockMvc.perform(post("/api/payments/card-payment/{orderId}", order.getId())
+            ResultActions resultActions = mockMvc.perform(post(PAY_API_PATH + "/{orderId}", order.getId())
                     .header(HttpHeaders.AUTHORIZATION, token)
                     .contentType(MediaType.APPLICATION_JSON));
 
@@ -97,221 +106,264 @@ class PaymentIntegrationTest extends MainIntegrationTest {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.cardExpirationYear").value("23"))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.orderDto.name").value("커피빵 외 1개"))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.paymentKey").isNotEmpty())
-                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentStatus").value(PaymentStatus.DONE.name()));
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentStatus").value(PaymentStatus.DONE.name()))
+                    .andDo(document("pay-create",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("orderId").description("주문 ID")
+                            ),
+                            responseFields(
+                                    getCardPaymentResponses()
+                            )
+                    ));
+        }
+
+        @Test
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @DisplayName("keyIn 유저가 카드 결제 시 주문 ID 내역이 없음")
+        public void testCardPaymentFailed() throws Exception {
+
+            // given
+            cartService.createCart(1L);
+            cartService.addMenu(1L, 1L);
+            Order order = orderService.order(1L, LocalDateTime.now());
+
+            // when
+            ResultActions resultActions = mockMvc.perform(post(PAY_API_PATH + "/{orderId}", 2)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isInternalServerError())
+                    .andDo(document("pay-create-failed",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("orderId").description("주문 ID")
+                            ),
+                            responseFields(
+                                    getFailResponses()
+                            )
+                    ));
+        }
+
+        @Test
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql", "/sql/payment.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @DisplayName("getByOrderId 결제 내역을 조회한다")
+        public void 결제내역_조회() throws Exception {
+
+            // given
+            // when
+            ResultActions resultActions = mockMvc.perform(get(PAY_API_PATH + "/orderId/{orderId}", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.cardNumber").value("9446032384143059"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.cardExpirationMonth").value("11"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.cardExpirationYear").value("23"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.orderDto.name").value("카페라떼 외 3건"))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentKey").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentStatus").value(PaymentStatus.DONE.name()))
+                    .andDo(document("pay-find",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("orderId").description("주문 ID")
+                            ),
+                            responseFields(
+                                    findCardPaymentResponses()
+                            )
+                    ));
+        }
+
+        @ParameterizedTest(name = "TestCase{index}: 취소코드: {0}")
+        @ValueSource(strings = {"0001", "0002", "0003", "0004"})
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql", "/sql/payment.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @DisplayName("cancelPaymentKey 결제를 취소한다")
+        public void cancelPayment(String cancelCode) throws Exception {
+
+            // given
+            String paymentKey = payRepository.findById(1L).getPaymentKey();
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(PAY_API_PATH + "/cancel")
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("paymentKey", paymentKey)
+                    .param("cancelCode", cancelCode)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.paymentKey").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.cancelReason").isNotEmpty())
+                    .andDo(document("pay-cancel",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            requestParameters(
+                                    parameterWithName("paymentKey").description("결제 키"),
+                                    parameterWithName("cancelCode").description("결제 취소 코드")
+                            ),
+                            responseFields(
+                                    cancelCardPaymentResponses()
+                            )
+                    ));
+        }
+
+        @ParameterizedTest(name = "TestCase{index}: 오류코드: {0}")
+        @ValueSource(strings = {"0005", "0006"})
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql", "/sql/payment.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @DisplayName("cancelPayment로_결제취소_실패")
+        public void invalidCancelPayment(String cancelCode) throws Exception {
+
+            // given
+            String paymentKey = payRepository.findById(1L).getPaymentKey();
+
+            // when
+            ResultActions resultActions = mockMvc.perform(get(PAY_API_PATH + "/cancel")
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("paymentKey", paymentKey)
+                    .param("cancelCode", cancelCode)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isInternalServerError())
+                    .andDo(document("pay-invalid-cancel",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            requestParameters(
+                                    parameterWithName("paymentKey").description("결제 키"),
+                                    parameterWithName("cancelCode").description("결제 취소 코드")
+                            ),
+                            responseFields(
+                                    getFailResponses()
+                            )
+                    ));
+        }
+
+        @ParameterizedTest
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql", "/sql/payments.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @ValueSource(strings = {"홍길동"})
+        @DisplayName("주문 회원명과 결제 상태 기준으로 내역을 조회한다")
+        public void getAllByUsernameAndPaymentStatus(String username) throws Exception {
+
+            // given
+            // when
+            ResultActions resultActions = mockMvc.perform(get(PAY_API_PATH + "/username-payment/{pageNumber}", 0)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("username", username)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andDo(document("pay-page-find-username-status",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("pageNumber").description("페이지 번호")
+                            ),
+                            requestParameters(
+                                    parameterWithName("username").description("회원 이름")
+                            ),
+                            responseFields(
+                                    getPaymentPageResponse()
+                            )
+                    ));
+        }
+
+        @ParameterizedTest
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql", "/sql/payments.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @ValueSource(strings = {"홍길동"})
+        @DisplayName("주문 회원명과 결제 상태 기준으로 취소 내역을 조회한다")
+        public void getAllByUsernameAndCancelPaymentStatus(String username) throws Exception {
+
+            // given
+            // when
+            ResultActions resultActions = mockMvc.perform(get(PAY_API_PATH + "/username-payment-cancel/{pageNumber}", 0)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .param("username", username)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andDo(document("pay-page-find-username-cancel-status",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("pageNumber").description("페이지 번호")
+                            ),
+                            requestParameters(
+                                    parameterWithName("username").description("회원 이름")
+                            ),
+                            responseFields(
+                                    getPaymentPageResponse()
+                            )
+                    ));
+        }
+
+        @Test
+        @Sql(value = {"/sql/user.sql", "/sql/menu.sql", "/sql/card.sql", "/sql/payments.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+        @Sql(value = "/sql/truncate_pay.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+        @DisplayName("결제 내역을 페이징 조회한다")
+        public void getAllPagingPayment() throws Exception {
+
+            // given
+            // when
+            ResultActions resultActions = mockMvc.perform(get(PAY_API_PATH + "/get/{pageNumber}", 0)
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // then
+            resultActions
+                    .andExpect(status().isOk())
+                    .andDo(document("pay-page-findAll",
+                            preprocessRequest(prettyPrint()),
+                            preprocessResponse(prettyPrint()),
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                            ),
+                            pathParameters(
+                                    parameterWithName("pageNumber").description("페이지 번호")
+                            ),
+                            responseFields(
+                                    getPaymentPageResponse()
+                            )
+                    ));
         }
     }
-
-//    @Test
-//    public void keyIn으로_카드결제를_한다() throws Exception {
-//
-//        // given
-//        // when
-//        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .keyIn(1L, 1L);
-//
-//        // then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-//        assertThat(result.getBody()).isNotNull();
-//        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.DONE);
-//        assertThat(result.getBody().orderUuid()).isEqualTo("testUuid");
-//        assertThat(result.getBody().totalAmount()).isEqualTo("3000");
-//        assertThat(result.getBody().orderDto().getMember().getName()).isEqualTo("하윤");
-//        assertThat(result.getBody().paymentKey()).isEqualTo("testPaymentKey");
-//        assertThat(IntStream.range(0, result.getBody().cardNumber().length())
-//                .filter(i -> result.getBody().cardNumber().charAt(i) != '*')
-//                .allMatch(i -> result.getBody().cardNumber().charAt(i) == this.card.getNumber().charAt(i))).isTrue();
-//    }
-//
-//    @Test
-//    public void getByOrderId로_결제내역을_조회한다() throws Exception {
-//
-//        // given
-//        PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .keyIn(1L, 1L);
-//
-//        // when
-//        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .getByOrderId("testUuid");
-//
-//        // then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(result.getBody()).isNotNull();
-//        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.DONE);
-//        assertThat(result.getBody().orderUuid()).isEqualTo("testUuid");
-//        assertThat(result.getBody().orderDto().getOrderPrice().getTotalPrice().toString()).isEqualTo("3000");
-//        assertThat(result.getBody().orderDto().getMember().getName()).isEqualTo("하윤");
-//        assertThat(result.getBody().cardExpirationYear()).isEqualTo("23");
-//        assertThat(result.getBody().cardExpirationMonth()).isEqualTo("10");
-//        assertThat(result.getBody().paymentKey()).isEqualTo("testPaymentKey");
-//        assertThat(result.getBody().cardNumber()).isEqualTo(this.card.getNumber());
-//    }
-//
-//    @Test
-//    public void getByPaymentKey로_결제내역을_조회한다() throws Exception {
-//
-//        // given
-//        PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .keyIn(1L, 1L);
-//
-//        // when
-//        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .getByPaymentKey("testPaymentKey");
-//
-//        // then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(result.getBody()).isNotNull();
-//        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.DONE);
-//        assertThat(result.getBody().orderUuid()).isEqualTo("testUuid");
-//        assertThat(result.getBody().orderDto().getOrderPrice().getTotalPrice().toString()).isEqualTo("3000");
-//        assertThat(result.getBody().orderDto().getMember().getName()).isEqualTo("하윤");
-//        assertThat(result.getBody().cardExpirationYear()).isEqualTo("23");
-//        assertThat(result.getBody().cardExpirationMonth()).isEqualTo("10");
-//        assertThat(result.getBody().paymentKey()).isEqualTo("testPaymentKey");
-//        assertThat(result.getBody().cardNumber()).isEqualTo(this.card.getNumber());
-//    }
-//
-//    @Test
-//    public void cancelPaymentKey로_결제를_취소한다() throws Exception {
-//
-//        // given
-//        PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .keyIn(1L, 1L);
-//
-//        // when
-//        ResponseEntity<CardPaymentDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .cancelPayment("testPaymentKey", "0001");
-//
-//        // then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(result.getBody()).isNotNull();
-//        assertThat(result.getBody().paymentStatus()).isEqualTo(PaymentStatus.CANCEL);
-//        assertThat(result.getBody().cancelReason().getDescription()).isEqualTo("서비스 및 상품 불만족");
-//        assertThat(result.getBody().cancelReason()).isEqualTo(PaymentCancelReason.NOT_SATISFIED_SERVICE);
-//    }
-//
-//    @Test
-//    public void cancelPaymentKey로_결제취소_실패() throws Exception {
-//
-//        // given
-//        PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .keyIn(1L, 1L);
-//
-//        // when
-//        // then
-//        assertThatThrownBy(() -> PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .cancelPayment("testPaymentKey", "0005"))
-//                .isInstanceOf(ExceptionControl.NOT_MATCHED_CANCEL_STATUS.paymentException().getClass())
-//                .hasMessageContaining("결제취소 사유가 올바르지 않습니다.");
-//    }
-//
-//    @Test
-//    void getAllByUsernameAndPaymentStatus로_페이징_처리를_한다() {
-//
-//        //given
-//        IntStream.range(0, 10).forEach(i -> {
-//            try {
-//                PaymentController.builder()
-//                        .payService(testPayContainer.payService)
-//                        .customMapper(new CustomMapper())
-//                        .build()
-//                        .keyIn(1L, 1L);
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        //when
-//        ResponseEntity<CardPaymentPageDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .getAllByUsernameAndPaymentStatus(0, "하윤");
-//
-//        //then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(Objects.requireNonNull(result.getBody()).pageNumber()).isEqualTo(0);
-//    }
-//
-//    @Test
-//    void getAllByUsernameAndPaymentCancelStatus로_페이징_처리를_한다() {
-//
-//        //given
-//        IntStream.range(0, 10).forEach(i -> {
-//            try {
-//                PaymentController.builder()
-//                        .payService(testPayContainer.payService)
-//                        .customMapper(new CustomMapper())
-//                        .build()
-//                        .keyIn(1L, 1L);
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        //when
-//        ResponseEntity<CardPaymentPageDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .getAllByUsernameAndPaymentCancelStatus(0, "하윤");
-//
-//        //then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(Objects.requireNonNull(result.getBody()).pageNumber()).isEqualTo(0);
-//    }
-//
-//    @Test
-//    void getAllOrderByApprovedAtByDesc로_페이징_처리를_한다() {
-//
-//        //given
-//        IntStream.range(0, 10).forEach(i -> {
-//            try {
-//                PaymentController.builder()
-//                        .payService(testPayContainer.payService)
-//                        .customMapper(new CustomMapper())
-//                        .build()
-//                        .keyIn(1L, 1L);
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        //when
-//        ResponseEntity<CardPaymentPageDto.Response> result = PaymentController.builder()
-//                .payService(testPayContainer.payService)
-//                .customMapper(new CustomMapper())
-//                .build()
-//                .getAllOrderByApprovedAtByDesc(0);
-//
-//        //then
-//        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(Objects.requireNonNull(result.getBody()).pageNumber()).isEqualTo(0);
-//    }
 }

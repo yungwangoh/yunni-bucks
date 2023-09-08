@@ -28,10 +28,10 @@ import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response.cancel;
 @Builder
 public class PaymentController {
 
-    private final @Qualifier("tossApiServiceImpl")PayService payService;
+    private final @Qualifier("tossApiServiceImpl") PayService payService;
     private final CustomMapper customMapper;
 
-    @PostMapping("/card-payment/{orderId}")
+    @PostMapping("/{orderId}")
     public ResponseEntity<Response> keyIn(@PathVariable Long orderId, @MemberId Long memberId) throws IOException, InterruptedException {
         Request request = payService.initPayment(orderId, memberId);
         CardPayment cardPayment = payService.pay(request);
@@ -41,21 +41,21 @@ public class PaymentController {
                 .body(customMapper.map(cardPayment, Response.class));
     }
 
-    @GetMapping("/{orderId}")
+    @GetMapping("/orderId/{orderId}")
     public ResponseEntity<Response> getByOrderId(@PathVariable Long orderId) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(customMapper.map(payService.getByOrderId(orderId), Response.class));
     }
 
-    @GetMapping("/{orderUuid}")
+    @GetMapping("/orderUuid/{orderUuid}")
     public ResponseEntity<Response> getByOrderUuid(@PathVariable String orderUuid) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(customMapper.map(payService.getByOrderUuid(orderUuid), Response.class));
     }
 
-    @GetMapping("/{paymentKey}")
+    @GetMapping("/paymentKey/{paymentKey}")
     public ResponseEntity<Response> getByPaymentKey(@PathVariable String paymentKey) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -72,7 +72,8 @@ public class PaymentController {
     }
 
     @GetMapping("/username-payment/{pageNumber}")
-    public ResponseEntity<CardPaymentPageDto.Response> getAllByUsernameAndPaymentStatus(@PathVariable int pageNumber, String username) {
+    public ResponseEntity<CardPaymentPageDto.Response> getAllByUsernameAndPaymentStatus(@PathVariable int pageNumber,
+                                                                                        @RequestParam("username") String username) {
 
         PageRequest pageRequest = PageRequest.of(pageNumber, 5);
         Page<CardPayment> cardPayments = payService.getAllByUsernameAndPaymentStatus(pageRequest, username);
@@ -83,7 +84,8 @@ public class PaymentController {
     }
 
     @GetMapping("/username-payment-cancel/{pageNumber}")
-    public ResponseEntity<CardPaymentPageDto.Response> getAllByUsernameAndPaymentCancelStatus(@PathVariable int pageNumber, String username) {
+    public ResponseEntity<CardPaymentPageDto.Response> getAllByUsernameAndPaymentCancelStatus(@PathVariable int pageNumber,
+                                                                                              @RequestParam("username") String username) {
 
         PageRequest pageRequest = PageRequest.of(pageNumber, 5);
         Page<CardPayment> cardPayments = payService.getAllByUsernameAndPaymentCancelStatus(pageRequest, username);
