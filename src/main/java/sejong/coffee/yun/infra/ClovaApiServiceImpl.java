@@ -52,8 +52,6 @@ public class ClovaApiServiceImpl implements ClovaApiService {
             json.put("timestamp", System.currentTimeMillis());
             JSONObject image = new JSONObject();
             image.put("format", request.format());
-//            image.put("url", "https://kr.object.ncloudstorage.com/ocr-ci-test/sample/1.jpg"); // image should be public, otherwise, should use data
-//            FileInputStream inputStream = new FileInputStream("/Users/hayoon/Downloads/ocrtest/src/main/resources/static/images/img_1.png");
             FileInputStream inputStream = new FileInputStream(request.path());
             byte[] buffer = new byte[inputStream.available()];
             inputStream.read(buffer);
