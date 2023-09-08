@@ -128,14 +128,14 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/duplication/name")
+    @GetMapping(value = "/duplication/name", produces = "application/json;charset=UTF-8")
     ResponseEntity<String> duplicateName(@RequestParam("name") String name) {
         String s = userService.duplicateName(name);
 
         return ResponseEntity.ok(s);
     }
 
-    @GetMapping("/duplication/email")
+    @GetMapping(value = "/duplication/email", produces = "application/json;charset=UTF-8")
     ResponseEntity<String> duplicateEmail(@RequestParam("email") String email) {
         String s = userService.duplicateEmail(email);
 
