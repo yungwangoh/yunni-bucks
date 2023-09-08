@@ -12,6 +12,10 @@ operation::card-create[snippets='http-request,request-headers,http-response,resp
 === 카드 삭제
 operation::card-remove[snippets='http-request,request-headers,request-parameters,http-response']
 
+[[Card-find]]
+=== 카드 조회
+operation::card-find[snippets='http-request,request-headers,http-response,response-fields']
+
 [[Fail]]
 == 실패
 
@@ -26,8 +30,3 @@ operation::card-invalid-password[snippets='http-request,request-headers,http-res
 [[Card-Invalid-Date]]
 === 카드 유효기간 등록 실패
 operation::card-invalid-date[snippets='http-request,request-headers,http-response,response-fields']
-
-[[Card-find]]
-=== 카드 조회
-operation::card-find[snippets='http-request,request-headers,http-response,response-fields']
-
