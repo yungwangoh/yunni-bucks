@@ -1,18 +1,37 @@
 # ☕️YUNNI-BUCKS
-*2023-07 ~ 2022-08(진행 중)*
 
+세종대학교 컴퓨터 공학과 19학번 2인 개발팀
+
+개발 기간 : *2023-07 ~ 2022-09 (MVP 구현 완료)* 
+
+## 목차
+ - [프로젝트 소개](#프로젝트-소개)
+ - [맴버 구성](#맴버-구성)
+ - [개발 환경](#개발-환경)
+
+
+## 프로젝트 소개
 주문-결제-배달 온라인 카페 서비스
 
-사용 기술: Spring Boot, Git, MariaDB, Redis, Spring Data JPA, (Docker, AWS EC2 서버 예정)
+## 맴버 구성
+|        | **윤광오(팀장)**                                                                                                                                                                                                                                               | 하윤(팀원)                                                                                        |
+|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+|        |                                                                                                                                                                                                                                                           |                                                                                               |
+| 포지션    | Back-End Developer                                                                                                                                                                                                                                        | Back-End Developer                                                                            |
+| 담당 도메인 | 회원, 주문, 배달                                                                                                                                                                                                                                                | 결제                                                                                            |
+| 기술 스택  | Spring Boot, Redis, Query-Dsl, Spring Data JPA, JPA, JUnit, H2 Database, MariaDB, Rest Docs, Mockito, JWT                                                                                                                                                 | Spring Boot, Query-Dsl, Spring Data JPA, JPA, JUnit, H2 Database, MariaDB, Rest Docs, Mockito |
+| 한 일    | 설계 : ERD (DB), Domain Model, OOP, Layered Architecture<br/><br/> 구현: Java Reflection 활용한 Record Class 전용 CustomMapper, Fake Repository, Redis(NoSql) Fake Repository 구현, Scheduler 활용한 배달 상태 변경 구현, 자체 비밀번호 암호화 구현, 썸네일 파일 업/다운로드, JWT 활용한 Login, 페이지네이션, |                                                                                               |
 
+## 개발 환경
+- Java 17
+- Oracle OpenJDK 17.0.4
+- IDE : IntelliJ IDEA
+- DATABASE : H2, MariaDB
+- ORM : JPA
+- Framework: Spring Boot 2.7.14
 
-Pay, Card 결제 도메인 개발 담당
+## 프로젝트 설명
 
-OCR(https://clova.ai/ocr/) ,Payment(https://docs.tosspayments.com/guides/index) develop API 활용
-
-신용/체크카드 이미지 인식 및 자동 결제 시스템 개발
-
-Unit Test, Integration Test로 Fake Object, Mock를 활용하여 테스트 OOP에 초점, SOLID 원칙 준수
 
 ### ERD
 
