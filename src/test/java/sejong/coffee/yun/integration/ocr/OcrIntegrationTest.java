@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import sejong.coffee.yun.integration.SubIntegrationTest;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
+import sejong.coffee.yun.service.PathControl;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -53,7 +54,7 @@ public class OcrIntegrationTest extends SubIntegrationTest {
         public void ocr() throws Exception {
 
             String cardPassword = "1234";
-            String path = "/Users/hayoon/Downloads/ocrtest/src/main/resources/static/images/img_1.png";
+            String path = PathControl.OCR_IMAGE_PATH.getPath();
 
             ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(OCR_API_PATH)
                     .header(HttpHeaders.AUTHORIZATION, token)
@@ -88,7 +89,7 @@ public class OcrIntegrationTest extends SubIntegrationTest {
         public void ocrFailed() throws Exception {
 
             String cardPassword = "1234";
-            String path = "/Users/hayoon/Downloads/ocrtest/src/main/resources/static/images/img_1.pngg";
+            String path = "";
 
             ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(OCR_API_PATH)
                     .header(HttpHeaders.AUTHORIZATION, token)
