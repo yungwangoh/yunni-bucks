@@ -9,10 +9,12 @@ public class CardPaymentPageDto {
     public record Response(int pageNumber, List<CardPaymentDto.Response> cardPayments) {
 
         public Response(PageImpl<CardPayment> page) {
-            this(page.getNumber(), page.getContent()
-                    .stream()
-                    .map(CardPaymentDto.Response::new)
-                    .toList()
+            this(
+                    page.getNumber(),
+                    page.getContent()
+                            .stream()
+                            .map(CardPaymentDto.Response::new)
+                            .toList()
             );
         }
     }

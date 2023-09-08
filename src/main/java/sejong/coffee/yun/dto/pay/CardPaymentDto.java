@@ -90,7 +90,7 @@ public class CardPaymentDto {
                     entity.getCardNumber(), entity.getCardExpirationYear(), entity.getCardExpirationMonth(),
                     entity.getOrder().getOrderPrice().getTotalPrice().toString(),
                     entity.getPaymentKey(), entity.getPaymentStatus(),
-                    entity.getRequestedAt().toString(), entity.getApprovedAt().toString(), new OrderDto.Response(entity.getOrder()), null);
+                    entity.getRequestedAt().toString(), entity.getApprovedAt().toString(), new OrderDto.Response(entity.getOrder()), entity.getCancelReason());
         }
 
         public static Response cancel(CardPayment entity) {
