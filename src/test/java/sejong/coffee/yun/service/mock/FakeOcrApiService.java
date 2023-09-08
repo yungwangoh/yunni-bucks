@@ -1,4 +1,4 @@
-package sejong.coffee.yun.infra.fake;
+package sejong.coffee.yun.service.mock;
 
 import sejong.coffee.yun.dto.ocr.OcrDto;
 import sejong.coffee.yun.infra.port.ClovaApiService;

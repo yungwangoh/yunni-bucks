@@ -5,7 +5,7 @@ import sejong.coffee.yun.controller.pay.CreatePaymentData;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.dto.pay.CardPaymentDto;
 import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.infra.fake.FakeTossApiService;
+import sejong.coffee.yun.service.mock.FakeTossApiService;
 
 import java.io.IOException;
 

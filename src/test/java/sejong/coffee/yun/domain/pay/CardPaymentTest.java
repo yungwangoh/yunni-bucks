@@ -3,7 +3,7 @@ package sejong.coffee.yun.domain.pay;
 import org.junit.jupiter.api.Test;
 import sejong.coffee.yun.domain.exception.CardException;
 import sejong.coffee.yun.domain.user.Card;
-import sejong.coffee.yun.infra.fake.FakeUuidHolder;
+import sejong.coffee.yun.service.mock.FakeUuidHolder;
 
 import java.time.LocalDateTime;
 

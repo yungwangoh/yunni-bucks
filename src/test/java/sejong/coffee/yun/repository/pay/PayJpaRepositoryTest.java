@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import sejong.coffee.yun.domain.pay.BeforeCreatedData;
 import sejong.coffee.yun.domain.pay.CardPayment;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
-import sejong.coffee.yun.infra.fake.FakeUuidHolder;
+import sejong.coffee.yun.service.mock.FakeUuidHolder;
 import sejong.coffee.yun.repository.pay.jpa.JpaPayRepository;
 
 import javax.persistence.EntityManager;

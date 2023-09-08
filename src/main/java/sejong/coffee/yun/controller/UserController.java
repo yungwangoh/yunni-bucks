@@ -135,7 +135,7 @@ public class UserController {
         return ResponseEntity.ok(s);
     }
 
-    @GetMapping("/duplication/email")
+    @GetMapping(value = "/duplication/email")
     ResponseEntity<String> duplicateEmail(@RequestParam("email") String email) {
         String s = userService.duplicateEmail(email);
 

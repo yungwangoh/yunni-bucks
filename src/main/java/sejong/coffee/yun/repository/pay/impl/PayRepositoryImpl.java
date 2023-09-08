@@ -1,6 +1,5 @@
 package sejong.coffee.yun.repository.pay.impl;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.pay.jpa.JpaPayRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_PAY_DETAILS;
 import static sejong.coffee.yun.domain.order.QOrder.order;
@@ -95,23 +93,18 @@ public class PayRepositoryImpl implements PayRepository {
 
     @Override
     public Page<CardPayment> findAllByUsernameAndPaymentCancelStatus(Pageable pageable, String username) {
-        List<Tuple> results = jpaQueryFactory.selectFrom(cardPayment)
-                .innerJoin(cardPayment.order, order)
-                .innerJoin(order.cart, cart)
-                .innerJoin(cart.member, member)
+        List<CardPayment> cardPayments = jpaQueryFactory.selectFrom(cardPayment)
+                .innerJoin(cardPayment.order, order).fetchJoin()
+                .innerJoin(order.cart, cart).fetchJoin()
+                .innerJoin(cart.member, member).fetchJoin()
                 .where(
                         member.name.eq(username)
                                 .and(cardPayment.paymentStatus.eq(PaymentStatus.CANCEL))
                 )
                 .orderBy(cardPayment.approvedAt.desc())
-                .select(cardPayment, order, cart, member)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        List<CardPayment> cardPayments = results.stream()
-                .map(result -> result.get(cardPayment))
-                .collect(Collectors.toList());
 
         JPAQuery<Long> jpaQuery = jpaQueryFactory.select(cardPayment.count())
                 .from(cardPayment);

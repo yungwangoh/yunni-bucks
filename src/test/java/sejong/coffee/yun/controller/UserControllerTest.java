@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_EMAIL;
@@ -306,6 +307,7 @@ class UserControllerTest extends BaseUserControllerTest {
 
         // then
         resultActions.andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(content().string(SUCCESS_DUPLICATE_EMAIL.getMessage()));
     }
 

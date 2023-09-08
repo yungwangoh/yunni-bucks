@@ -1,4 +1,4 @@
-package sejong.coffee.yun.repository.cart.fake;
+package sejong.coffee.yun.mock.repository;
 
 import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.user.Cart;
