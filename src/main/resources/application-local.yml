@@ -35,6 +35,8 @@ logging:
   discord:
     webhook-uri: https://discord.com/api/webhooks/1150073801967677612/8eV2tDl39S6yHq_QW81ZV7mGKZPeypsi0uXFsGwj0hSP1NjlsMH07-d7oDWgAytZxzu1
   config: classpath:logback-spring.xml
+  slack:
+    token: T05S4KA8C9F/B05S4L85NAV/jW3SWBKcl8kThXBY3tvlRyYz
 
 origin:
   address: http://localhost:8080
