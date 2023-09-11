@@ -32,6 +32,9 @@ logging:
   level: #띄어쓰기 없음
     org.hibernate.SQL: debug
 #    org.hibernate.type: trace
+  discord:
+    webhook-uri: https://discord.com/api/webhooks/1150073801967677612/8eV2tDl39S6yHq_QW81ZV7mGKZPeypsi0uXFsGwj0hSP1NjlsMH07-d7oDWgAytZxzu1
+  config: classpath:logback-spring.xml
 
 origin:
   address: http://localhost:8080

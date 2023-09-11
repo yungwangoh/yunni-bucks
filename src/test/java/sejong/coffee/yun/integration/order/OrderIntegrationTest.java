@@ -252,7 +252,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                             responseFields(
                                     getFailResponses()
                             )
-                            ));
+                    ));
         }
 
         @Test

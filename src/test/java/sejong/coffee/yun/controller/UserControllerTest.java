@@ -302,7 +302,7 @@ class UserControllerTest extends BaseUserControllerTest {
         given(userService.duplicateEmail(anyString())).willReturn(SUCCESS_DUPLICATE_EMAIL.getMessage());
 
         // when
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/members/duplication/email")
+        ResultActions resultActions = mockMvc.perform(get("/api/members/duplication/email")
                 .param("email", email));
 
         // then
@@ -317,7 +317,7 @@ class UserControllerTest extends BaseUserControllerTest {
         given(userService.duplicateEmail(anyString())).willThrow(DUPLICATE_USER_EMAIL.duplicatedEmailException());
 
         // when
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/members/duplication/email")
+        ResultActions resultActions = mockMvc.perform(get("/api/members/duplication/email")
                 .param("email", email));
 
         // then

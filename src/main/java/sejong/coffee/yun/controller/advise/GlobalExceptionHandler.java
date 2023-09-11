@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sejong.coffee.yun.domain.exception.*;
 import sejong.coffee.yun.dto.error.ErrorResult;
 
-import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.INPUT_ERROR;
 
 @Slf4j
 @RestControllerAdvice(annotations = RestController.class)
@@ -22,6 +22,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     ResponseEntity<ErrorResult> notFoundException(NotFoundException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.NOT_FOUND, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResult);
@@ -31,6 +32,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> userNotMatchException(NotMatchUserException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -40,6 +42,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> menuException(MenuException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -49,6 +52,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> illegalArgumentException(IllegalArgumentException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -58,6 +62,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     ResponseEntity<ErrorResult> illegalStateException(IllegalStateException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.NOT_FOUND, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResult);
@@ -67,6 +72,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ResponseEntity<ErrorResult> runTimeException(RuntimeException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResult);
@@ -76,6 +82,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> duplicateException(DuplicatedException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -85,6 +92,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> duplicateNameException(DuplicatedNameException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -94,6 +102,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> duplicateEmailException(DuplicatedEmailException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -103,6 +112,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> methodArgumentNotValidException(MethodArgumentNotValidException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, INPUT_ERROR.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
@@ -112,6 +122,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseEntity<ErrorResult> jwtException(JwtException e) {
 
+        log.error("error = {}", e.getMessage());
         ErrorResult errorResult = getErrorResult(HttpStatus.BAD_REQUEST, e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
