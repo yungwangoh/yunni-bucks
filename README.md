@@ -53,6 +53,8 @@
 모듈별 인터페이스를 두어 코드 재사용이 용이하다. Unit Test 소형 테스트 진행에 수월하다.
 
 <img width="359" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/c333f588-7561-4b27-afdd-a453af0d6e74">
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<img width="359" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/dd6c7f4a-172a-4a97-b2b2-e3811f117073">
 
 ### 3.ISP
 인터페이스의 단일책임을 강조하여 Service, Repository layer 계층 별 서로 다른 성격의 인터페이스를 명백히 분리한다.
@@ -65,20 +67,24 @@ Transitive Dependency가 발생했을 때 상위 레벨의 레이어가 하위 �
 <img width="538" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/d7296b2a-496d-4487-b532-114976ecec9b">
 
 
-### Integration Test / Unit Test -> Fake Object, Mock를 활용 (진행 중)
+### Integration Test / Unit Test 속도 비교 
 
-**Payment Test Result**
+*PaymentTest Result (Fake Object, TestContainer, MockMvc 사용)*
 
-- **Repository**
-1. JpaRepository
-   
-    <img width="339" alt="Untitled" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/96a8506c-5b2c-4077-86f7-ac6b989b911d">
+Integration Test 대비 Unit Test 속도 약 *8배* 단축
+- **Repository**   
 
-    
-2. FakeRepository
-    
-    <img width="339" alt="Untitled" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/cef19145-01d0-4ba2-9e95-fb54b37c97da">
-
-Fake Object Repository 구현, UnitTest 시 통합 테스트 속도 대비 약 *8배* 단축
+<img width="339" alt="Untitled" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/96a8506c-5b2c-4077-86f7-ac6b989b911d">
+&nbsp;
+<img width="329" alt="Untitled" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/cef19145-01d0-4ba2-9e95-fb54b37c97da">
 
 - **Service**
+<img width="364" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/2e571fdd-ad3b-40a1-8fed-bdf9618ec84c">
+&nbsp;
+<img width="394" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/fc5763b7-2a8b-4148-a577-38dbabb529db">
+
+- **Controller**
+<img width="364" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/8536f169-d312-4fc9-a8c2-bd45ce77c942">
+&nbsp;
+<img width="374" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/e8132222-dc1b-4c19-b570-8cc00d0e5471">
+
