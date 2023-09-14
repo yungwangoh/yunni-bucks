@@ -8,6 +8,7 @@
  - [프로젝트 소개](#프로젝트-소개)
  - [맴버 구성](#맴버-구성)
  - [개발 환경](#개발-환경)
+ - [프로젝트 구조](#프로젝트-구조)
 
 
 ## 프로젝트 소개
@@ -43,6 +44,11 @@
 
 ### Domain Model
 <img width="757" alt="image" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/35e060e7-dd72-46c7-90f0-b28fc55b36d7">
+
+### 프로젝트 구조
+
+[프로젝트 디렉토리](https://github.com/gkdbssla97/yunni-bucks/blob/master/DIRECTORY-STRUCTURE.md)
+
 
 ### 1.SRP
 주문, 결제, 할인, 배달은 각각의 기능만 가지며 책임을 수행한다.
