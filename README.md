@@ -38,6 +38,10 @@
 
 <img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/4881409d-6661-4591-91f0-896ed3c48029">
 
+### Flow Chart
+
+<img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/4a8f2a6d-4508-407b-a511-68374f6c3080">
+
 ### ERD
 
 <img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/37452648-0c1b-4b6f-aa0a-42a53cbcc9ce">
@@ -48,7 +52,6 @@
 ### 프로젝트 구조
 
 [프로젝트 디렉토리](https://github.com/gkdbssla97/yunni-bucks/blob/master/DIRECTORY-STRUCTURE.md)
-
 
 ### 1.SRP
 주문, 결제, 할인, 배달은 각각의 기능만 가지며 책임을 수행한다.
