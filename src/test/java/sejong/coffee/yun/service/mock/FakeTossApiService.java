@@ -1,4 +1,4 @@
-package sejong.coffee.yun.infra.fake;
+package sejong.coffee.yun.service.mock;
 
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.dto.order.OrderDto;

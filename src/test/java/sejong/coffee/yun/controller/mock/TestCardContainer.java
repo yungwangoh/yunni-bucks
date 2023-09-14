@@ -3,7 +3,7 @@ package sejong.coffee.yun.controller.mock;
 import lombok.Builder;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.card.CardRepository;
-import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
+import sejong.coffee.yun.mock.repository.FakeCardRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CardService;
 

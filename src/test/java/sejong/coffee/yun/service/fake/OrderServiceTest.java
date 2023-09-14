@@ -28,7 +28,7 @@ import sejong.coffee.yun.mock.repository.FakeMenuRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
+import sejong.coffee.yun.mock.repository.FakeCartRepository;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;

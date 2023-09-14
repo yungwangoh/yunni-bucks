@@ -1,4 +1,4 @@
-package sejong.coffee.yun.repository.card.fake;
+package sejong.coffee.yun.mock.repository;
 
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.repository.card.CardRepository;

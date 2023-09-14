@@ -72,6 +72,7 @@ dependencies {
 	testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.6.1'
 
 	implementation 'com.github.napstr:logback-discord-appender:1.0.0'
+	implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
 }
 
 ext {

@@ -11,13 +11,13 @@ import sejong.coffee.yun.domain.pay.PaymentCancelReason;
 import sejong.coffee.yun.domain.pay.PaymentStatus;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.infra.fake.FakeUuidHolder;
+import sejong.coffee.yun.service.mock.FakeUuidHolder;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.repository.cart.fake.FakeCartRepository;
+import sejong.coffee.yun.mock.repository.FakeCartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.repository.pay.fake.FakePayRepository;
+import sejong.coffee.yun.mock.repository.FakePayRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import java.time.LocalDateTime;

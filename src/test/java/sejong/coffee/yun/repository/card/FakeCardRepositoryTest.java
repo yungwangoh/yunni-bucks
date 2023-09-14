@@ -6,7 +6,7 @@ import sejong.coffee.yun.domain.pay.BeforeCreatedData;
 import sejong.coffee.yun.domain.user.Card;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
-import sejong.coffee.yun.repository.card.fake.FakeCardRepository;
+import sejong.coffee.yun.mock.repository.FakeCardRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;

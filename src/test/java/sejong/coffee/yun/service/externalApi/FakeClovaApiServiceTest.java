@@ -3,8 +3,8 @@ package sejong.coffee.yun.service.externalApi;
 import org.junit.jupiter.api.Test;
 import sejong.coffee.yun.dto.ocr.OcrDto;
 import sejong.coffee.yun.infra.ApiService;
-import sejong.coffee.yun.infra.fake.FakeOcrApiService;
-import sejong.coffee.yun.infra.fake.FakeUuidHolder;
+import sejong.coffee.yun.service.mock.FakeOcrApiService;
+import sejong.coffee.yun.service.mock.FakeUuidHolder;
 import sejong.coffee.yun.util.parse.JsonParsing;
 
 import java.io.IOException;
