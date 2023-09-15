@@ -196,7 +196,7 @@ class UserServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> userService.signOut("token", any()))
+        assertThatThrownBy(() -> userService.signOut("bearer token", 1L))
                 .isInstanceOf(JwtException.class)
                 .hasMessageContaining("토큰이 만료되었습니다.");
     }
