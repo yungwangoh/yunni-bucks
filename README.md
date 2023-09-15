@@ -80,7 +80,7 @@ Transitive Dependency가 발생했을 때 상위 레벨의 레이어가 하위 �
 
 *PaymentTest Result (Fake Object, TestContainer, MockMvc 사용)*
 
-Integration Test 대비 Unit Test 속도 약 *8배* 단축
+Integration Test 대비 Unit Test 속도 약 *8배* 단축 (Test DB를 활용한 테스트보다 Fake Repository 를 활용한 테스트가 월등히 빠르다.)
 - **Repository**   
 
 <img width="339" alt="Untitled" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/96a8506c-5b2c-4077-86f7-ac6b989b911d">
@@ -97,3 +97,15 @@ Integration Test 대비 Unit Test 속도 약 *8배* 단축
 &nbsp;
 <img width="374" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/e8132222-dc1b-4c19-b570-8cc00d0e5471">
 
+- **Mock**
+
+그리고 Mock 이용한 테스트 보다 100 ~ 200ms 의 속도가 더 빠르다.
+
+Mock을 이용한 테스트는 각 실제 코드의 캡슐화를 위반하기 때문에 변경에 대해 취약하다. 이는 Fake를 활용함으로써 변경에 대해 둔감하도록 하였다.
+
+왼쪽이 Mocking한 test, 오른쪽이 Fake Test이다.
+
+
+<img width="350" alt="스크린샷 2023-09-15 오후 2 54 06" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/16b5b49b-264a-4489-ac7c-73478a331a8b">
+&nbsp;
+<img width="350" alt="스크린샷 2023-09-15 오후 2 54 34" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/0731c0f5-61ea-40fb-8ddf-390cfe575ef4">
