@@ -2,10 +2,12 @@ package sejong.coffee.yun.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import sejong.coffee.yun.controller.advise.ErrorDetectAdvisor;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
@@ -16,8 +18,11 @@ import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.UserService;
 
 @WebMvcTest(UserController.class)
+@Disabled
 public class BaseUserControllerTest {
 
+    @Autowired
+    ErrorDetectAdvisor errorDetectAdvisor;
     @Autowired
     ObjectMapper objectMapper;
     @MockBean

@@ -5,6 +5,7 @@ import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackAttachment;
 import net.gpedro.integrations.slack.SlackField;
 import net.gpedro.integrations.slack.SlackMessage;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestControllerAdvice(annotations = RestController.class)
+@Component
 @RequiredArgsConstructor
 public class ErrorDetectAdvisor extends GlobalExceptionHandler {
 

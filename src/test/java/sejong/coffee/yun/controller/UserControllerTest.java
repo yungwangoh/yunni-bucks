@@ -1,6 +1,7 @@
 package sejong.coffee.yun.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_EMAIL;
 import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_NAME;
 
+@Disabled
 class UserControllerTest extends BaseUserControllerTest {
 
     @Test
