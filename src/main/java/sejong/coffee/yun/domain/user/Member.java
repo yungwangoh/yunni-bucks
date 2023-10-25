@@ -29,10 +29,12 @@ public class Member extends DateTimeEntity {
     private Address address;
     private Money money;
     @Column(name = "order_count")
-    private Integer orderCount;
+    private int orderCount;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
+    @Version
+    private int version;
 
     @Builder
     public Member(Long id, String name, String password, String email, UserRank userRank, Address address, Money money, Integer orderCount, Coupon coupon) {
@@ -84,9 +86,11 @@ public class Member extends DateTimeEntity {
     public BigDecimal fetchTotalPrice() {
         return this.money.getTotalPrice();
     }
+
     public boolean hasCoupon() {
         return this.coupon != null && this.coupon.hasAvailableCoupon();
     }
+
     public void checkPasswordMatch(String checkPassword) {
         boolean match = PasswordUtil.match(this.password, checkPassword);
 

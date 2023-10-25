@@ -31,9 +31,11 @@ public class Coupon implements DiscountType {
     private double discountRate;
     @Enumerated(EnumType.STRING)
     private CouponUse couponUse;
+    @Column(name = "quantity")
+    private int quantity;
 
     @Builder
-    public Coupon(Long id, String name, String identityNumber, LocalDateTime createAt, LocalDateTime expireAt, double discountRate, CouponUse couponUse) {
+    public Coupon(Long id, String name, String identityNumber, LocalDateTime createAt, LocalDateTime expireAt, double discountRate, CouponUse couponUse, int quantity) {
         this.id = id;
         this.name = name;
         this.identityNumber = checkValidatedCouponIdentityNumber(identityNumber);
@@ -41,6 +43,7 @@ public class Coupon implements DiscountType {
         this.expireAt = expireAt;
         this.discountRate = discountRate;
         this.couponUse = couponUse;
+        this.quantity = quantity;
     }
 
     public static Coupon from(Long id, Coupon coupon) {
@@ -68,6 +71,10 @@ public class Coupon implements DiscountType {
         if(localDateTime.compareTo(this.expireAt) > 0) {
             this.couponUse = YES;
         }
+    }
+
+    public void subQuantity() {
+        if(this.quantity > 0) this.quantity--;
     }
 
     public boolean hasAvailableCoupon() {
