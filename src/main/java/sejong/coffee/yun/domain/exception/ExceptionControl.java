@@ -33,6 +33,7 @@ public enum ExceptionControl {
     COUPON_NOT_ENOUGH_QUANTITY("쿠폰 수량이 부족합니다."),
     NOT_FOUND_COUPON("쿠폰을 찾을 수 없습니다."),
     ALREADY_EXIST_COUPON("쿠폰이 이미 존재합니다."),
+    COUPON_OVER_EXPIRE_TIME("유효한 쿠폰이 아닙니다."),
 
     // Card
     INVALID_CARD_EXPIRATION_DATE("카드 유효기간이 올바르지 않습니다."),
