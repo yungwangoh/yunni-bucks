@@ -93,7 +93,7 @@ public class Member extends DateTimeEntity {
     }
 
     public boolean hasCoupon() {
-        return this.coupon != null && this.coupon.hasAvailableCoupon();
+        return this.coupon != null;
     }
 
     public void checkPasswordMatch(String checkPassword) {
