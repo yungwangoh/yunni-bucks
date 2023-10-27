@@ -14,6 +14,7 @@ import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
+import javax.persistence.OptimisticLockException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,13 +29,17 @@ public class OrderService {
     @Transactional
     public Order order(Long memberId, LocalDateTime now) {
 
-        Cart cart = cartRepository.findByMember(memberId);
+        try {
+            Cart cart = cartRepository.findByMember(memberId);
 
-        Money money = calculator.calculateMenus(cart.getMember(), cart.convertToMenus());
+            Money money = calculator.calculateMenus(cart.getMember(), cart.convertToMenus());
 
-        Order order = Order.createOrder(cart, money, now);
+            Order order = Order.createOrder(cart, money, now);
 
-        return orderRepository.save(order);
+            return orderRepository.save(order);
+        } catch (OptimisticLockException e) {
+            throw new OptimisticLockException(e.getMessage());
+        }
     }
 
     @Transactional
