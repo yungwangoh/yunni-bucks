@@ -40,4 +40,10 @@ public class CouponRepositoryImpl implements CouponRepository {
     public void deleteById(Long id) {
         jpaCouponRepository.deleteById(id);
     }
+
+    @Override
+    @Transactional
+    public void clear() {
+        jpaCouponRepository.deleteAll();
+    }
 }
