@@ -48,4 +48,9 @@ public class FakeCouponRepository implements CouponRepository {
     public void deleteById(Long id) {
         coupons.removeIf(element -> Objects.equals(element.getId(), id));
     }
+
+    @Override
+    public void clear() {
+        coupons.clear();
+    }
 }
