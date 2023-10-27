@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface JpaCouponRepository extends JpaRepository<Coupon, Long> {
 
+    @NotNull
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Coupon> findById(@NotNull Long couponId);
 }
