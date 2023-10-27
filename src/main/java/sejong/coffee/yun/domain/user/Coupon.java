@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.discount.type.DiscountType;
+import sejong.coffee.yun.domain.exception.CouponException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static sejong.coffee.yun.domain.exception.ExceptionControl.COUPON_NOT_ENOUGH_QUANTITY;
 import static sejong.coffee.yun.domain.user.CouponUse.NO;
 import static sejong.coffee.yun.domain.user.CouponUse.YES;
 
@@ -74,7 +76,9 @@ public class Coupon implements DiscountType {
     }
 
     public void subQuantity() {
-        if(this.quantity > 0) this.quantity--;
+        if(this.quantity < 0) throw new CouponException(COUPON_NOT_ENOUGH_QUANTITY.getMessage());
+
+        this.quantity--;
     }
 
     public boolean hasAvailableCoupon() {
