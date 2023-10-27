@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.discount.type.DiscountType;
 import sejong.coffee.yun.domain.exception.CouponException;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -57,6 +58,7 @@ public class Coupon implements DiscountType {
                 .expireAt(coupon.getExpireAt())
                 .name(coupon.getName())
                 .discountRate(coupon.getDiscountRate())
+                .quantity(coupon.getQuantity())
                 .build();
     }
 
@@ -71,14 +73,14 @@ public class Coupon implements DiscountType {
 
     public void checkExpireTime(LocalDateTime localDateTime) {
         if(localDateTime.compareTo(this.expireAt) > 0) {
-            this.couponUse = YES;
+            throw new CouponException(ExceptionControl.COUPON_OVER_EXPIRE_TIME.getMessage());
         }
     }
 
     public void subQuantity() {
-        if(this.quantity < 0) throw new CouponException(COUPON_NOT_ENOUGH_QUANTITY.getMessage());
-
         this.quantity--;
+
+        if(this.quantity < 0) throw new CouponException(COUPON_NOT_ENOUGH_QUANTITY.getMessage());
     }
 
     public boolean hasAvailableCoupon() {
