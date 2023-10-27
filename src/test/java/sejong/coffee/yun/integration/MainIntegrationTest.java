@@ -140,6 +140,16 @@ public class MainIntegrationTest {
                 .build();
     }
 
+    public Coupon coupon(int quantity) {
+        return Coupon.builder()
+                .identityNumber("1234-1234-1234-1234")
+                .couponUse(CouponUse.YES)
+                .createAt(LocalDateTime.of(2023, 7, 29, 3, 56))
+                .expireAt(LocalDateTime.of(2023, 7, 30, 3, 56))
+                .quantity(quantity)
+                .build();
+    }
+
     public Order order(Cart cart) {
         return Order.createOrder(cart, Money.ZERO, LocalDateTime.now());
     }
