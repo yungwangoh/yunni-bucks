@@ -80,7 +80,9 @@ public class Coupon implements DiscountType {
     public void subQuantity() {
         this.quantity--;
 
-        if(this.quantity < 0) throw new CouponException(COUPON_NOT_ENOUGH_QUANTITY.getMessage());
+        if(this.quantity < 0) {
+            throw new CouponException(COUPON_NOT_ENOUGH_QUANTITY.getMessage());
+        }
     }
 
     public boolean hasAvailableCoupon() {
