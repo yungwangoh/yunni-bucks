@@ -56,6 +56,8 @@ public class CartService {
 
         CartItem saveCartItem = cartItemRepository.save(cartItem);
 
+        saveCartItem.getMenu().subQuantity();
+
         cart.addMenu(saveCartItem);
 
         cart.getCartItems().forEach(CartItem::getId);
@@ -79,6 +81,8 @@ public class CartService {
     @Transactional
     public Cart removeMenu(Long memberId, int idx) {
         Cart cart = cartRepository.findByMember(memberId);
+
+        cart.getMenu(idx).addQuantity();
 
         cart.removeMenu(idx);
 
