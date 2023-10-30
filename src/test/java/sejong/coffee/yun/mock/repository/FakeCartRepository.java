@@ -4,10 +4,7 @@ import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.repository.cart.CartRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART;
 
@@ -15,7 +12,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_CART
 @Repository
 public class FakeCartRepository implements CartRepository {
 
-    private final List<Cart> carts = new ArrayList<>();
+    private final List<Cart> carts = Collections.synchronizedList(new ArrayList<>());
     private Long id = 0L;
 
     @Override
