@@ -27,7 +27,7 @@ public enum ExceptionControl {
     DELIVERY_COMPLETE_EXCEPTION("배송 완료를 할 수 없습니다."),
     NOT_FOUND_MENU_REVIEW("메뉴 리뷰를 찾을 수 없습니다."),
     NOT_FOUND_MENU_THUMBNAIL("메뉴 썸네일을 찾을 수 없습니다."),
-    QUANTITY_INDEX_OF_BOUND_ERROR("수량은 0 미만으로 내릴 수 없습니다."),
+    MENU_NOT_ENOUGH_QUANTITY("메뉴 수량이 부족합니다."),
 
     // Coupon
     COUPON_NOT_ENOUGH_QUANTITY("쿠폰 수량이 부족합니다."),
