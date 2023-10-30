@@ -176,6 +176,7 @@ public class MainIntegrationTest {
                 .now(LocalDateTime.now())
                 .menuSize(MenuSize.M)
                 .price(Money.initialPrice(new BigDecimal(4000)))
+                .quantity(10000)
                 .build();
     }
 
@@ -187,6 +188,7 @@ public class MainIntegrationTest {
                 .now(LocalDateTime.now())
                 .menuSize(MenuSize.S)
                 .price(Money.initialPrice(new BigDecimal(3000)))
+                .quantity(100)
                 .build();
     }
 

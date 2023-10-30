@@ -23,27 +23,29 @@ import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.jwt.JwtProvider;
-import sejong.coffee.yun.mock.repository.FakeCartItemRepository;
-import sejong.coffee.yun.mock.repository.FakeMenuRepository;
-import sejong.coffee.yun.mock.repository.FakeOrderRepository;
-import sejong.coffee.yun.mock.repository.FakeUserRepository;
+import sejong.coffee.yun.mock.repository.*;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.mock.repository.FakeCartRepository;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
+import sejong.coffee.yun.service.CartService;
 import sejong.coffee.yun.service.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
+        CartService.class,
         OrderService.class,
         FakeUserRepository.class,
         FakeOrderRepository.class,
@@ -65,6 +67,8 @@ public class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private CartService cartService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -108,6 +112,7 @@ public class OrderServiceTest {
                 .nutrients(nutrients)
                 .menuSize(MenuSize.M)
                 .now(LocalDateTime.now())
+                .quantity(100)
                 .build();
 
         CartItem cartItem = CartItem.builder()
@@ -317,5 +322,47 @@ public class OrderServiceTest {
 
         // then
         assertThat(orderPage.getTotalElements()).isEqualTo(statusCount);
+    }
+
+    @Test
+    void 유저들이_주문하면_메뉴_재고가_감소한다() throws InterruptedException {
+        // given
+        Nutrients nutrients = new Nutrients(80, 80, 80, 80);
+
+        Menu menu = menuRepository.save(Beverage.builder()
+                .description("에티오피아산 커피")
+                .title("커피")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .quantity(100)
+                .build());
+
+        int memberCount = 5;
+        List<Member> members = Stream.generate(() -> userRepository.save(member))
+                .limit(memberCount)
+                .toList();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(memberCount);
+        CountDownLatch latch = new CountDownLatch(memberCount);
+
+        // when
+        members.forEach(member -> executorService.submit(() -> {
+            try {
+                cartService.createCart(member.getId());
+                cartService.addMenu(member.getId(), menu.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        Menu m = menuRepository.findById(menu.getId());
+
+        // then
+        assertThat(m.getQuantity()).isEqualTo(100 - memberCount);
     }
 }
