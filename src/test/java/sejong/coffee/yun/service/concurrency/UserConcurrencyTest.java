@@ -113,4 +113,35 @@ public class UserConcurrencyTest extends MainIntegrationTest {
         // then
         assertEquals(c.getQuantity(), 100 - memberCount);
     }
+
+    @Test
+    void 유저들이_주문을_할_때_메뉴_재고_감소에_대한_동시성_처리_비관적_락() throws Exception {
+        // given
+        int memberCount = 100;
+
+        List<Member> members = Stream.generate(() -> userRepository.save(member()))
+                .limit(memberCount)
+                .toList();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(memberCount);
+
+        // when
+        members.forEach(member -> executorService.submit(() -> {
+            try {
+                cartService.createCart(member.getId());
+                cartService.addMenu(member.getId(), menu.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        Menu m = menuRepository.findById(menu.getId());
+
+        // then
+        assertEquals(m.getQuantity(), 10000 - memberCount);
+    }
 }

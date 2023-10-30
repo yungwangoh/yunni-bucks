@@ -6,10 +6,7 @@ import sejong.coffee.yun.domain.discount.condition.CouponCondition;
 import sejong.coffee.yun.domain.discount.condition.RankCondition;
 import sejong.coffee.yun.domain.discount.policy.PercentPolicy;
 import sejong.coffee.yun.domain.exception.MenuException;
-import sejong.coffee.yun.domain.order.menu.Beverage;
-import sejong.coffee.yun.domain.order.menu.Menu;
-import sejong.coffee.yun.domain.order.menu.MenuSize;
-import sejong.coffee.yun.domain.order.menu.Nutrients;
+import sejong.coffee.yun.domain.order.menu.*;
 import sejong.coffee.yun.domain.user.*;
 
 import java.math.BigDecimal;
@@ -41,18 +38,35 @@ class OrderTest {
     void init() {
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
 
-        Beverage beverage = Beverage.builder()
+        menu1 = Beverage.builder()
                 .description("에티오피아산 커피")
                 .title("커피")
                 .price(Money.initialPrice(new BigDecimal(1000)))
                 .nutrients(nutrients)
                 .menuSize(MenuSize.M)
                 .now(LocalDateTime.now())
+                .quantity(100)
                 .build();
 
-        menu1 = beverage;
-        menu2 = beverage;
-        menu3 = beverage;
+        menu2 = Bread.builder()
+                .description("커피빵")
+                .title("빵")
+                .price(Money.initialPrice(new BigDecimal(1000)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .quantity(100)
+                .build();
+
+        menu3 = Bread.builder()
+                .description("소라빵")
+                .title("빵")
+                .price(Money.initialPrice(new BigDecimal(1200)))
+                .nutrients(nutrients)
+                .menuSize(MenuSize.M)
+                .now(LocalDateTime.now())
+                .quantity(100)
+                .build();
 
         coupon = Coupon.builder()
             .createAt(LocalDateTime.of(2023, 7, 29, 10, 10))
@@ -168,5 +182,22 @@ class OrderTest {
 
         // then
         assertThat(order.fetchTotalOrderPrice()).isEqualTo("2400");
+    }
+
+    @Test
+    void 주문하고_메뉴_수량이_감소_됐는지_확인() {
+        // given
+        int totalQuantity = 100;
+        Money money = calculator.calculateMenus(member, cart.convertToMenus());
+
+        // when
+        Order order = Order.createOrder(cart, money, LocalDateTime.now());
+
+        List<Menu> menus = order.getCart().getCartItems().stream().map(CartItem::getMenu).toList();
+
+        // then
+       menus.forEach(menu -> {
+           assertThat(menu.getQuantity()).isEqualTo(totalQuantity - 1);
+       });
     }
 }
