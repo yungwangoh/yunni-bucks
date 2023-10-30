@@ -21,6 +21,7 @@ public class CartItemRepositoryImpl implements CartItemRepository {
         return jpaCartItemRepository.save(cartItem);
     }
     @Override
+    @Transactional
     public void clear() {
         jpaCartItemRepository.deleteAll();
     }
