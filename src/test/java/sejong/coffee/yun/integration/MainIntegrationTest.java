@@ -67,6 +67,7 @@ public class MainIntegrationTest {
     public static final String DELIVERY_API_PATH = "/api/deliveries";
     public static final String MENU_REVIEW_API_PATH = "/api";
     public static final String MENU_THUMBNAIL_API_PATH = "/api";
+    public static final String MENU_API_PATH = "/api/menus";
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
