@@ -86,6 +86,11 @@ public class FakeMenuReviewRepository implements MenuReviewRepository {
     }
 
     @Override
+    public Page<MenuReview> findAllByMenuId(Pageable pageable, Long menuId) {
+        return null;
+    }
+
+    @Override
     public void clear() {
         reviews.clear();
     }

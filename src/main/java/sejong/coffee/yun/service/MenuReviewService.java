@@ -56,6 +56,10 @@ public class MenuReviewService {
         return menuReviewRepository.findAllByMemberId(pageable, memberId);
     }
 
+    public Page<MenuReview> findAllByMenuId(Pageable pageable, Long menuId) {
+        return menuReviewRepository.findAllByMenuId(pageable, menuId);
+    }
+
     @Transactional
     public MenuReview updateComment(Long memberId, Long reviewId, String comments, LocalDateTime now) {
         MenuReview menuReview = menuReviewRepository.findByMemberIdAndId(memberId, reviewId);

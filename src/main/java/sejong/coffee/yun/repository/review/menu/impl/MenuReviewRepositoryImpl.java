@@ -17,6 +17,7 @@ import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_REVIEW;
 import static sejong.coffee.yun.domain.order.menu.QMenuReview.menuReview;
+import static sejong.coffee.yun.domain.user.QMember.member;
 
 @Repository
 @Primary
@@ -73,6 +74,23 @@ public class MenuReviewRepositoryImpl implements MenuReviewRepository {
     public Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId) {
         List<MenuReview> menuReviews = jpaQueryFactory.selectFrom(menuReview)
                 .where(menuReview.member.id.eq(memberId))
+                .join(menuReview.member, member).fetchJoin()
+                .orderBy(menuReview.createAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(menuReview.count())
+                .from(menuReview);
+
+        return PageableExecutionUtils.getPage(menuReviews, pageable, jpaQuery::fetchOne);
+    }
+
+    @Override
+    public Page<MenuReview> findAllByMenuId(Pageable pageable, Long menuId) {
+        List<MenuReview> menuReviews = jpaQueryFactory.selectFrom(menuReview)
+                .where(menuReview.menu.id.eq(menuId))
+                .join(menuReview.member, member).fetchJoin()
                 .orderBy(menuReview.createAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
