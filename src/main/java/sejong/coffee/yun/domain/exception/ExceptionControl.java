@@ -28,6 +28,7 @@ public enum ExceptionControl {
     NOT_FOUND_MENU_REVIEW("메뉴 리뷰를 찾을 수 없습니다."),
     NOT_FOUND_MENU_THUMBNAIL("메뉴 썸네일을 찾을 수 없습니다."),
     MENU_NOT_ENOUGH_QUANTITY("메뉴 수량이 부족합니다."),
+    MENU_ORDER_COUNT_INDEX_BOUND_ERROR("메뉴 주문 개수는 음수가 될 수 없습니다."),
 
     // Coupon
     COUPON_NOT_ENOUGH_QUANTITY("쿠폰 수량이 부족합니다."),

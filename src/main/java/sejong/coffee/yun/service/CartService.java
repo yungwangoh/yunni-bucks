@@ -49,14 +49,15 @@ public class CartService {
         Menu menu = menuRepository.findById(menuId);
         Cart cart = cartRepository.findByMember(memberId);
 
-        CartItem cartItem = CartItem.builder()
+        CartItem saveCartItem = cartItemRepository.save(
+                CartItem.builder()
                 .cart(cart)
                 .menu(menu)
-                .build();
-
-        CartItem saveCartItem = cartItemRepository.save(cartItem);
+                .build()
+        );
 
         saveCartItem.getMenu().subQuantity();
+        saveCartItem.getMenu().addOrderCount();
 
         cart.addMenu(saveCartItem);
 
@@ -83,6 +84,7 @@ public class CartService {
         Cart cart = cartRepository.findByMember(memberId);
 
         cart.getMenu(idx).addQuantity();
+        cart.getMenu(idx).subOrderCount();
 
         cart.removeMenu(idx);
 
