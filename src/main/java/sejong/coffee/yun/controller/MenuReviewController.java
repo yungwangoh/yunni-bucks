@@ -12,6 +12,7 @@ import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.dto.review.menu.MenuReviewDto;
 import sejong.coffee.yun.dto.review.menu.MenuReviewPageDto;
+import sejong.coffee.yun.dto.review.menu.MenuReviewPageWrapperDto;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.MenuReviewService;
 
@@ -82,6 +83,17 @@ public class MenuReviewController {
         MenuReviewPageDto.Response response = customMapper.map(menuReviewPage, MenuReviewPageDto.Response.class);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{menuId}/reviews/page/{pageNum}")
+    ResponseEntity<MenuReviewPageWrapperDto.PageResponse> findAllByMenuId(@PathVariable Long menuId,
+                                                                          @PathVariable int pageNum) {
+
+        PageRequest pr = PageRequest.of(pageNum, 10);
+
+        MenuReviewPageWrapperDto.PageResponse pageResponse = menuReviewService.findAllByMenuId(pr, menuId);
+
+        return ResponseEntity.ok(pageResponse);
     }
 
     @GetMapping("/reviews")

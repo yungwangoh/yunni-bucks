@@ -1,6 +1,9 @@
 package sejong.coffee.yun.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -8,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.dto.review.menu.MenuReviewPageWrapperDto;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -43,11 +47,13 @@ public class MenuReviewService {
     }
 
     @Transactional
+    @CacheEvict(value = "menuReview", key = "#reviewId", cacheManager = "cacheManager")
     public void delete(Long reviewId) {
         menuReviewRepository.delete(reviewId);
     }
 
     @Transactional
+    @CacheEvict(value = "menuReview", key = "#memberId + #reviewId", cacheManager = "cacheManager")
     public void delete(Long memberId, Long reviewId) {
         menuReviewRepository.delete(memberId, reviewId);
     }
@@ -56,11 +62,16 @@ public class MenuReviewService {
         return menuReviewRepository.findAllByMemberId(pageable, memberId);
     }
 
-    public Page<MenuReview> findAllByMenuId(Pageable pageable, Long menuId) {
-        return menuReviewRepository.findAllByMenuId(pageable, menuId);
+    @Cacheable(value = "menuReview", key = "#pageable.pageNumber", cacheManager = "cacheManager")
+    public MenuReviewPageWrapperDto.PageResponse findAllByMenuId(Pageable pageable, Long menuId) {
+
+        Page<MenuReview> reviews = menuReviewRepository.findAllByMenuId(pageable, menuId);
+
+        return new MenuReviewPageWrapperDto.PageResponse(reviews);
     }
 
     @Transactional
+    @CachePut(value = "menuReview", key = "#memberId + #reviewId + #comments")
     public MenuReview updateComment(Long memberId, Long reviewId, String comments, LocalDateTime now) {
         MenuReview menuReview = menuReviewRepository.findByMemberIdAndId(memberId, reviewId);
 
