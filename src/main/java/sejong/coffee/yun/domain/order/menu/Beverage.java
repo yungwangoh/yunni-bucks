@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 public class Beverage extends Menu {
 
     @Builder
-    public Beverage(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now, int quantity) {
-        super(id, title, description, price, nutrients, menuSize, now, quantity);
+    public Beverage(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now, int quantity, Long orderCount) {
+        super(id, title, description, price, nutrients, menuSize, now, quantity, orderCount);
     }
 
     public static Beverage from(Long id, Beverage beverage) {
@@ -31,6 +31,7 @@ public class Beverage extends Menu {
                 .menuSize(beverage.getMenuSize())
                 .now(beverage.getCreateAt())
                 .quantity(beverage.getQuantity())
+                .orderCount(beverage.getOrderCount())
                 .build();
     }
 }

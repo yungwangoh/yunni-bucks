@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.MENU_NOT_ENOUGH_QUANTITY;
+import static sejong.coffee.yun.domain.exception.ExceptionControl.MENU_ORDER_COUNT_INDEX_BOUND_ERROR;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -32,8 +33,12 @@ public abstract class Menu {
     private LocalDateTime updateAt;
     @Column(name = "quantity")
     private int quantity;
+    private Long orderCount;
 
-    protected Menu(Long id, String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now, int quantity) {
+    protected Menu(Long id, String title, String description, Money price,
+                   Nutrients nutrients, MenuSize menuSize, LocalDateTime now,
+                   int quantity, Long orderCount) {
+
         this.id = id;
         this.title = title;
         this.description = description;
@@ -43,6 +48,7 @@ public abstract class Menu {
         this.createAt = now;
         this.updateAt = now;
         this.quantity = quantity;
+        this.orderCount = orderCount;
     }
 
     protected Menu(String title, String description, Money price, Nutrients nutrients, MenuSize menuSize, LocalDateTime now, int quantity) {
@@ -65,6 +71,16 @@ public abstract class Menu {
         if(this.quantity < 0) {
             throw new MenuException(MENU_NOT_ENOUGH_QUANTITY.getMessage());
         }
+    }
+
+    public void addOrderCount() {
+        this.orderCount++;
+    }
+
+    public void subOrderCount() {
+        this.orderCount--;
+
+        if(this.orderCount < 0) throw new MenuException(MENU_ORDER_COUNT_INDEX_BOUND_ERROR.getMessage());
     }
 
     public void addQuantity() {
