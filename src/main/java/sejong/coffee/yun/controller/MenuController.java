@@ -71,7 +71,15 @@ public class MenuController {
     @GetMapping("")
     public ResponseEntity<List<MenuDto.Response>> findAllMenu() {
 
-        List<MenuDto.Response> responses = menuService.findAll();
+        List<MenuDto.Response> responses = menuService.findAll().responses();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<MenuDto.Response>> searchPopularMenus() {
+
+        List<MenuDto.Response> responses = menuService.searchPopularMenus();
 
         return ResponseEntity.ok(responses);
     }
