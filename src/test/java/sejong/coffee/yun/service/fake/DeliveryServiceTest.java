@@ -19,7 +19,7 @@ import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
-import sejong.coffee.yun.infra.DeliveryScheduler;
+import sejong.coffee.yun.infra.SchedulerService;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mock.repository.FakeDeliveryRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
@@ -53,7 +53,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
         FakeDeliveryRepository.class,
         FakeCartRepository.class,
         JwtProvider.class,
-        DeliveryScheduler.class
+        SchedulerService.class
 })
 @TestPropertySource(properties = {
         "jwt.key=applicationKey",
