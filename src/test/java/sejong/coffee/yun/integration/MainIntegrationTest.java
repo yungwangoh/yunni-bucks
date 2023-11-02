@@ -178,6 +178,7 @@ public class MainIntegrationTest {
                 .menuSize(MenuSize.M)
                 .price(Money.initialPrice(new BigDecimal(4000)))
                 .quantity(10000)
+                .orderCount(0L)
                 .build();
     }
 
