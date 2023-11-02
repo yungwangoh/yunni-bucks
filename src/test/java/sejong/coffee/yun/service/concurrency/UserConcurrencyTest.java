@@ -7,6 +7,7 @@ import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Coupon;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.integration.MainIntegrationTest;
+import sejong.coffee.yun.redis.lock.RedisLockingMenuQuantity;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -41,6 +42,8 @@ public class UserConcurrencyTest extends MainIntegrationTest {
     private MenuRepository menuRepository;
     @Autowired
     private CouponRepository couponRepository;
+    @Autowired
+    private RedisLockingMenuQuantity redisLockingMenuQuantity;
 
     private Member member;
     private Menu menu;
@@ -143,5 +146,37 @@ public class UserConcurrencyTest extends MainIntegrationTest {
 
         // then
         assertEquals(m.getQuantity(), 10000 - memberCount);
+    }
+
+    @Test
+    void 메뉴의_주문_개수_동시성_처리_비관적_락() throws Exception {
+        // given
+        int memberCount = 100;
+
+        List<Member> members = Stream.generate(() -> userRepository.save(member()))
+                .limit(memberCount)
+                .toList();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(memberCount);
+
+        // when
+        members.forEach(member -> executorService.submit(() -> {
+            try {
+                cartService.createCart(member.getId());
+                cartService.addMenu(member.getId(), menu.getId());
+                orderService.order(member.getId(), LocalDateTime.now());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                latch.countDown();
+            }
+        }));
+        latch.await();
+
+        Menu findMenu = menuRepository.findById(menu.getId());
+
+        // then
+        assertEquals(findMenu.getOrderCount(), memberCount);
     }
 }
