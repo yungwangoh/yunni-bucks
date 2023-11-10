@@ -69,7 +69,7 @@
 <img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/37452648-0c1b-4b6f-aa0a-42a53cbcc9ce">
 
 #### Domain Model
-<img width="757" alt="image" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/35e060e7-dd72-46c7-90f0-b28fc55b36d7">
+<img width="800" alt="image" src="https://github.com/yungwangoh/yunni-bucks/assets/37898720/67fb4d57-e321-4987-8b28-b92ec2213024">
 
 ### Layered Architecture
 DB 모듈을 손쉽게 전환하기 위해 설계
