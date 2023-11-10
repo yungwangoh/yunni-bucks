@@ -17,6 +17,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.MENU_ORDER_COU
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @DiscriminatorColumn
+@Table(name = "MENU", indexes = @Index(columnList = "title"))
 public abstract class Menu {
 
     @Id @GeneratedValue
@@ -34,6 +35,8 @@ public abstract class Menu {
     @Column(name = "quantity")
     private int quantity;
     private Long orderCount;
+    @Version
+    private Long version;
 
     protected Menu(Long id, String title, String description, Money price,
                    Nutrients nutrients, MenuSize menuSize, LocalDateTime now,
