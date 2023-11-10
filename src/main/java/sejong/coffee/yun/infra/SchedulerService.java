@@ -24,8 +24,4 @@ public class SchedulerService {
         log.info("schedule END, current thread = {} ", Thread.currentThread().getName());
     }
 
-    @Scheduled(cron = "0 */2 * * * *")
-    public void processAddPopularMenus() {
-        menuService.addPopularMenus();
-    }
 }
