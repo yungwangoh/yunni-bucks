@@ -1,6 +1,5 @@
 package sejong.coffee.yun.service.cache;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +11,7 @@ import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.MenuReviewService;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
@@ -28,7 +28,7 @@ public class MenuReviewCacheTest extends MainIntegrationTest {
     private Menu menu;
     private Member member;
 
-    @BeforeEach
+    @PostConstruct
     void init() {
         member = userRepository.save(member());
         menu = menuRepository.save(bread());
@@ -43,15 +43,11 @@ public class MenuReviewCacheTest extends MainIntegrationTest {
 
     @Test
     void 메뉴_리뷰_조회_캐시() {
-        // given
         PageRequest pr = PageRequest.of(0, 10);
 
-        // when
         for(int i = 0; i < 1000; i++) {
             menuReviewService.findAllByMenuId(pr, menu.getId());
         }
-
-        // then
 
     }
 }
