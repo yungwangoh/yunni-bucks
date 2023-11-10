@@ -1,5 +1,6 @@
 package sejong.coffee.yun.domain.user;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import static sejong.coffee.yun.domain.user.CartControl.SIZE;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cart {
 
     @Id @GeneratedValue
