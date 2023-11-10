@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface JpaMenuRepository extends JpaRepository<Menu, Long> {
     @NotNull
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC)
     Optional<Menu> findById(@NotNull Long menuId);
 }
