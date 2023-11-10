@@ -31,7 +31,7 @@ public class MenuService {
         return menuRepository.save(menu);
     }
 
-    @Cacheable(value = "menu", key = "#menuId", cacheManager = "cacheManager")
+    //@Cacheable(value = "menu", key = "#menuId", cacheManager = "cacheManager")
     public MenuDto.Response findById(Long menuId) {
         return new MenuDto.Response(menuRepository.findById(menuId));
     }
@@ -44,32 +44,18 @@ public class MenuService {
         return new MenuWrapperDto.Response(responses);
     }
 
-    @Transactional
-    public void addPopularMenus() {
-
-        List<Menu> menus = menuRepository.findAll();
-
-        ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
-
-        menus.forEach(response -> {
-            try {
-                zSetOperations.add(RANK_KEY, response.getTitle(), response.getOrderCount());
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
     public List<MenuDto.Response> searchPopularMenus() {
 
         List<Menu> menus = menuRepository.findAll();
 
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
 
-        Set<String> rankSets = zSetOperations.reverseRange(RANK_KEY, 0, 10);
+        Set<ZSetOperations.TypedTuple<String>> rankSets =
+                zSetOperations.reverseRangeByScoreWithScores(RANK_KEY, 0, 10);
 
-        return rankSets.stream().map(rankSet -> getMenuDtoResponse(menus, rankSet)).toList();
+        assert rankSets != null;
+
+        return rankSets.stream().map(rankSet -> getMenuDtoResponse(menus, rankSet.getValue())).toList();
     }
 
     @Transactional
