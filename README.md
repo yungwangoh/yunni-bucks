@@ -22,11 +22,18 @@
 
 주문-결제-배달 온라인 카페 서비스
 
+주 도메인 
+
+- 회원
+- 주문
+- 결제
+- 배달
+
 ## 맴버 소개
 
 ---
-- [하윤](https://github.com/gkdbssla97)
-- [윤광오](https://github.com/yungwangoh)
+- [하윤](https://github.com/gkdbssla97) -> 결제 담당
+- [윤광오](https://github.com/yungwangoh) -> 회원, 주문, 배달 담당
 
 ## 개발 환경
 
