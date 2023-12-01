@@ -9,10 +9,15 @@ secrets:
 
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/food
+    url: jdbc:h2:mem
     username: sa
     password:
     driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 100 #최대 pool 크기
+      minimum-idle: 10 #최소 pool 크기
+      idle-timeout: 600000 #연결위한 최대 유후 시간
+      max-lifetime: 1800000 #반납된 커넥션의 최대 수명
 
   jpa:
     hibernate:
@@ -23,6 +28,11 @@ spring:
         default_batch_fetch_size: 100
         auto_quote_keyword: true
     database-platform:
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
 
   redis:
     host: localhost

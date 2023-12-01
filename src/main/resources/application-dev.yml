@@ -1,0 +1,69 @@
+# dev environment (개발 환경)
+secrets:
+  clova:
+    authorizeUri: https://zfusrxrk3k.apigw.ntruss.com/custom/v1/23890/2453eb775e796913aca6d68e93eb5c9d0eda8b9e8f224fe7413ac067ae57fc7b/document/credit-card
+    secret-key: bHdFSFJGTklOVVJzUFBNeEx3UmhFU3dZdXVtakxUY3U=
+  toss:
+    apiUri: https://api.tosspayments.com/v1/payments/key-in
+    secret-key: Basic dGVzdF9za183WFpZa0tMNE1yakFsYUJ5MGExVjB6SndsRVdSOg==
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3333/myDB?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 100 #최대 pool 크기
+      minimum-idle: 10 #최소 pool 크기
+      idle-timeout: 600000 #연결위한 최대 유후 시간
+      max-lifetime: 1800000 #반납된 커넥션의 최대 수명
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        auto_quote_keyword: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+  redis:
+    host: localhost
+    port: 6379
+
+logging:
+  level: #띄어쓰기 없음
+    org.hibernate.SQL: debug
+  #    org.hibernate.type: trace
+  discord:
+    webhook-uri: https://discord.com/api/webhooks/1150073801967677612/8eV2tDl39S6yHq_QW81ZV7mGKZPeypsi0uXFsGwj0hSP1NjlsMH07-d7oDWgAytZxzu1
+  config: classpath:logback-spring.xml
+  slack:
+    token: T05S4KA8C9F/B05S4L85NAV/jW3SWBKcl8kThXBY3tvlRyYz
+
+origin:
+  address: http://localhost:8081
+
+jwt:
+  key: applicationKey
+  blackList: blackList
+  expireTime:
+    access: 3600000
+    refresh: 1296000000
+
+schedules:
+  cron:
+    product: "0 0 0 * * *"
+    test: "1 * * * * *"
