@@ -21,6 +21,7 @@ class AmountPolicyTest {
         Member member = Member.builder()
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
+                .orderCount(0)
                 .build();
 
         // when
@@ -36,6 +37,7 @@ class AmountPolicyTest {
         Member member = Member.builder()
                 .userRank(UserRank.SILVER)
                 .money(Money.ZERO)
+                .orderCount(0)
                 .build();
 
         // when

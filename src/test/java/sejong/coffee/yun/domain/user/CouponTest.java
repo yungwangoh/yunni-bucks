@@ -3,6 +3,8 @@ package sejong.coffee.yun.domain.user;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import sejong.coffee.yun.domain.exception.CouponException;
+import sejong.coffee.yun.domain.exception.ExceptionControl;
 
 import java.time.LocalDateTime;
 
@@ -35,9 +37,12 @@ class CouponTest {
                 .build();
 
         // when
-        coupon.checkExpireTime(LocalDateTime.of(2024, 7, 29,3, 56));
 
         // then
+        assertThatThrownBy(() -> coupon.checkExpireTime(LocalDateTime.of(2024, 7, 29,3, 56)))
+                .isInstanceOf(CouponException.class)
+                .hasMessageContaining(ExceptionControl.COUPON_OVER_EXPIRE_TIME.getMessage());
+
         assertThat(coupon.getCouponUse()).isEqualTo(CouponUse.YES);
     }
 

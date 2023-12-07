@@ -13,7 +13,7 @@ public class AmountPolicy implements DiscountPolicy {
 
     @Override
     public double calculateDiscount(Member member) {
-        if(!condition.isSatisfiedBy(member)) {
+        if(!condition.isSatisfiedBy(member) && member.getOrderCount() == 0) {
             return 1000;
         }
         return 0;

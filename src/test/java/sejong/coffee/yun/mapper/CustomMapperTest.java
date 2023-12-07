@@ -34,6 +34,7 @@ class CustomMapperTest {
                 .userRank(UserRank.BRONZE)
                 .money(Money.ZERO)
                 .address(address)
+                .orderCount(0)
                 .build();
 
         // when

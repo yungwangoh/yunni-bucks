@@ -2,7 +2,6 @@ package sejong.coffee.yun.domain.user;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,6 +13,7 @@ class MemberRankTest {
         // given
         Member member = Member.builder()
                 .userRank(UserRank.calculateUserRank(orderCount))
+                .orderCount(0)
                 .build();
 
         // when

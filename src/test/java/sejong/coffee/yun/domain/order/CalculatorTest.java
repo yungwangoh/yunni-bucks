@@ -57,6 +57,7 @@ class CalculatorTest {
                 .money(Money.ZERO)
                 .userRank(userRank)
                 .password("qwer1234")
+                .orderCount(0)
                 .name("윤광오")
                 .build();
 
@@ -80,6 +81,7 @@ class CalculatorTest {
                 .money(Money.ZERO)
                 .password("qwer1234")
                 .name("윤광오")
+                .orderCount(0)
                 .build();
 
         List<Menu> menuList = new ArrayList<>();

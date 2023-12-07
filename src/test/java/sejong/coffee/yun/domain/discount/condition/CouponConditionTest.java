@@ -32,6 +32,7 @@ class CouponConditionTest {
                 .userRank(UserRank.SILVER)
                 .money(Money.ZERO)
                 .coupon(coupon)
+                .orderCount(0)
                 .build();
 
         // when
@@ -57,6 +58,7 @@ class CouponConditionTest {
                 .userRank(UserRank.SILVER)
                 .money(Money.ZERO)
                 .coupon(coupon)
+                .orderCount(0)
                 .build();
 
         // when

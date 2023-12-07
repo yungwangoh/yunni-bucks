@@ -23,6 +23,7 @@ class RankConditionTest {
         Member member = Member.builder()
                 .money(Money.ZERO)
                 .userRank(UserRank.BRONZE)
+                .orderCount(0)
                 .build();
 
         // when
@@ -39,6 +40,7 @@ class RankConditionTest {
         Member member = Member.builder()
                 .money(Money.ZERO)
                 .userRank(userRank)
+                .orderCount(0)
                 .build();
 
         // when

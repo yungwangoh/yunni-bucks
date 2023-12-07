@@ -108,10 +108,10 @@ class OrderTest {
         money.mapBigDecimalToLong();
 
         // when
-        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
+        Order order = Order.createOrder(cart, money, LocalDateTime.now());
 
         // then
-        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo("2400");
+        assertThat(order.getOrderPrice().getTotalPrice()).isEqualTo(money.getTotalPrice());
         assertThat(order.getStatus()).isEqualTo(OrderStatus.ORDER);
     }
 
@@ -121,7 +121,7 @@ class OrderTest {
         Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         // when
-        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
+        Order order = Order.createOrder(cart, money, LocalDateTime.now());
         String orderName = menuList.get(0).getMenu().getTitle() + " 외 " + menuList.size() + "개";
 
         // then
@@ -140,7 +140,7 @@ class OrderTest {
         // when
 
         // then
-        assertThatThrownBy(() -> Order.createOrder(member, c, Money.ZERO, LocalDateTime.now()))
+        assertThatThrownBy(() -> Order.createOrder(c, Money.ZERO, LocalDateTime.now()))
                 .isInstanceOf(MenuException.class)
                 .hasMessageContaining(EMPTY_MENUS.getMessage());
     }
@@ -149,7 +149,7 @@ class OrderTest {
     void 주문_취소_했을때_상태_주문취소로_변경() {
         // given
         Money money = calculator.calculateMenus(member, cart.convertToMenus());
-        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
+        Order order = Order.createOrder(cart, money, LocalDateTime.now());
 
         // when
         order.cancel();
@@ -164,7 +164,7 @@ class OrderTest {
         Money money = calculator.calculateMenus(member, cart.convertToMenus());
 
         // when
-        Order.createOrder(member, cart, money, LocalDateTime.now());
+        Order.createOrder(cart, money, LocalDateTime.now());
 
         // then
         assertThat(member.getCoupon().getCouponUse()).isEqualTo(CouponUse.YES);
@@ -178,10 +178,10 @@ class OrderTest {
         money.mapBigDecimalToLong();
 
         // when
-        Order order = Order.createOrder(member, cart, money, LocalDateTime.now());
+        Order order = Order.createOrder(cart, money, LocalDateTime.now());
 
         // then
-        assertThat(order.fetchTotalOrderPrice()).isEqualTo("2400");
+        assertThat(order.fetchTotalOrderPrice()).isEqualTo(money.getTotalPrice());
     }
 
     @Test
@@ -193,7 +193,11 @@ class OrderTest {
         // when
         Order order = Order.createOrder(cart, money, LocalDateTime.now());
 
-        List<Menu> menus = order.getCart().getCartItems().stream().map(CartItem::getMenu).toList();
+        order.getCart().getCartItems().stream().map(CartItem::getMenu)
+                .forEach(Menu::subQuantity);
+
+        List<Menu> menus = order.getCart().getCartItems().stream().map(CartItem::getMenu)
+                .toList();
 
         // then
        menus.forEach(menu -> {

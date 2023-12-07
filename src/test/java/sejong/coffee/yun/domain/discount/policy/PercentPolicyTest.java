@@ -1,6 +1,5 @@
 package sejong.coffee.yun.domain.discount.policy;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -26,6 +25,7 @@ class PercentPolicyTest {
         Member member = Member.builder()
                 .userRank(userRank)
                 .money(Money.ZERO)
+                .orderCount(0)
                 .build();
 
         // when
@@ -51,6 +51,7 @@ class PercentPolicyTest {
                 .userRank(UserRank.SILVER)
                 .money(Money.ZERO)
                 .coupon(coupon)
+                .orderCount(0)
                 .build();
 
         // when
