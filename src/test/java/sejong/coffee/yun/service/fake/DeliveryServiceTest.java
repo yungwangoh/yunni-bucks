@@ -21,11 +21,11 @@ import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.infra.SchedulerService;
 import sejong.coffee.yun.jwt.JwtProvider;
+import sejong.coffee.yun.mock.repository.FakeCartRepository;
 import sejong.coffee.yun.mock.repository.FakeDeliveryRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.mock.repository.FakeCartRepository;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -53,14 +53,16 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
         FakeDeliveryRepository.class,
         FakeCartRepository.class,
         JwtProvider.class,
-        SchedulerService.class
+        SchedulerService.class,
 })
 @TestPropertySource(properties = {
         "jwt.key=applicationKey",
         "jwt.expireTime.access=100000",
         "jwt.expireTime.refresh=1000000",
         "jwt.blackList=blackList",
-        "schedules.cron.product=0/1 * * * * * "
+        "schedules.cron.product=0/1 * * * * * ",
+        "spring.redis.port=6379",
+        "spring.redis.host-localhost"
 })
 public class DeliveryServiceTest {
 

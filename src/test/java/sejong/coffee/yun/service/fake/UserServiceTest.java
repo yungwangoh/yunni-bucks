@@ -2,6 +2,7 @@ package sejong.coffee.yun.service.fake;
 
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -10,6 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.exception.NotMatchUserException;
 import sejong.coffee.yun.domain.user.Address;
+import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mock.repository.CustomValueOperationImpl;
@@ -20,6 +22,7 @@ import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.service.UserService;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,6 +57,15 @@ public class UserServiceTest {
     @Autowired
     private NoSqlRepository noSqlRepository;
 
+    private Cart cart;
+
+    @BeforeEach
+    void init() {
+        cart = Cart.builder()
+                .cartItems(new ArrayList<>())
+                .build();
+    }
+
     @AfterEach
     void initDB() {
         userRepository.clear();
@@ -68,7 +80,7 @@ public class UserServiceTest {
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
         // when
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userService.signUp(name, email, pwd, address, cart);
 
         // then
         assertThat(signUp.getName()).isEqualTo(name);
@@ -84,7 +96,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userService.signUp(name, email, pwd, address, cart);
 
         // when
         Member member = userService.findMember(signUp.getId());
@@ -101,7 +113,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        List<Member> members = List.of(userService.signUp(name, email, pwd, address));
+        List<Member> members = List.of(userService.signUp(name, email, pwd, address, cart));
 
         // when
         List<Member> list = userService.findAll();
@@ -118,7 +130,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member sign = userService.signUp(name, email, pwd, address);
+        Member sign = userService.signUp(name, email, pwd, address, cart);
 
         // when
         String token = userService.signIn(email, pwd);
@@ -136,7 +148,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        userService.signUp(name, email, pwd, address);
+        userService.signUp(name, email, pwd, address, cart);
 
         String wrongEmail = "asdfqwer1234@naver.com";
         String wrongPwd = "trewttrgfg@A";
@@ -157,7 +169,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member member = userService.signUp(name, email, pwd, address);
+        Member member = userService.signUp(name, email, pwd, address, cart);
         String token = userService.signIn(email, pwd);
 
         // when
@@ -176,7 +188,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userService.signUp(name, email, pwd, address, cart);
 
         String updateName = "홍홍길동";
 
@@ -195,7 +207,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userService.signUp(name, email, pwd, address, cart);
 
         String updateEmail = "asdf1234@daum.net";
 
@@ -214,7 +226,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member member = userService.signUp(name, email, pwd, address);
+        Member member = userService.signUp(name, email, pwd, address, cart);
 
         String updatePwd = "asdf1234@A";
 
@@ -242,7 +254,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member sign = userService.signUp(name, email, pwd, address);
+        Member sign = userService.signUp(name, email, pwd, address, cart);
 
         // when
         String expireToken = "bearer gfjsghjkfsdhgjs";
@@ -261,7 +273,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userService.signUp(name, email, pwd, address, cart);
 
         // when
         userService.deleteMember(signUp.getId());

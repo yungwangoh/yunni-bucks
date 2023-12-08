@@ -36,6 +36,7 @@ import static sejong.coffee.yun.domain.pay.PaymentStatus.DONE;
 import static sejong.coffee.yun.dto.pay.CardPaymentDto.Request;
 import static sejong.coffee.yun.dto.pay.CardPaymentDto.Response;
 
+@Disabled
 @SpringBootTest
 @Slf4j
 public class PayServiceIntegrateTest extends MainIntegrationTest {

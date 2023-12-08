@@ -70,7 +70,7 @@ class UserServiceTest {
         given(userRepository.save(any())).willReturn(member);
 
         // when
-        Member signUp = userService.signUp(member.getName(), member.getEmail(), member.getPassword(), member.getAddress());
+        Member signUp = userService.signUp(member.getName(), member.getEmail(), member.getPassword(), member.getAddress(), null);
 
         // then
         assertThat(signUp.getName()).isEqualTo(member.getName());

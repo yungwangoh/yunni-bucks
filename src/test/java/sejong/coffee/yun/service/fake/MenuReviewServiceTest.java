@@ -70,6 +70,7 @@ public class MenuReviewServiceTest {
                 .password("qwer1234")
                 .address(null)
                 .email("qwer1234@naver.com")
+                .orderCount(0)
                 .build();
 
         saveMember = userRepository.save(member);

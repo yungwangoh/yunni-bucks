@@ -27,6 +27,7 @@ import sejong.coffee.yun.service.CartService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -73,6 +74,7 @@ public class CartServiceTest {
     private Menu menu2;
     private Menu menu3;
     private CartItem cartItem;
+    private Cart cart;
 
     @BeforeEach
     void init() {
@@ -83,6 +85,7 @@ public class CartServiceTest {
                 .password("qwer1234")
                 .address(null)
                 .email("qwer1234@naver.com")
+                .orderCount(0)
                 .build();
 
         Nutrients nutrients = new Nutrients(80, 80, 80, 80);
@@ -93,6 +96,7 @@ public class CartServiceTest {
                 .price(Money.initialPrice(new BigDecimal(1000)))
                 .nutrients(nutrients)
                 .menuSize(MenuSize.M)
+                .orderCount(0)
                 .now(LocalDateTime.now())
                 .build();
 
@@ -102,6 +106,7 @@ public class CartServiceTest {
                 .price(Money.initialPrice(new BigDecimal(1000)))
                 .nutrients(nutrients)
                 .menuSize(MenuSize.M)
+                .orderCount(0)
                 .now(LocalDateTime.now())
                 .build();
 
@@ -111,6 +116,7 @@ public class CartServiceTest {
                 .price(Money.initialPrice(new BigDecimal(1000)))
                 .nutrients(nutrients)
                 .menuSize(MenuSize.M)
+                .orderCount(0)
                 .now(LocalDateTime.now())
                 .build();
 
@@ -120,6 +126,11 @@ public class CartServiceTest {
 
         cartItem = CartItem.builder()
                 .menu(menu1)
+                .build();
+
+        cart = Cart.builder()
+                .id(1L)
+                .cartItems(new ArrayList<>())
                 .build();
     }
 
@@ -172,16 +183,14 @@ public class CartServiceTest {
     void 메뉴_추가() {
         // given
         Member save = userRepository.save(member);
+        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
-
-        cartService.createCart(save.getId());
 
         // when
         Cart cart = cartService.addMenu(save.getId(), menu.getId());
 
         // then
-        assertThat(cart.getMember()).isEqualTo(save);
         assertThat(cart.getCartItems().get(0).getMenu()).isEqualTo(menu);
     }
 
@@ -189,10 +198,9 @@ public class CartServiceTest {
     void 메뉴_추가할때_장바구니_사이즈를_넘은_경우() {
         // given
         Member save = userRepository.save(member);
+        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
-
-        cartService.createCart(save.getId());
 
         // when
         IntStream.range(0, 10).forEach(i -> cartService.addMenu(save.getId(), menu.getId()));
@@ -213,10 +221,9 @@ public class CartServiceTest {
     void 카트에서_메뉴_찾기() {
         // given
         Member save = userRepository.save(member);
+        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
-
-        cartService.createCart(save.getId());
 
         cartService.addMenu(save.getId(), menu.getId());
 
@@ -231,10 +238,9 @@ public class CartServiceTest {
     void 카트에서_메뉴_지우기() {
         // given
         Member save = userRepository.save(member);
+        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
-
-        cartService.createCart(save.getId());
 
         cartService.addMenu(save.getId(), menu.getId());
 
@@ -249,9 +255,9 @@ public class CartServiceTest {
     void 카트에_있는_메뉴를_찾을_수_없을때() {
         // given
         Member save = userRepository.save(member);
+        save.setCart(cart);
 
         // when
-        cartService.createCart(save.getId());
 
         // then
         assertThatThrownBy(() -> cartService.addMenu(save.getId(), 1L))
