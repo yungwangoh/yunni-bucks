@@ -24,6 +24,7 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
+    @Transactional
     public Coupon findById(Long id) {
         return jpaCouponRepository.findById(id)
                 .orElseThrow(NOT_FOUND_COUPON::notFoundException);

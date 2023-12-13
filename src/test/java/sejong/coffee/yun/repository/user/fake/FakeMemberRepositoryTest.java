@@ -44,6 +44,7 @@ class FakeMemberRepositoryTest {
                 .userRank(UserRank.BRONZE)
                 .password("qwer1234")
                 .name("윤광오")
+                .orderCount(0)
                 .build();
     }
 

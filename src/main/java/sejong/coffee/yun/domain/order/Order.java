@@ -25,7 +25,7 @@ import static sejong.coffee.yun.domain.order.OrderStatus.ORDER;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "order_name")
     private String name;

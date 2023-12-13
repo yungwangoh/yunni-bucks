@@ -17,7 +17,7 @@ import static sejong.coffee.yun.util.parse.ParsingUtil.parsingCardValidDate;
 public class Card extends DateTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_id")
     private Long id;
     @Column(length = 20)

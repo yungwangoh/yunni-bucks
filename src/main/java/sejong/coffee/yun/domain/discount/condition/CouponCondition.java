@@ -8,6 +8,10 @@ public class CouponCondition implements DiscountCondition {
 
     @Override
     public boolean isSatisfiedBy(Member member) {
-        return member.hasCoupon();
+        if(member.hasCoupon()) {
+            return member.getCoupon().hasAvailableCoupon();
+        }
+
+        return false;
     }
 }

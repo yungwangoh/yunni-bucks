@@ -155,11 +155,14 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                                     fieldWithPath("memberId").description("유저 ID"),
                                     fieldWithPath("menuList").description("메뉴 리스트").type(JsonFieldType.ARRAY),
                                     fieldWithPath("menuList[]").description("메뉴 리스트"),
-                                    fieldWithPath("menuList[].menuId").description("메뉴 ID"),
+                                    fieldWithPath("menuList[].id").description("메뉴 ID"),
                                     fieldWithPath("menuList[].title").description("메뉴 제목"),
                                     fieldWithPath("menuList[].description").description("메뉴 설명"),
                                     fieldWithPath("menuList[].price.totalPrice").description("메뉴 가격"),
-                                    fieldWithPath("menuList[].nutrients").description("영양 정보"),
+                                    fieldWithPath("menuList[].nutrients.kcal").description("칼로리"),
+                                    fieldWithPath("menuList[].nutrients.carbohydrates").description("탄수 화물"),
+                                    fieldWithPath("menuList[].nutrients.fats").description("지방"),
+                                    fieldWithPath("menuList[].nutrients.proteins").description("단백질"),
                                     fieldWithPath("menuList[].menuSize").description("메뉴 크기")
                             )
                             ));
@@ -203,7 +206,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 잘못된_메뉴ID인_경우_500() throws Exception {
+        void 잘못된_메뉴ID인_경우_404() throws Exception {
             // given
             cartService.createCart(1L);
 
@@ -213,7 +216,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                     .param("menuId", "100"));
 
             // then
-            resultActions.andExpect(status().isInternalServerError())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(document("invalid_menu_id",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -230,7 +233,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 카트가_생성되지_않고_카트에_어떤_행위를_할_경우_500() throws Exception {
+        void 카트가_생성되지_않고_카트에_어떤_행위를_할_경우_404() throws Exception {
             // given
 
             // when
@@ -239,7 +242,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                     .param("menuId", "1"));
 
             // then
-            resultActions.andExpect(status().isInternalServerError())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(document("not-exist-cart",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -308,11 +311,14 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                                     parameterWithName("menuIdx").description("카트에 있는 메뉴 번호")
                             ),
                             responseFields(
-                                    fieldWithPath("menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
+                                    fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 ID"),
                                     fieldWithPath("title").type(JsonFieldType.STRING).description("메뉴 제목"),
                                     fieldWithPath("description").type(JsonFieldType.STRING).description("메뉴 설명"),
                                     fieldWithPath("price.totalPrice").type(JsonFieldType.NUMBER).description("메뉴 가격"),
-                                    fieldWithPath("nutrients").type(JsonFieldType.OBJECT).description("영양소"),
+                                    fieldWithPath("nutrients.kcal").description("칼로리"),
+                                    fieldWithPath("nutrients.carbohydrates").description("탄수 화물"),
+                                    fieldWithPath("nutrients.fats").description("지방"),
+                                    fieldWithPath("nutrients.proteins").description("단백질"),
                                     fieldWithPath("menuSize").type(JsonFieldType.STRING).description("메뉴 사이즈")
                             )
                             ));
@@ -393,7 +399,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 장바구니를_생성하지_않고_주문할_경우_500() throws Exception {
+        void 장바구니를_생성하지_않고_주문할_경우_404() throws Exception {
             // given
 
             // when
@@ -401,7 +407,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                     .header(HttpHeaders.AUTHORIZATION, token));
 
             // then
-            resultActions.andExpect(status().isInternalServerError())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(document("orderDto-fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),
@@ -465,7 +471,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 주문을_하지_않고_취소할_경우_500() throws Exception {
+        void 주문을_하지_않고_취소할_경우_404() throws Exception {
             // given
 
             // when
@@ -474,7 +480,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
                     .param("orderId", "100"));
 
             // then
-            resultActions.andExpect(status().isInternalServerError())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(document("orderDto-cancel-fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

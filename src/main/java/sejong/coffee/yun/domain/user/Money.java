@@ -54,4 +54,8 @@ public class Money {
     public static Money initialPrice(BigDecimal totalPrice) {
         return new Money(totalPrice);
     }
+
+    public int mapToInt() {
+        return this.getTotalPrice().intValue();
+    }
 }

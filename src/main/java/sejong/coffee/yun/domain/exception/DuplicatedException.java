@@ -1,6 +1,6 @@
 package sejong.coffee.yun.domain.exception;
 
-public class DuplicatedException extends IllegalArgumentException{
+public class DuplicatedException extends IllegalArgumentException {
     public DuplicatedException() {
     }
 

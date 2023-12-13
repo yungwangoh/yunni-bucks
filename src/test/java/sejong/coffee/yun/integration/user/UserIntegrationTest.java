@@ -8,6 +8,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.integration.MainIntegrationTest;
+import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.UserService;
@@ -15,7 +16,6 @@ import sejong.coffee.yun.service.UserService;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
@@ -28,12 +28,15 @@ public class UserIntegrationTest extends MainIntegrationTest {
     @Autowired
     private UserService userService;
     @Autowired
+    private CartRepository cartRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private NoSqlRepository noSqlRepository;
 
     @AfterEach
     void initDB() {
+        cartRepository.clear();
         userRepository.clear();
         noSqlRepository.clear();
     }
@@ -468,7 +471,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 회원_탈퇴에_성공한다_200() throws Exception {
+        void 회원_탈퇴에_성공한다_204() throws Exception {
             // given
 
             // when

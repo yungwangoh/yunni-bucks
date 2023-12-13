@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sejong.coffee.yun.service.DeliveryService;
-import sejong.coffee.yun.service.MenuService;
 
 @Component
 @RequiredArgsConstructor
@@ -15,7 +14,6 @@ import sejong.coffee.yun.service.MenuService;
 public class SchedulerService {
 
     private final DeliveryService deliveryService;
-    private final MenuService menuService;
 
     @Scheduled(cron = "${schedules.cron.product}")
     public void processReserveScheduler() {

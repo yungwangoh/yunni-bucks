@@ -20,7 +20,7 @@ import static sejong.coffee.yun.domain.user.CouponUse.YES;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Coupon implements DiscountType {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "coupon_name")
     private String name;
@@ -73,6 +73,7 @@ public class Coupon implements DiscountType {
 
     public void checkExpireTime(LocalDateTime localDateTime) {
         if(localDateTime.compareTo(this.expireAt) > 0) {
+            this.convertStatusUsedCoupon();
             throw new CouponException(ExceptionControl.COUPON_OVER_EXPIRE_TIME.getMessage());
         }
     }

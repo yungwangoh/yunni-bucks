@@ -1,4 +1,4 @@
-set REFERENTIAL_INTEGRITY FALSE ;
-truncate table "MENU";
-truncate table "member";
-set REFERENTIAL_INTEGRITY TRUE ;
+set foreign_key_checks = 0 ;
+truncate table menu;
+truncate table member;
+set foreign_key_checks = 1;

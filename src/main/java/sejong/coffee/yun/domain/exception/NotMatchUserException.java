@@ -1,6 +1,6 @@
 package sejong.coffee.yun.domain.exception;
 
-public class NotMatchUserException extends IllegalArgumentException{
+public class NotMatchUserException extends RuntimeException {
     public NotMatchUserException() {
     }
 

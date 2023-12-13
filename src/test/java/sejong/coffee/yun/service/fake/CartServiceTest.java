@@ -183,9 +183,10 @@ public class CartServiceTest {
     void 메뉴_추가() {
         // given
         Member save = userRepository.save(member);
-        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
+
+        cartService.createCart(save.getId());
 
         // when
         Cart cart = cartService.addMenu(save.getId(), menu.getId());
@@ -198,9 +199,10 @@ public class CartServiceTest {
     void 메뉴_추가할때_장바구니_사이즈를_넘은_경우() {
         // given
         Member save = userRepository.save(member);
-        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
+
+        cartService.createCart(save.getId());
 
         // when
         IntStream.range(0, 10).forEach(i -> cartService.addMenu(save.getId(), menu.getId()));
@@ -221,9 +223,10 @@ public class CartServiceTest {
     void 카트에서_메뉴_찾기() {
         // given
         Member save = userRepository.save(member);
-        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
+
+        cartService.createCart(save.getId());
 
         cartService.addMenu(save.getId(), menu.getId());
 
@@ -238,9 +241,10 @@ public class CartServiceTest {
     void 카트에서_메뉴_지우기() {
         // given
         Member save = userRepository.save(member);
-        save.setCart(cart);
 
         Menu menu = menuRepository.save(menu1);
+
+        cartService.createCart(save.getId());
 
         cartService.addMenu(save.getId(), menu.getId());
 
@@ -255,7 +259,6 @@ public class CartServiceTest {
     void 카트에_있는_메뉴를_찾을_수_없을때() {
         // given
         Member save = userRepository.save(member);
-        save.setCart(cart);
 
         // when
 

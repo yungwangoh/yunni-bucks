@@ -49,11 +49,9 @@ public class OrderService {
 
         Order order = Order.createOrder(cart, money, now);
 
-        Order saveOrder = orderRepository.save(order);
+        //cart.clearCartItems();
 
-        cart.clearCartItems();
-
-        return saveOrder;
+        return orderRepository.save(order);
     }
 
     @Transactional

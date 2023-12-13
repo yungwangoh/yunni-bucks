@@ -17,7 +17,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends DateTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "user_name")
     private String name;

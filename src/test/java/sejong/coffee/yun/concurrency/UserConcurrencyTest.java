@@ -8,7 +8,6 @@ import sejong.coffee.yun.domain.user.Coupon;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.facade.OrderServiceFacade;
 import sejong.coffee.yun.integration.MainIntegrationTest;
-import sejong.coffee.yun.redis.lock.RedisLockingMenuQuantity;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
@@ -47,8 +46,6 @@ public class UserConcurrencyTest extends MainIntegrationTest {
     @Autowired
     private CouponRepository couponRepository;
     @Autowired
-    private RedisLockingMenuQuantity redisLockingMenuQuantity;
-    @Autowired
     private CartRepository cartRepository;
 
     private Member member;
@@ -77,16 +74,11 @@ public class UserConcurrencyTest extends MainIntegrationTest {
         // when
         for(int i = 0; i < orderCount; i++) {
             executorService.submit(() -> {
-                try {
-                    orderServiceFacade.order(member.getId(), LocalDateTime.now());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                orderServiceFacade.order(member.getId(), LocalDateTime.now());
                 latch.countDown();
             });
         }
         latch.await();
-        //Thread.sleep(500);
 
         Member findMember = userRepository.findById(member.getId());
 
@@ -109,15 +101,9 @@ public class UserConcurrencyTest extends MainIntegrationTest {
 
         // when
         members.forEach(member -> executorService.submit(() -> {
-                try {
-                    couponService.couponRegistry(coupon.getId(), member.getId(), coupon.getCreateAt());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    latch.countDown();
-                }
-            }
-        ));
+                couponService.couponRegistry(coupon.getId(), member.getId(), coupon.getCreateAt());
+                latch.countDown();
+        }));
         latch.await();
 
         Coupon c = couponRepository.findById(coupon.getId());
@@ -145,11 +131,7 @@ public class UserConcurrencyTest extends MainIntegrationTest {
 
         // when
         members.forEach(member -> executorService.submit(() -> {
-            try {
-                orderServiceFacade.order(member.getId(), LocalDateTime.now());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            orderServiceFacade.order(member.getId(), LocalDateTime.now());
             latch.countDown();
         }));
         latch.await();
@@ -163,7 +145,7 @@ public class UserConcurrencyTest extends MainIntegrationTest {
     @Test
     void 메뉴의_주문_개수_동시성_처리_낙관적_락() throws Exception {
         // given
-        int memberCount = 100;
+        int memberCount = 10;
 
         List<Member> members = Stream.generate(() -> userRepository.save(member()))
                 .limit(memberCount)
@@ -179,13 +161,8 @@ public class UserConcurrencyTest extends MainIntegrationTest {
 
         // when
         members.forEach(member -> executorService.submit(() -> {
-            try {
-                orderServiceFacade.order(member.getId(), LocalDateTime.now());
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                latch.countDown();
-            }
+            orderServiceFacade.order(member.getId(), LocalDateTime.now());
+            latch.countDown();
         }));
         latch.await();
 

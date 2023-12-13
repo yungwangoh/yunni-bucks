@@ -169,7 +169,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 잘못된_리뷰ID인_경우_500() throws Exception {
+        void 잘못된_리뷰ID인_경우_404() throws Exception {
             // given
             menuReviewService.create(1L, 1L, "맛있어요", LocalDateTime.now());
 
@@ -183,7 +183,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
                     .contentType(MediaType.APPLICATION_JSON));
 
             // then
-            resultActions.andExpect(status().isInternalServerError())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(document("invalid-review-id",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

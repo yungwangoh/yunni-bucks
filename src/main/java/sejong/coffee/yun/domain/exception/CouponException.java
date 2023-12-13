@@ -1,6 +1,6 @@
 package sejong.coffee.yun.domain.exception;
 
-public class CouponException extends IllegalArgumentException{
+public class CouponException extends IllegalArgumentException {
 
     public CouponException() {
     }

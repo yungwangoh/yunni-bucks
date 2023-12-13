@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import sejong.coffee.yun.custom.annotation.MemberId;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.user.UserDto;
+import sejong.coffee.yun.facade.UserServiceFacade;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.UserService;
 import sejong.coffee.yun.util.jwt.JwtUtil;
@@ -25,6 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Slf4j
 public class UserController {
 
+    private final UserServiceFacade userServiceFacade;
     private final UserService userService;
     private final CustomMapper customMapper;
 
@@ -33,7 +35,7 @@ public class UserController {
 
         log.info("request = {}", request.email());
 
-        Member member = userService.signUp(
+        Member member = userServiceFacade.signUp(
                 request.name(),
                 request.email(),
                 request.password(),

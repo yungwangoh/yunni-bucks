@@ -1,6 +1,5 @@
 package sejong.coffee.yun.service.fake;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,8 +71,6 @@ public class OrderServiceTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private CartService cartService;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private FakeUserRepository fakeUserRepository;
@@ -128,7 +125,8 @@ public class OrderServiceTest {
                 .menu(saveMenu)
                 .build();
 
-        menuList.add(cartItemRepository.save(cartItem));
+        CartItem saveCartItem = cartItemRepository.save(cartItem);
+        menuList.add(saveCartItem);
 
         ZSetOperations<String, String> zSetOperations = Mockito.mock(ZSetOperations.class);
 
@@ -326,11 +324,16 @@ public class OrderServiceTest {
         assertThat(orderPage.getTotalElements()).isEqualTo(statusCount);
     }
 
-    @NotNull
     private Member getMember() {
-        Member save = userRepository.save(member);
-        Cart cart = cartRepository.save(Cart.builder().member(save).cartItems(menuList).build());
-        save.setCart(cart);
-        return save;
+        Member saveMember = userRepository.save(member);
+
+        Cart cart = Cart.builder()
+                .cartItems(menuList)
+                .member(saveMember)
+                .build();
+
+        Cart saveCart = cartRepository.save(cart);
+
+        return saveCart.getMember();
     }
 }

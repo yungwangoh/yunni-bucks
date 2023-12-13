@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @DiscriminatorColumn
 public abstract class Delivery {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")

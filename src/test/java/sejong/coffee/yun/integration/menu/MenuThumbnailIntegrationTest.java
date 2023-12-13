@@ -131,7 +131,7 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 잘못된_메뉴_ID를_요청했을_경우_500() throws Exception {
+        void 잘못된_메뉴_ID를_요청했을_경우_404() throws Exception {
             // given
 
             // when
@@ -139,7 +139,7 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
                     .file(multipartFile));
 
             // then
-            resultActions.andExpect(status().isInternalServerError())
+            resultActions.andExpect(status().isNotFound())
                     .andDo(document("thumbnail-upload-fail",
                             preprocessRequest(prettyPrint()),
                             preprocessResponse(prettyPrint()),

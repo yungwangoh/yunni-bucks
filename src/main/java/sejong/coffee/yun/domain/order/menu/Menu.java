@@ -20,7 +20,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.MENU_ORDER_COU
 @Table(name = "MENU", indexes = @Index(columnList = "title"))
 public abstract class Menu {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
@@ -34,13 +34,13 @@ public abstract class Menu {
     private LocalDateTime updateAt;
     @Column(name = "quantity")
     private int quantity;
-    private Long orderCount;
+    private int orderCount;
     @Version
     private Long version;
 
     protected Menu(Long id, String title, String description, Money price,
                    Nutrients nutrients, MenuSize menuSize, LocalDateTime now,
-                   int quantity, Long orderCount) {
+                   int quantity, int orderCount) {
 
         this.id = id;
         this.title = title;

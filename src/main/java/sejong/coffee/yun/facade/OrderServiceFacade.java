@@ -13,15 +13,23 @@ public class OrderServiceFacade {
 
     private final OrderService orderService;
 
-    public void order(Long memberId, LocalDateTime now) throws InterruptedException {
+    public void order(Long memberId, LocalDateTime now) {
 
         while (true) {
             try {
                 orderService.order(memberId, now);
                 break;
             } catch (ObjectOptimisticLockingFailureException e) {
-                Thread.sleep(50);
+                sleep(50);
             }
+        }
+    }
+
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException exception) {
+            throw new RuntimeException(exception);
         }
     }
 }

@@ -178,7 +178,7 @@ public class MainIntegrationTest {
                 .menuSize(MenuSize.M)
                 .price(Money.initialPrice(new BigDecimal(4000)))
                 .quantity(10000)
-                .orderCount(0L)
+                .orderCount(0)
                 .build();
     }
 
@@ -281,11 +281,14 @@ public class MainIntegrationTest {
                 fieldWithPath("name").description("주문 이름"),
                 fieldWithPath("menuList").type(JsonFieldType.ARRAY).description("메뉴 리스트"),
                 fieldWithPath("menuList[]").description("메뉴 리스트"),
-                fieldWithPath("menuList[].menuId").description("메뉴 ID"),
+                fieldWithPath("menuList[].id").description("메뉴 ID"),
                 fieldWithPath("menuList[].title").description("메뉴 제목"),
                 fieldWithPath("menuList[].description").description("메뉴 설명"),
                 fieldWithPath("menuList[].price.totalPrice").description("메뉴 가격"),
-                fieldWithPath("menuList[].nutrients").description("영양 정보"),
+                fieldWithPath("menuList[].nutrients.kcal").description("칼로리"),
+                fieldWithPath("menuList[].nutrients.carbohydrates").description("탄수 화물"),
+                fieldWithPath("menuList[].nutrients.fats").description("지방"),
+                fieldWithPath("menuList[].nutrients.proteins").description("단백질"),
                 fieldWithPath("menuList[].menuSize").description("메뉴 크기"),
                 fieldWithPath("status").description("주문 상태"),
                 fieldWithPath("money.totalPrice").description("총 주문 가격"),

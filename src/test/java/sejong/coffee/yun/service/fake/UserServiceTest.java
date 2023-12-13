@@ -80,7 +80,7 @@ public class UserServiceTest {
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
         // when
-        Member signUp = userService.signUp(name, email, pwd, address, cart);
+        Member signUp = userService.signUp(name, email, pwd, address);
 
         // then
         assertThat(signUp.getName()).isEqualTo(name);
@@ -96,7 +96,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address, cart);
+        Member signUp = userService.signUp(name, email, pwd, address);
 
         // when
         Member member = userService.findMember(signUp.getId());
@@ -113,7 +113,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        List<Member> members = List.of(userService.signUp(name, email, pwd, address, cart));
+        List<Member> members = List.of(userService.signUp(name, email, pwd, address));
 
         // when
         List<Member> list = userService.findAll();
@@ -130,7 +130,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member sign = userService.signUp(name, email, pwd, address, cart);
+        Member sign = userService.signUp(name, email, pwd, address);
 
         // when
         String token = userService.signIn(email, pwd);
@@ -148,7 +148,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        userService.signUp(name, email, pwd, address, cart);
+        userService.signUp(name, email, pwd, address);
 
         String wrongEmail = "asdfqwer1234@naver.com";
         String wrongPwd = "trewttrgfg@A";
@@ -169,7 +169,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member member = userService.signUp(name, email, pwd, address, cart);
+        Member member = userService.signUp(name, email, pwd, address);
         String token = userService.signIn(email, pwd);
 
         // when
@@ -188,7 +188,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address, cart);
+        Member signUp = userService.signUp(name, email, pwd, address);
 
         String updateName = "홍홍길동";
 
@@ -207,7 +207,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address, cart);
+        Member signUp = userService.signUp(name, email, pwd, address);
 
         String updateEmail = "asdf1234@daum.net";
 
@@ -226,7 +226,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member member = userService.signUp(name, email, pwd, address, cart);
+        Member member = userService.signUp(name, email, pwd, address);
 
         String updatePwd = "asdf1234@A";
 
@@ -254,7 +254,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member sign = userService.signUp(name, email, pwd, address, cart);
+        Member sign = userService.signUp(name, email, pwd, address);
 
         // when
         String expireToken = "bearer gfjsghjkfsdhgjs";
@@ -273,7 +273,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address, cart);
+        Member signUp = userService.signUp(name, email, pwd, address);
 
         // when
         userService.deleteMember(signUp.getId());

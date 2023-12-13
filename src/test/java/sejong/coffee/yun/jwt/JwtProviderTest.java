@@ -24,6 +24,7 @@ class JwtProviderTest {
                 .money(Money.ZERO)
                 .password("qwer1234@A")
                 .userRank(UserRank.BRONZE)
+                .orderCount(0)
                 .build();
     }
 
