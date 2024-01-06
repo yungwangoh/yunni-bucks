@@ -92,7 +92,7 @@ public class UserController {
 
     @DeleteMapping("")
     ResponseEntity<Void> delete(@MemberId Long memberId) {
-        userService.deleteMember(memberId);
+        userServiceFacade.withdrawUser(memberId);
 
         return ResponseEntity.noContent().build();
     }

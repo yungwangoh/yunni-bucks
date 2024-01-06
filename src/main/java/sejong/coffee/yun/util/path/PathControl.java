@@ -1,4 +1,4 @@
-package sejong.coffee.yun.service;
+package sejong.coffee.yun.util.path;
 
 import lombok.Getter;
 

@@ -23,4 +23,10 @@ public class UserServiceFacade {
 
         return cart.getMember();
     }
+
+    @Transactional
+    public void withdrawUser(Long memberId) {
+        cartService.removeCart(memberId);
+        userService.deleteMember(memberId);
+    }
 }

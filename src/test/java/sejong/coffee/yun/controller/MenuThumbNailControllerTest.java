@@ -34,7 +34,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static sejong.coffee.yun.service.PathControl.PATH;
+import static sejong.coffee.yun.util.path.PathControl.PATH;
 
 @Disabled
 @WebMvcTest(MenuThumbNailController.class)

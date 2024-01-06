@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.domain.delivery.Delivery;
 import sejong.coffee.yun.domain.delivery.DeliveryStatus;
 import sejong.coffee.yun.domain.delivery.DeliveryType;
+import sejong.coffee.yun.domain.delivery.ReserveDelivery;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Cart;
@@ -27,7 +28,9 @@ import sejong.coffee.yun.service.DeliveryService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.LongStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -55,14 +58,6 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
     @Autowired
     private CartRepository cartRepository;
 
-    @AfterEach
-    void initDB() {
-        deliveryRepository.clear();
-        orderRepository.clear();
-        cartRepository.clear();
-        cartItemRepository.clear();
-    }
-
     @Nested
     @DisplayName("유저가 로그인 후 장바구니에 물품을 담고 주문을 하고 배달을 진행한다.")
     @Sql(value = {"/sql/user.sql", "/sql/menu.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -84,6 +79,14 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
             order.completePayment();
 
             saveOrder = orderRepository.save(order);
+        }
+
+        @AfterEach
+        void initDB() {
+            deliveryRepository.clear();
+            orderRepository.clear();
+            cartRepository.clear();
+            cartItemRepository.clear();
         }
 
         @Test
@@ -442,6 +445,60 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
                                     getDeliveryPageResponse()
                             )
                     ));
+        }
+    }
+
+    @Nested
+    @DisplayName("배달 대용량 테스트")
+    @Sql(value = {"/sql/user.sql", "/sql/menu.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/sql/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    class DeliveryLargeCapacityTest {
+
+        String token;
+        Order saveOrder;
+        LocalDateTime reserveAt;
+        LocalDateTime createAt;
+        List<Delivery> deliveries;
+        @BeforeEach
+        void init() throws Exception{
+            token = signInModule();
+
+            cartService.createCart(1L);
+
+            Cart addMenu = cartService.addMenu(1L, 1L);
+
+            Order order = Order.createOrder(addMenu, Money.initialPrice(new BigDecimal("5000")), LocalDateTime.now());
+            order.completePayment();
+
+            saveOrder = orderRepository.save(order);
+
+            createAt = LocalDateTime.of(2023, 12, 27, 12,0);
+            reserveAt = LocalDateTime.of(2023, 12, 30, 12,0);
+
+            deliveries = LongStream.rangeClosed(1, 100000)
+                    .mapToObj(i -> (Delivery) ReserveDelivery.from(i, ReserveDelivery.create(order, createAt, member().getAddress(),
+                            DeliveryType.RESERVE, DeliveryStatus.READY, reserveAt))).toList();
+
+            deliveryRepository.bulkInsert(deliveries.size(), deliveries, "R", reserveAt);
+        }
+
+        @Test
+        void 배달_상태_변경_대용량_수정_벌크_업데이트() {
+            // given
+
+            // when
+            Long delivery = deliveryService.reserveDelivery(reserveAt);
+
+            // then
+            assertThat((long) deliveries.size()).isEqualTo(delivery);
+        }
+
+        @AfterEach
+        void initDB() {
+            deliveryRepository.bulkDelete();
+            orderRepository.clear();
+            cartRepository.clear();
+            cartItemRepository.clear();
         }
     }
 }

@@ -251,7 +251,7 @@ class DeliveryServiceTest {
         given(deliveryRepository.findAll()).willReturn(deliveries);
 
         // when
-        deliveryService.reserveDelivery();
+        deliveryService.reserveDelivery(LocalDateTime.now());
 
         // then
         for(var a : deliveries) {

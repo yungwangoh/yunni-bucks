@@ -2,16 +2,13 @@ package sejong.coffee.yun.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sejong.coffee.yun.domain.exception.NotFoundException;
-import sejong.coffee.yun.domain.order.Order;
-import sejong.coffee.yun.domain.user.*;
+import sejong.coffee.yun.domain.user.Address;
+import sejong.coffee.yun.domain.user.Member;
+import sejong.coffee.yun.domain.user.Money;
+import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.jwt.JwtProvider;
-import sejong.coffee.yun.repository.cart.CartRepository;
-import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.util.jwt.JwtUtil;
@@ -29,11 +26,9 @@ import static sejong.coffee.yun.message.SuccessOrFailMessage.*;
 @Slf4j
 public class UserService {
 
-    private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final NoSqlRepository noSqlRepository;
-    private final OrderRepository orderRepository;
 
     @Transactional
     public Member signUp(String name, String email, String password, Address address) {
@@ -97,13 +92,6 @@ public class UserService {
 
     @Transactional
     public void deleteMember(Long memberId) {
-        try {
-            Cart cart = cartRepository.findByMember(memberId);
-            cartRepository.delete(cart);
-        } catch (NotFoundException e) {
-            log.info("empty cart = {}", e.getMessage());
-        }
-
         userRepository.delete(memberId);
     }
 
@@ -144,10 +132,6 @@ public class UserService {
         } else {
             throw TOKEN_EXPIRED.tokenExpiredException();
         }
-    }
-
-    public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
-        return orderRepository.findAllByMemberId(pageable, memberId);
     }
 
     public String duplicateName(String name) {

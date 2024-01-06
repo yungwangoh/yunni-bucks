@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorColumn
+@Table(name = "delivery", indexes = @Index(name = "idx_reserve", columnList = "type, reserve_at"))
 public abstract class Delivery {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

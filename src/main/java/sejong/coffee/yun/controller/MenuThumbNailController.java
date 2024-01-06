@@ -17,7 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 
-import static sejong.coffee.yun.service.PathControl.PATH;
+import static sejong.coffee.yun.util.path.PathControl.PATH;
 
 @RestController
 @RequiredArgsConstructor

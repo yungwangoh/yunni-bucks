@@ -13,7 +13,6 @@ import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -58,10 +57,8 @@ public class DeliveryService {
     }
 
     @Transactional
-    public void reserveDelivery() {
-        List<Delivery> deliveries = deliveryRepository.findAllByReserveType();
-
-        deliveries.forEach(Delivery::delivery);
+    public Long reserveDelivery(LocalDateTime reserveAt) {
+        return deliveryRepository.bulkUpdate(reserveAt);
     }
 
     @Transactional

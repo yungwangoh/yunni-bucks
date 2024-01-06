@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Address;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

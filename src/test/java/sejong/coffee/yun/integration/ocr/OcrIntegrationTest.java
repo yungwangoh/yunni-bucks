@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import sejong.coffee.yun.integration.SubIntegrationTest;
 import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.PathControl;
+import sejong.coffee.yun.util.path.PathControl;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;

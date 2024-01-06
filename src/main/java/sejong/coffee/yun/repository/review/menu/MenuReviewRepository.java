@@ -11,10 +11,14 @@ public interface MenuReviewRepository {
     MenuReview save(MenuReview menuReview);
     MenuReview findById(Long reviewId);
     MenuReview findByMemberIdAndId(Long memberId, Long reviewId);
+    List<MenuReview> findByCommentsContaining(String searchComment);
+    List<MenuReview> fullTextSearchComments(String searchComment);
     List<MenuReview> findAll();
     void delete(Long reviewId);
     void delete(Long memberId, Long reviewId);
     Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId);
     Page<MenuReview> findAllByMenuId(Pageable pageable, Long menuId);
     void clear();
+    default void bulkInsert(int size, List<MenuReview> reviews) {};
+    default void bulkDelete() {};
 }

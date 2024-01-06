@@ -286,7 +286,7 @@ public class DeliveryServiceTest {
         deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), reserveTime, DeliveryType.RESERVE);
 
         // when
-        deliveryService.reserveDelivery();
+        deliveryService.reserveDelivery(LocalDateTime.now());
 
         // then
         assertThat(deliveryRepository.findAll())

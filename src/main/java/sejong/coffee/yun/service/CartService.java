@@ -1,8 +1,10 @@
 package sejong.coffee.yun.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sejong.coffee.yun.domain.exception.NotFoundException;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.CartItem;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class CartService {
 
@@ -87,8 +90,11 @@ public class CartService {
 
     @Transactional
     public void removeCart(Long memberId) {
-        Cart cart = cartRepository.findByMember(memberId);
-
-        cartRepository.delete(cart);
+        try {
+            Cart cart = cartRepository.findByMember(memberId);
+            cartRepository.delete(cart);
+        } catch (NotFoundException e) {
+            log.info("empty cart = {}", e.getMessage());
+        }
     }
 }

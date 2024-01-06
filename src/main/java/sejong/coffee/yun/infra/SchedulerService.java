@@ -7,6 +7,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sejong.coffee.yun.service.DeliveryService;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -18,7 +20,7 @@ public class SchedulerService {
     @Scheduled(cron = "${schedules.cron.product}")
     public void processReserveScheduler() {
         log.info("schedule START, current thread = {} ", Thread.currentThread().getName());
-        deliveryService.reserveDelivery();
+        deliveryService.reserveDelivery(LocalDateTime.now());
         log.info("schedule END, current thread = {} ", Thread.currentThread().getName());
     }
 

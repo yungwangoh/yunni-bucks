@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-import static sejong.coffee.yun.service.PathControl.PATH;
+import static sejong.coffee.yun.util.path.PathControl.PATH;
 
 @Service
 @RequiredArgsConstructor

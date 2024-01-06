@@ -12,11 +12,13 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "menu_review")
 public class MenuReview {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "comments")
+
+    @Column(name = "comments", columnDefinition = "TEXT")
     private String comments;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

@@ -50,6 +50,16 @@ public class FakeMenuReviewRepository implements MenuReviewRepository {
     }
 
     @Override
+    public List<MenuReview> findByCommentsContaining(String searchComment) {
+        return null;
+    }
+
+    @Override
+    public List<MenuReview> fullTextSearchComments(String searchComment) {
+        return null;
+    }
+
+    @Override
     public List<MenuReview> findAll() {
         return reviews;
     }

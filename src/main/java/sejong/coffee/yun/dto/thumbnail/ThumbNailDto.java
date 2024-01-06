@@ -7,7 +7,7 @@ import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static sejong.coffee.yun.service.PathControl.PATH;
+import static sejong.coffee.yun.util.path.PathControl.PATH;
 
 public class ThumbNailDto {
     public record Response(Long menuId, Resource resource) {

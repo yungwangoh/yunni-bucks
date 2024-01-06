@@ -58,6 +58,14 @@ public class MenuReviewService {
         menuReviewRepository.delete(memberId, reviewId);
     }
 
+    public List<MenuReview> findByComments(String searchComment) {
+        return menuReviewRepository.findByCommentsContaining(searchComment);
+    }
+
+    public List<MenuReview> findByFullTextComment(String searchComment) {
+        return menuReviewRepository.fullTextSearchComments(searchComment);
+    }
+
     public Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId) {
         return menuReviewRepository.findAllByMemberId(pageable, memberId);
     }

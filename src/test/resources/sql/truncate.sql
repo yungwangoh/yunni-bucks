@@ -1,4 +1,11 @@
 set foreign_key_checks = 0 ;
 truncate table menu;
 truncate table member;
+truncate table menu_thumbnail;
+truncate table menu_review;
+truncate table `order`;
+truncate table delivery;
+truncate table coupon;
+truncate table cart_item;
+truncate table cart;
 set foreign_key_checks = 1;

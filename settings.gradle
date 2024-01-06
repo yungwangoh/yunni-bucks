@@ -1,1 +1,5 @@
 rootProject.name = 'yun'
+include 'yunni-common'
+include 'yunni-api'
+include 'yunni-domain'
+

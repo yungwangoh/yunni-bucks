@@ -74,6 +74,9 @@ dependencies {
 
 	implementation 'com.github.napstr:logback-discord-appender:1.0.0'
 	implementation("net.gpedro.integrations.slack:slack-webhook:1.4.0")
+
+	// https://mvnrepository.com/artifact/net.datafaker/datafaker
+	implementation 'net.datafaker:datafaker:2.0.2'
 }
 
 ext {
