@@ -511,4 +511,11 @@ public class UserIntegrationTest extends MainIntegrationTest {
                     ));
         }
     }
+
+    @Nested
+    @DisplayName("유저 대용량 처리")
+    class UserLargeCapacityTest {
+
+
+    }
 }

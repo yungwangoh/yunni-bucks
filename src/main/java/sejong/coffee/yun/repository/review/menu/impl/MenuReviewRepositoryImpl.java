@@ -163,14 +163,15 @@ public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
     private List<MenuReview> searchFullTextJdbc(String keyword) {
 
-        String sql = "SELECT * FROM menu_review WHERE MATCH (comments) AGAINST (? IN NATURAL LANGUAGE MODE )";
+        String sql = "SELECT * FROM menu_review mr WHERE MATCH (mr.comments) AGAINST (? IN NATURAL LANGUAGE MODE )";
 
         return jdbcTemplate.query(sql, this.mapMenuReview(), keyword);
     }
 
     private List<MenuReview> searchFullTextLikeJdbc(String keyword) {
 
-        String sql = "SELECT * FROM menu_review WHERE comments LIKE CONCAT('%', ?, '%') ";
+        String sql = "SELECT * FROM menu_review mr " +
+                "WHERE mr.comments LIKE CONCAT('%', ?, '%') ";
 
         return jdbcTemplate.query(sql, this.mapMenuReview(), keyword);
     }

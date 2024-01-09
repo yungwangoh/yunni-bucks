@@ -20,7 +20,8 @@ public class SchedulerService {
     @Scheduled(cron = "${schedules.cron.product}")
     public void processReserveScheduler() {
         log.info("schedule START, current thread = {} ", Thread.currentThread().getName());
-        deliveryService.reserveDelivery(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now().withMinute(0);
+        deliveryService.reserveDelivery(now);
         log.info("schedule END, current thread = {} ", Thread.currentThread().getName());
     }
 

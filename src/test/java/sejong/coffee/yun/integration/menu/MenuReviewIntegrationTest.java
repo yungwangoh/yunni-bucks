@@ -9,6 +9,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.StopWatch;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.domain.user.Member;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -224,7 +226,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
             Menu menu = menuRepository.findById(1L);
             Member member = userRepository.findById(1L);
 
-            for(int i = 0; i < 1; i++) {
+            for(int i = 0; i < 5; i++) {
 
                 for (int j = 1; j <= 100000; j++) {
                     String sentence = faker.lorem().sentence();
@@ -251,37 +253,39 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         }
 
         @Test
-        void 메뉴_리뷰_전문검색_테스트_10만_데이터_LIKE_방식() {
+        void 메뉴_리뷰_전문검색_테스트_10만_데이터_LIKE_방식_TEXT_조회() {
             // given
             String searchString = "법률";
 
-            Long beforeTime = System.currentTimeMillis();
-            // when
-            List<MenuReview> comments = menuReviewService.findByComments(searchString);
+            StopWatch stopWatch = new StopWatch();
 
-            Long afterTime = System.currentTimeMillis();
+            // when
+            stopWatch.start();
+            List<MenuReview> comments = menuReviewService.findByComments(searchString);
+            stopWatch.stop();
 
             // then
-            //assertTrue(comments.get(0).getComments().contains(searchString));
+            assertTrue(comments.get(0).getComments().contains(searchString));
             System.out.println(comments.size());
-            System.out.println("execution time -> " + (double) (afterTime - beforeTime) / 1000);
+            System.out.println("total time -> " + stopWatch.getTotalTimeMillis());
         }
 
         @Test
-        void 메뉴_리뷰_전문검색_테스트_10만_데이터_FULL_TEXT_SEARCH_방식() {
+        void 메뉴_리뷰_전문검색_테스트_10만_데이터_FULL_TEXT_SEARCH_방식_TEXT_조회() {
             // given
             String searchString = "법률";
 
-            Long beforeTime = System.currentTimeMillis();
-            // when
-            List<MenuReview> menuReviews = menuReviewService.findByFullTextComment(searchString);
+            StopWatch stopWatch = new StopWatch();
 
-            Long afterTime = System.currentTimeMillis();
+            // when
+            stopWatch.start();
+            List<MenuReview> menuReviews = menuReviewService.findByFullTextComment(searchString);
+            stopWatch.stop();
 
             // then
-            //assertTrue(menuReviews.get(0).getComments().contains(searchString));
+            assertTrue(menuReviews.get(0).getComments().contains(searchString));
             System.out.println(menuReviews.size());
-            System.out.println("execution time -> " + (double) (afterTime - beforeTime) / 1000);
+            System.out.println("total time -> " + stopWatch.getTotalTimeMillis());
         }
     }
 }

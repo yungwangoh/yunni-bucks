@@ -117,6 +117,21 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
+    public Page<Long> findDeliveryIds(Pageable pageable) {
+        List<Long> deliveries = jpaQueryFactory.select(delivery.id)
+                .from(delivery)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(delivery.createAt.desc())
+                .fetch();
+
+        JPAQuery<Long> jpaQuery = jpaQueryFactory.select(delivery.count())
+                .from(delivery);
+
+        return PageableExecutionUtils.getPage(deliveries, pageable, jpaQuery::fetchOne);
+    }
+
+    @Override
     @Transactional
     public void clear() {
         jpaDeliveryRepository.deleteAll();
@@ -158,16 +173,46 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     public Long bulkUpdate(LocalDateTime reserveAt) {
 
         long execute = jpaQueryFactory.update(reserveDelivery)
-                .where(reserveDelivery.type.eq(DeliveryType.RESERVE).and(reserveDelivery.reserveAt.eq(reserveAt)))
+                .where(reserveDelivery.reserveAt.eq(reserveAt))
                 .set(reserveDelivery.status, DeliveryStatus.DELIVERY)
                 .execute();
 
         em.clear();
         em.flush();
 
-        if(execute <= 0) throw new RuntimeException("fail bulk update!!");
+        if(execute < 0) throw new RuntimeException("fail bulk update!!");
 
         return execute;
+    }
+
+    @Override
+    @Transactional
+    public Long bulkInUpdate(List<Long> ids, LocalDateTime reserveAt) {
+        return jpaQueryFactory.update(reserveDelivery)
+                .where(reserveDelivery.reserveAt.eq(reserveAt))
+                .where(reserveDelivery.id.in(ids))
+                .set(reserveDelivery.status, DeliveryStatus.DELIVERY)
+                .execute();
+    }
+
+    @Override
+    @Transactional
+    public void jdbcExecuteUpdate(List<Delivery> deliveries, LocalDateTime reserveAt) {
+
+        String sql = "UPDATE delivery SET status = ? WHERE reserve_at = ?";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, "DELIVERY");
+                ps.setTimestamp(2, Timestamp.valueOf(reserveAt));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return deliveries.size();
+            }
+        });
     }
 
     @Override

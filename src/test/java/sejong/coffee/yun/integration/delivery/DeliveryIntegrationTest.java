@@ -4,11 +4,14 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.StopWatch;
 import sejong.coffee.yun.domain.delivery.Delivery;
 import sejong.coffee.yun.domain.delivery.DeliveryStatus;
 import sejong.coffee.yun.domain.delivery.DeliveryType;
@@ -27,7 +30,10 @@ import sejong.coffee.yun.service.DeliveryService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -458,7 +464,9 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         Order saveOrder;
         LocalDateTime reserveAt;
         LocalDateTime createAt;
+        final int MAX = 100000;
         List<Delivery> deliveries;
+
         @BeforeEach
         void init() throws Exception{
             token = signInModule();
@@ -475,22 +483,88 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
             createAt = LocalDateTime.of(2023, 12, 27, 12,0);
             reserveAt = LocalDateTime.of(2023, 12, 30, 12,0);
 
-            deliveries = LongStream.rangeClosed(1, 100000)
-                    .mapToObj(i -> (Delivery) ReserveDelivery.from(i, ReserveDelivery.create(order, createAt, member().getAddress(),
-                            DeliveryType.RESERVE, DeliveryStatus.READY, reserveAt))).toList();
+            for(int j = 0; j < 10; j++) {
+                int finalJ = j;
+                List<Delivery> deliveries = LongStream.rangeClosed(1, MAX)
+                        .mapToObj(id -> (Delivery) ReserveDelivery.from(id + (finalJ * MAX), ReserveDelivery.create(order, createAt, member().getAddress(),
+                                DeliveryType.RESERVE, DeliveryStatus.READY, reserveAt))).toList();
 
-            deliveryRepository.bulkInsert(deliveries.size(), deliveries, "R", reserveAt);
+                deliveryRepository.bulkInsert(deliveries.size(), deliveries, "R", reserveAt);
+            }
         }
 
         @Test
         void 배달_상태_변경_대용량_수정_벌크_업데이트() {
             // given
+            LocalDateTime reserve = LocalDateTime.of(2023, 12, 30, 12, 15)
+                    .withMinute(0);
+
+            StopWatch stopWatch = new StopWatch();
 
             // when
-            Long delivery = deliveryService.reserveDelivery(reserveAt);
+            stopWatch.start();
+            Long delivery = deliveryService.reserveDelivery(reserve);
+            stopWatch.stop();
 
             // then
-            assertThat((long) deliveries.size()).isEqualTo(delivery);
+            System.out.println("execution time -> " + stopWatch.getTotalTimeSeconds());
+            assertThat((long) MAX).isEqualTo(delivery);
+        }
+
+        @Test
+        @Disabled
+        void JDBC_배달_상태_변경_대용량_업데이트() {
+            // given
+            LocalDateTime reserve = LocalDateTime.of(2023, 12, 30, 12, 15)
+                    .withMinute(0);
+
+            // when
+            Long beforeTime = System.currentTimeMillis();
+            deliveryRepository.jdbcExecuteUpdate(deliveries, reserve);
+            Long afterTime = System.currentTimeMillis();
+
+            // then
+            Delivery one = deliveryRepository.findOne(1L);
+            System.out.println("execution time -> " + (double) (afterTime - beforeTime) / 1000);
+            assertThat(one.getStatus()).isEqualTo(DeliveryStatus.DELIVERY);
+        }
+
+        @Test
+        @Disabled
+        void 배달_상태_변경_10만개씩_묶어서_업데이트() {
+            // given
+            LocalDateTime reserve = LocalDateTime.of(2023, 12, 30, 12, 15)
+                    .withMinute(0);
+
+            AtomicLong delivery = new AtomicLong(0L);
+            StopWatch stopWatch = new StopWatch();
+
+            List<CompletableFuture<Long>> futures = new ArrayList<>();
+
+            stopWatch.start();
+            for (int page = 0; page < 100; page++) {
+                int currentPage = page;
+                CompletableFuture<Long> future = CompletableFuture.supplyAsync(() -> {
+                    Page<Long> deliveries = deliveryRepository.findDeliveryIds(
+                            PageRequest.of(currentPage, MAX / 10));
+                    return deliveryService.reserveDeliveryInUpdate(deliveries.getContent(), reserve);
+                });
+                futures.add(future);
+            }
+            stopWatch.stop();
+
+            CompletableFuture<Void> allOf = CompletableFuture.allOf(
+                    futures.toArray(new CompletableFuture[0]));
+            CompletableFuture<Long> allResult = allOf.thenApply(v ->
+                    futures.stream()
+                            .map(CompletableFuture::join)
+                            .reduce(0L, Long::sum));
+
+            Long result = allResult.join();
+
+            System.out.println("Total Delivery: " + result);
+            System.out.println("Execution Time: " + stopWatch.getTotalTimeSeconds() + " seconds");
+            //assertThat()
         }
 
         @AfterEach
