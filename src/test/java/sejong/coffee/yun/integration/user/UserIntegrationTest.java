@@ -1,5 +1,7 @@
 package sejong.coffee.yun.integration.user;
 
+import net.datafaker.Faker;
+import net.datafaker.providers.base.Name;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -7,11 +9,22 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.StopWatch;
+import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.cart.CartRepository;
+import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.UserService;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.LongStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -33,6 +46,8 @@ public class UserIntegrationTest extends MainIntegrationTest {
     private UserRepository userRepository;
     @Autowired
     private NoSqlRepository noSqlRepository;
+    @Autowired
+    private CouponRepository couponRepository;
 
     @AfterEach
     void initDB() {
@@ -514,8 +529,117 @@ public class UserIntegrationTest extends MainIntegrationTest {
 
     @Nested
     @DisplayName("유저 대용량 처리")
+    @Sql(value = "/sql/coupon.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     class UserLargeCapacityTest {
 
+        final int MAX = 100000;
 
+        @BeforeEach
+        void init() throws Exception {
+            Faker faker = new Faker(new Locale("ko"));
+
+            Coupon coupon = Coupon.builder()
+                    .name("월별 쿠폰")
+                    .quantity(0)
+                    .discountRate(0.1)
+                    .identityNumber("1234-1234-1234-1234")
+                    .couponUse(CouponUse.NO)
+                    .createAt(LocalDateTime.now())
+                    .expireAt(LocalDateTime.now())
+                    .build();
+
+            Address address = new Address("서울시", "광진구", "세종대1번출구", "123-123");
+
+            Coupon saveCoupon = couponRepository.save(coupon);
+            Name name = faker.name();
+
+            var t = LongStream.iterate(0, i -> i + 1)
+                    .limit(100)
+                    .mapToObj(i -> CompletableFuture.supplyAsync(() -> {
+
+                        String expression = faker.expression("#{options.option 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND'}");
+
+                        var deliveries = LongStream.rangeClosed(1, MAX / 1000)
+                                .mapToObj(id -> Member.from(id + i * MAX, Member.create(name.name(), "qwer1234@A", "swager253@naver.com",
+                                                UserRank.valueOf(expression), address, Money.ZERO,
+                                                this.mapToOrderCount(UserRank.valueOf(expression)), saveCoupon)
+                                        )
+                                )
+                                .toList();
+
+                        userRepository.bulkInsert(deliveries);
+                        return 1;
+                    }))
+                    .toList();
+
+            t.stream().map(CompletableFuture::join).forEach((ignore) -> {});
+        }
+
+        @AfterEach
+        void initDB() {
+            userRepository.bulkDelete();
+        }
+
+        @Test
+        void 유저들_등급_일괄_업데이트() {
+            // given
+            List<UserRank> userRanks = Arrays.asList(UserRank.BRONZE, UserRank.SILVER, UserRank.GOLD, UserRank.PLATINUM);
+            StopWatch stopWatch = new StopWatch();
+
+            // when
+            stopWatch.start();
+            userRanks.forEach(userRank -> userRepository.updateUserRank(mapToOrderCount(userRank), userRank));
+            stopWatch.stop();
+
+            // then
+            System.out.println("execution time -> " + stopWatch.getTotalTimeSeconds());
+        }
+
+        @Test
+        void 유저들_등급_일괄_업데이트_병렬처리() {
+            // given
+            List<UserRank> userRanks = Arrays.asList(UserRank.BRONZE, UserRank.SILVER, UserRank.GOLD, UserRank.PLATINUM);
+            StopWatch stopWatch = new StopWatch();
+
+            // when
+            stopWatch.start();
+            var v = userRanks.stream()
+                    .map(userRank -> CompletableFuture.supplyAsync(() -> userRepository.updateUserRank(mapToOrderCount(userRank), userRank)));
+
+            long sum = v.map(CompletableFuture::join).mapToLong(i -> i).sum();
+            stopWatch.stop();
+
+            // then
+            System.out.println("execution time -> " + stopWatch.getTotalTimeSeconds());
+            System.out.println("count -> "+ sum);
+        }
+
+        @Test
+        void 유저들_등급_업데이트_Dirty_Check() {
+            // given
+            StopWatch stopWatch = new StopWatch();
+
+            // when
+            stopWatch.start();
+            userService.updateAllUserRank();
+            stopWatch.stop();
+
+            // then
+            System.out.println("execution time -> " + stopWatch.getTotalTimeSeconds());
+        }
+
+        private int mapToOrderCount(UserRank userRank) {
+            if(Objects.equals(userRank, UserRank.BRONZE)) {
+                return 1;
+            } else if(Objects.equals(userRank, UserRank.SILVER)) {
+                return 6;
+            } else if(Objects.equals(userRank, UserRank.GOLD)) {
+                return 11;
+            } else if(Objects.equals(userRank, UserRank.PLATINUM)) {
+                return 16;
+            } else {
+                return 100;
+            }
+        }
     }
 }

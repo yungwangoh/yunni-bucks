@@ -66,6 +66,10 @@ public class MenuReviewService {
         return menuReviewRepository.fullTextSearchComments(searchComment);
     }
 
+    public List<MenuReview> findByFullTextCommentsNative(String searchComment) {
+        return menuReviewRepository.fullTextSearchCommentsNative(searchComment);
+    }
+
     public Page<MenuReview> findAllByMemberId(Pageable pageable, Long memberId) {
         return menuReviewRepository.findAllByMemberId(pageable, memberId);
     }

@@ -104,4 +104,9 @@ public class FakeMenuReviewRepository implements MenuReviewRepository {
     public void clear() {
         reviews.clear();
     }
+
+    @Override
+    public List<MenuReview> fullTextSearchCommentsNative(String searchComment) {
+        return null;
+    }
 }

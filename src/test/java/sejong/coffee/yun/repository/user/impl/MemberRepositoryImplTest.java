@@ -1,9 +1,9 @@
 package sejong.coffee.yun.repository.user.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import sejong.coffee.yun.domain.exception.DuplicatedEmailException;
 import sejong.coffee.yun.domain.exception.DuplicatedNameException;
 import sejong.coffee.yun.domain.user.Address;
@@ -11,7 +11,6 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.repository.user.jpa.JpaUserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,14 +19,10 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER
 import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE_USER_NAME;
 
 @Disabled
+@RequiredArgsConstructor
 class MemberRepositoryImplTest {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    public MemberRepositoryImplTest(JpaUserRepository jpaUserRepository) {
-        this.userRepository = new UserRepositoryImpl(jpaUserRepository);
-    }
 
     private Member member;
 

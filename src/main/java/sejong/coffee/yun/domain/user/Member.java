@@ -49,6 +49,21 @@ public class Member extends DateTimeEntity {
         this.coupon = coupon;
     }
 
+    public static Member create(String name, String password, String email, UserRank userRank,
+                                Address address, Money money, Integer orderCount, Coupon coupon) {
+
+        return Member.builder()
+                .name(name)
+                .email(email)
+                .password(password)
+                .userRank(userRank)
+                .address(address)
+                .money(money)
+                .orderCount(orderCount)
+                .coupon(coupon)
+                .build();
+    }
+
     public static Member from(Long id, Member member) {
         return Member.builder()
                 .id(id)

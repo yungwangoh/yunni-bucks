@@ -15,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 import sejong.coffee.yun.repository.review.menu.jpa.JpaMenuReviewRepository;
+import sejong.coffee.yun.util.querydsl.MenuReviewQueryDslUtil;
 
 import javax.persistence.EntityManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU_REVIEW;
 import static sejong.coffee.yun.domain.order.menu.QMenuReview.menuReview;
@@ -61,12 +63,17 @@ public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
     @Override
     public List<MenuReview> findByCommentsContaining(String searchComment) {
-        return this.searchFullTextLikeJdbc(searchComment);
+        return this.searchFullTextQueryDsl(searchComment);
     }
 
     @Override
     public List<MenuReview> fullTextSearchComments(String searchComment) {
         return this.searchFullTextJdbc(searchComment);
+    }
+
+    @Override
+    public List<MenuReview> fullTextSearchCommentsNative(String searchComment) {
+        return jpaMenuReviewRepository.searchFullTextComments(searchComment);
     }
 
     @Override
@@ -163,7 +170,7 @@ public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
     private List<MenuReview> searchFullTextJdbc(String keyword) {
 
-        String sql = "SELECT * FROM menu_review mr WHERE MATCH (mr.comments) AGAINST (? IN NATURAL LANGUAGE MODE )";
+        String sql = "SELECT * FROM menu_review mr WHERE MATCH (mr.comments) AGAINST (? IN BOOLEAN MODE )";
 
         return jdbcTemplate.query(sql, this.mapMenuReview(), keyword);
     }
@@ -187,5 +194,14 @@ public class MenuReviewRepositoryImpl implements MenuReviewRepository {
 
             return menuReview;
         });
+    }
+
+    private List<MenuReview> searchFullTextQueryDsl(String searchComment) {
+
+        StringTokenizer st = new StringTokenizer(searchComment);
+
+        return jpaQueryFactory.selectFrom(menuReview)
+                .where(MenuReviewQueryDslUtil.containCheckStrings(st))
+                .fetch();
     }
 }

@@ -13,6 +13,7 @@ public interface MenuReviewRepository {
     MenuReview findByMemberIdAndId(Long memberId, Long reviewId);
     List<MenuReview> findByCommentsContaining(String searchComment);
     List<MenuReview> fullTextSearchComments(String searchComment);
+    List<MenuReview> fullTextSearchCommentsNative(String searchComment);
     List<MenuReview> findAll();
     void delete(Long reviewId);
     void delete(Long memberId, Long reviewId);

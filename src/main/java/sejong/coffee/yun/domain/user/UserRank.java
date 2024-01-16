@@ -65,4 +65,28 @@ public enum UserRank implements DiscountType {
     private static boolean checkCondition(int orderCount, int start, int end) {
         return (orderCount >= start && orderCount <= end);
     }
+
+    public UserRank downRank() {
+
+        switch (this) {
+            case SILVER -> {return BRONZE;}
+            case GOLD -> {return SILVER;}
+            case PLATINUM -> {return GOLD;}
+            case DIAMOND -> {return PLATINUM;}
+        }
+
+        return null;
+    }
+
+    public UserRank upRank() {
+
+        switch (this) {
+            case BRONZE -> {return SILVER;}
+            case SILVER -> {return GOLD;}
+            case GOLD -> {return PLATINUM;}
+            case PLATINUM -> {return DIAMOND;}
+        }
+        
+        return null;
+    }
 }

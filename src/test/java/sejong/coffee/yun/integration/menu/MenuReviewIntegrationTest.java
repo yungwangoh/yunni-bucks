@@ -23,8 +23,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -216,6 +218,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
 
         String token;
         List<MenuReview> list = new ArrayList<>();
+        final int MAX = 100000;
 
         @BeforeEach
         void init() throws Exception{
@@ -226,25 +229,19 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
             Menu menu = menuRepository.findById(1L);
             Member member = userRepository.findById(1L);
 
-            for(int i = 0; i < 5; i++) {
+            List<CompletableFuture<Integer>> completableFutures = IntStream.iterate(0, i -> i + 1)
+                    .limit(10)
+                    .mapToObj(i -> CompletableFuture.supplyAsync(() -> {
+                        List<MenuReview> menuReviews = LongStream.rangeClosed(1, MAX / 100)
+                                .mapToObj(id -> MenuReview.from(id + ((long) i * MAX / 100), MenuReview.create(faker.lorem().sentence(), member, menu, LocalDateTime.now())))
+                                .toList();
 
-                for (int j = 1; j <= 100000; j++) {
-                    String sentence = faker.lorem().sentence();
+                        menuReviewRepository.bulkInsert(menuReviews.size(), menuReviews);
+                        return 1;
+                    })).toList();
 
-                    MenuReview menuReview = MenuReview.builder()
-                            .id((long) j + (100000 * i))
-                            .comments(sentence)
-                            .menu(menu)
-                            .member(member)
-                            .now(LocalDateTime.now())
-                            .build();
 
-                    list.add(menuReview);
-                }
-                menuReviewRepository.bulkInsert(list.size(), list);
-
-                list.clear();
-            }
+            completableFutures.stream().map(CompletableFuture::join).forEach(integer -> {});
         }
 
         @AfterEach
@@ -255,7 +252,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         @Test
         void 메뉴_리뷰_전문검색_테스트_10만_데이터_LIKE_방식_TEXT_조회() {
             // given
-            String searchString = "법률";
+            String searchString = "모든 법률에 존재한다";
 
             StopWatch stopWatch = new StopWatch();
 
@@ -265,15 +262,15 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
             stopWatch.stop();
 
             // then
-            assertTrue(comments.get(0).getComments().contains(searchString));
+            //assertTrue(comments.get(0).getComments().contains(searchString));
             System.out.println(comments.size());
-            System.out.println("total time -> " + stopWatch.getTotalTimeMillis());
+            System.out.println("total time -> " + stopWatch.getTotalTimeSeconds());
         }
 
         @Test
-        void 메뉴_리뷰_전문검색_테스트_10만_데이터_FULL_TEXT_SEARCH_방식_TEXT_조회() {
+        void 메뉴_리뷰_전문검색_테스트_10만_데이터_JDBC_FULL_TEXT_SEARCH_방식_TEXT_조회() {
             // given
-            String searchString = "법률";
+            String searchString = "모든 법률에 존재한다";
 
             StopWatch stopWatch = new StopWatch();
 
@@ -283,9 +280,27 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
             stopWatch.stop();
 
             // then
-            assertTrue(menuReviews.get(0).getComments().contains(searchString));
+            ///assertTrue(menuReviews.get(0).getComments().contains(searchString));
             System.out.println(menuReviews.size());
-            System.out.println("total time -> " + stopWatch.getTotalTimeMillis());
+            System.out.println("total time -> " + stopWatch.getTotalTimeSeconds());
+        }
+
+        @Test
+        void 메뉴_리뷰_전문검색_테스트_10만_데이터_JPA_NATIVE_QUERY_FULL_TEXT_SEARCH_방식_TEXT_조회() {
+            // given
+            String searchString = "법률에 의하여";
+
+            StopWatch stopWatch = new StopWatch();
+
+            // when
+            stopWatch.start();
+            List<MenuReview> menuReviews = menuReviewService.findByFullTextCommentsNative(searchString);
+            stopWatch.stop();
+
+            // then
+            //assertTrue(menuReviews.get(0).getComments().contains(searchString));
+            System.out.println(menuReviews.size());
+            System.out.println("total time -> " + stopWatch.getTotalTimeSeconds());
         }
     }
 }

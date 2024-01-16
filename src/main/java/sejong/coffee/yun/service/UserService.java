@@ -103,7 +103,7 @@ public class UserService {
         try {
             Member member = userRepository.findByEmail(email);
 
-            member.upgradeUserRank(member.getOrderCount());
+            upgradeUserRank(member);
 
             accessToken = userCheck(password, member);
 
@@ -115,6 +115,9 @@ public class UserService {
         return accessToken;
     }
 
+    private void upgradeUserRank(Member member) {
+        member.upgradeUserRank(member.getOrderCount());
+    }
     @Transactional
     public String signOut(String accessToken, Long memberId) {
 
@@ -157,5 +160,15 @@ public class UserService {
         noSqlRepository.setValues(String.valueOf(member.getId()), refreshToken, Duration.ofMillis(jwtProvider.fetchRefreshTokenExpireTime()));
 
         return accessToken;
+    }
+
+    @Transactional
+    public List<Member> updateAllUserRank() {
+
+        List<Member> members = userRepository.findAll();
+
+        members.forEach(this::upgradeUserRank);
+
+        return members;
     }
 }

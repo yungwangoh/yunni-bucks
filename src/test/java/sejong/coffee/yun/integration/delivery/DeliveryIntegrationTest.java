@@ -483,14 +483,21 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
             createAt = LocalDateTime.of(2023, 12, 27, 12,0);
             reserveAt = LocalDateTime.of(2023, 12, 30, 12,0);
 
-            for(int j = 0; j < 10; j++) {
-                int finalJ = j;
-                List<Delivery> deliveries = LongStream.rangeClosed(1, MAX)
-                        .mapToObj(id -> (Delivery) ReserveDelivery.from(id + (finalJ * MAX), ReserveDelivery.create(order, createAt, member().getAddress(),
-                                DeliveryType.RESERVE, DeliveryStatus.READY, reserveAt))).toList();
+            var t = LongStream.iterate(0, i -> i + 1)
+                    .limit(1000)
+                    .mapToObj(i -> CompletableFuture.supplyAsync(() -> {
+                        var deliveries = LongStream.rangeClosed(1, MAX / 100)
+                                .mapToObj(id -> (Delivery) ReserveDelivery.from(id + (i * MAX),
+                                        ReserveDelivery.create(order, createAt, member().getAddress(),
+                                                DeliveryType.RESERVE, DeliveryStatus.READY, reserveAt)))
+                                .toList();
+                        deliveryRepository.bulkInsert(MAX, deliveries, "R", reserveAt);
+                        return 1;
+                    }))
+                    .toList();
 
-                deliveryRepository.bulkInsert(deliveries.size(), deliveries, "R", reserveAt);
-            }
+            t.stream().map(CompletableFuture::join).forEach((ignore) -> {});
+
         }
 
         @Test
