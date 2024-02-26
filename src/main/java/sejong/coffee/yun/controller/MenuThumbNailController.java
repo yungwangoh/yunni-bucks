@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
-import sejong.coffee.yun.service.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailService;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

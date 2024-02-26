@@ -9,7 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
-import sejong.coffee.yun.service.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailService;
 
 import java.io.FileInputStream;
 import java.time.LocalDateTime;

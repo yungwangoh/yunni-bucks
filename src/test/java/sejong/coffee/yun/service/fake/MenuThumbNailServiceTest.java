@@ -19,7 +19,7 @@ import sejong.coffee.yun.mock.repository.FakeMenuRepository;
 import sejong.coffee.yun.mock.repository.FakeMeuThumbNeilRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
-import sejong.coffee.yun.service.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailService;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;

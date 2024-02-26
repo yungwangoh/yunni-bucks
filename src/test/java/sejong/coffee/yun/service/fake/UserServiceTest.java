@@ -19,7 +19,7 @@ import sejong.coffee.yun.mock.repository.FakeNoSqlRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.UserService;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
 import java.util.ArrayList;

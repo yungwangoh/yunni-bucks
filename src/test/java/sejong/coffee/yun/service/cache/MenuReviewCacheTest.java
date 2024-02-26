@@ -9,7 +9,7 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.MenuReviewService;
+import sejong.coffee.yun.service.command.MenuReviewService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;

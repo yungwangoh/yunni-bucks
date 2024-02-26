@@ -11,7 +11,7 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.facade.UserServiceFacade;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.UserService;
 import sejong.coffee.yun.util.jwt.JwtUtil;
 
 import javax.validation.Valid;

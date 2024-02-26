@@ -27,8 +27,8 @@ import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.dto.order.OrderPageDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.OrderService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,7 +52,7 @@ class OrderControllerTest {
     @MockBean
     OrderService orderService;
     @MockBean
-    CartService cartService;
+    CartServiceCommand cartService;
     @MockBean
     CustomMapper customMapper;
     @MockBean

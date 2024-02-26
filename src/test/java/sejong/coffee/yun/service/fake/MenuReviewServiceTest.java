@@ -20,7 +20,7 @@ import sejong.coffee.yun.mock.repository.FakeMenuReviewRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.MenuReviewService;
+import sejong.coffee.yun.service.command.MenuReviewService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

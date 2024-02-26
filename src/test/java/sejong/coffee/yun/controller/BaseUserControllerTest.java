@@ -15,7 +15,7 @@ import sejong.coffee.yun.domain.user.UserRank;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.UserService;
 
 @WebMvcTest(UserController.class)
 @Disabled

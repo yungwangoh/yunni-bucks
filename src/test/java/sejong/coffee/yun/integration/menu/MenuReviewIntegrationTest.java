@@ -17,7 +17,7 @@ import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.MenuReviewService;
+import sejong.coffee.yun.service.command.MenuReviewService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

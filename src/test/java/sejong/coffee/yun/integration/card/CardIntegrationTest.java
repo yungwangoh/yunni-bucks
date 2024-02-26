@@ -15,8 +15,8 @@ import sejong.coffee.yun.repository.card.CardRepository;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CardService;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.OrderService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.OrderService;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -37,7 +37,7 @@ public class CardIntegrationTest extends SubIntegrationTest {
     @Autowired
     public CardService cardService;
     @Autowired
-    public CartService cartService;
+    public CartServiceCommand cartService;
     @Autowired
     public OrderService orderService;
     @Autowired

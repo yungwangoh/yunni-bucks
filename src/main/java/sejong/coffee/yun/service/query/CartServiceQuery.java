@@ -1,4 +1,4 @@
-package sejong.coffee.yun.service.read;
+package sejong.coffee.yun.service.query;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class CartService {
+public class CartServiceQuery {
 
     private final CartRepository cartRepository;
 
@@ -20,5 +20,9 @@ public class CartService {
         Cart cart = cartRepository.findByMember(memberId);
 
         return cart.getMenu(idx);
+    }
+
+    public Cart findCartByMember(Long memberId) {
+        return cartRepository.findByMember(memberId);
     }
 }

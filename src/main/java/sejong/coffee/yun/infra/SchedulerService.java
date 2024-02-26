@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import sejong.coffee.yun.service.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryService;
 
 import java.time.LocalDateTime;
 

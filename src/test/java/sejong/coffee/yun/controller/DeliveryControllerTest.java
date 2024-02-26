@@ -25,7 +25,7 @@ import sejong.coffee.yun.dto.delivery.DeliveryDto;
 import sejong.coffee.yun.dto.delivery.DeliveryPageDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

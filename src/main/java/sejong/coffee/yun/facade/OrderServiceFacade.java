@@ -3,7 +3,7 @@ package sejong.coffee.yun.facade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
-import sejong.coffee.yun.service.OrderService;
+import sejong.coffee.yun.service.command.OrderService;
 
 import java.time.LocalDateTime;
 

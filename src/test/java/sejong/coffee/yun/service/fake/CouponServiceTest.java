@@ -13,7 +13,7 @@ import sejong.coffee.yun.mock.repository.FakeCouponRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CouponService;
+import sejong.coffee.yun.service.command.CouponService;
 
 import java.time.LocalDateTime;
 

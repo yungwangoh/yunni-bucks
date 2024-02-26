@@ -14,6 +14,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
+import sejong.coffee.yun.service.command.CartServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 class CartServiceTest {
 
     @InjectMocks
-    private CartService cartService;
+    private CartServiceCommand cartService;
     @Mock
     private CartRepository cartRepository;
     @Mock

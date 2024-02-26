@@ -16,7 +16,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

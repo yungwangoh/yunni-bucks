@@ -12,10 +12,10 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.CouponService;
-import sejong.coffee.yun.service.OrderService;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.CouponService;
+import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.command.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +38,7 @@ public class UserConcurrencyTest extends MainIntegrationTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private CartService cartService;
+    private CartServiceCommand cartService;
     @Autowired
     private UserRepository userRepository;
     @Autowired

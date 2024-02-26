@@ -29,7 +29,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryService;
 
 import java.math.BigDecimal;
 import java.time.Duration;

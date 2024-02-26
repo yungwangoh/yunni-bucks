@@ -1,4 +1,4 @@
-package sejong.coffee.yun.service.read;
+package sejong.coffee.yun.service.query;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

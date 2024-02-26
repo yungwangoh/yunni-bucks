@@ -13,8 +13,8 @@ import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.OrderService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.OrderService;
 
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
@@ -39,7 +39,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private CartService cartService;
+    private CartServiceCommand cartService;
     @Autowired
     private CartRepository cartRepository;
 

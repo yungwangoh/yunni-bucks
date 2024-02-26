@@ -18,7 +18,7 @@ import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.dto.thumbnail.ThumbNailDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailService;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;

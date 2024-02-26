@@ -20,7 +20,7 @@ import sejong.coffee.yun.dto.cart.CartDto;
 import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.CartService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,7 +45,7 @@ class CartControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    CartService cartService;
+    CartServiceCommand cartService;
     @MockBean
     JwtProvider jwtProvider;
     @MockBean

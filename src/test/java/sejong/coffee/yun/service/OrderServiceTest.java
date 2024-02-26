@@ -24,6 +24,7 @@ import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
+import sejong.coffee.yun.service.command.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

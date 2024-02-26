@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
-import sejong.coffee.yun.service.CartService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisLockingMenuQuantity {
 
     private final RedissonClient redissonClient;
-    private final CartService cartService;
+    private final CartServiceCommand cartService;
 
     public void menuSubQuantity(final Long key, final Long memberId, final Long menuId) {
 

@@ -6,15 +6,15 @@ import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.UserService;
 
 @Component
 @RequiredArgsConstructor
 public class UserServiceFacade {
 
     private final UserService userService;
-    private final CartService cartService;
+    private final CartServiceCommand cartService;
 
     @Transactional
     public Member signUp(String name, String email, String password, Address address) {

@@ -15,15 +15,12 @@ import sejong.coffee.yun.domain.order.menu.MenuSize;
 import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.jwt.JwtProvider;
-import sejong.coffee.yun.mock.repository.FakeCartItemRepository;
-import sejong.coffee.yun.mock.repository.FakeMenuRepository;
-import sejong.coffee.yun.mock.repository.FakeOrderRepository;
-import sejong.coffee.yun.mock.repository.FakeUserRepository;
-import sejong.coffee.yun.mock.repository.FakeCartRepository;
+import sejong.coffee.yun.mock.repository.*;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CartService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.query.CartServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,7 +35,8 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
-        CartService.class,
+        CartServiceCommand.class,
+        CartServiceQuery.class,
         FakeUserRepository.class,
         FakeOrderRepository.class,
         FakeCartRepository.class,
@@ -55,7 +53,9 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 public class CartServiceTest {
 
     @Autowired
-    private CartService cartService;
+    private CartServiceQuery cartServiceQuery;
+    @Autowired
+    private CartServiceCommand cartService;
     @Autowired
     private FakeCartRepository fakeCartRepository;
     @Autowired
@@ -214,7 +214,7 @@ public class CartServiceTest {
 
     @Test
     void 유저의_카트를_찾을_수_없을_때() {
-        assertThatThrownBy(() -> cartService.findCartByMember(100L))
+        assertThatThrownBy(() -> cartServiceQuery.findCartByMember(100L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_CART.getMessage());
     }

@@ -20,8 +20,8 @@ import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.OrderService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.OrderService;
 import sejong.coffee.yun.service.PayService;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class PayServiceIntegrateTest extends MainIntegrationTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private CartService cartService;
+    private CartServiceCommand cartService;
     @Autowired
     private UuidHolder uuidHolder;
 

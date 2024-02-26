@@ -10,7 +10,7 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Bread;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.dto.menu.MenuDto;
-import sejong.coffee.yun.service.MenuService;
+import sejong.coffee.yun.service.command.MenuService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
