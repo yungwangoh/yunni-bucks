@@ -18,6 +18,7 @@ import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.MenuReviewServiceCommand;
+import sejong.coffee.yun.service.query.MenuReviewServiceQuery;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,7 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MenuReviewIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private MenuReviewServiceCommand menuReviewService;
+    private MenuReviewServiceCommand menuReviewServiceCommand;
+    @Autowired
+    private MenuReviewServiceQuery menuReviewServiceQuery;
     @Autowired
     private MenuReviewRepository menuReviewRepository;
     @Autowired
@@ -102,7 +105,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         @Test
         void 유저가_자신이_쓴_리뷰를_조회한다_200() throws Exception {
             // given
-            MenuReview menuReview = menuReviewService.create(1L, 1L, "맛있어요", LocalDateTime.now());
+            MenuReview menuReview = menuReviewServiceCommand.create(1L, 1L, "맛있어요", LocalDateTime.now());
 
             // when
             ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(MENU_REVIEW_API_PATH + "/reviews/{reviewId}", menuReview.getId())
@@ -129,7 +132,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         @Test
         void 유저가_메뉴리뷰를_삭제한다_204() throws Exception {
             // given
-            MenuReview menuReview = menuReviewService.create(1L, 1L, "맛있어요", LocalDateTime.now());
+            MenuReview menuReview = menuReviewServiceCommand.create(1L, 1L, "맛있어요", LocalDateTime.now());
 
             // when
             ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete(MENU_REVIEW_API_PATH + "/reviews/{reviewId}", menuReview.getId())
@@ -152,7 +155,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         @Test
         void 유저가_자신이_쓴_리뷰를_수정한다_200() throws Exception {
             // given
-            MenuReview menuReview = menuReviewService.create(1L, 1L, "맛있어요", LocalDateTime.now());
+            MenuReview menuReview = menuReviewServiceCommand.create(1L, 1L, "맛있어요", LocalDateTime.now());
 
             String s = toJson(menuReviewUpdateRequest());
 
@@ -187,7 +190,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
         @Test
         void 잘못된_리뷰ID인_경우_404() throws Exception {
             // given
-            menuReviewService.create(1L, 1L, "맛있어요", LocalDateTime.now());
+            menuReviewServiceCommand.create(1L, 1L, "맛있어요", LocalDateTime.now());
 
             String s = toJson(menuReviewUpdateRequest());
 
@@ -258,7 +261,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
 
             // when
             stopWatch.start();
-            List<MenuReview> comments = menuReviewService.findByComments(searchString);
+            List<MenuReview> comments = menuReviewServiceQuery.findByComments(searchString);
             stopWatch.stop();
 
             // then
@@ -276,7 +279,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
 
             // when
             stopWatch.start();
-            List<MenuReview> menuReviews = menuReviewService.findByFullTextComment(searchString);
+            List<MenuReview> menuReviews = menuReviewServiceQuery.findByFullTextComment(searchString);
             stopWatch.stop();
 
             // then
@@ -294,7 +297,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
 
             // when
             stopWatch.start();
-            List<MenuReview> menuReviews = menuReviewService.findByFullTextCommentsNative(searchString);
+            List<MenuReview> menuReviews = menuReviewServiceQuery.findByFullTextCommentsNative(searchString);
             stopWatch.stop();
 
             // then

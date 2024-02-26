@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class OrderIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private OrderServiceCommand orderService;
+    private OrderServiceCommand orderServiceCommand;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -449,7 +449,7 @@ public class OrderIntegrationTest extends MainIntegrationTest {
             // given
             cartService.createCart(1L);
             cartService.addMenu(1L, 1L);
-            Order order = orderService.order(1L, LocalDateTime.now());
+            Order order = orderServiceCommand.order(1L, LocalDateTime.now());
 
             // when
             ResultActions resultActions = mockMvc.perform(get(ORDER_API_PATH + "/cancel")

@@ -26,6 +26,7 @@ import sejong.coffee.yun.dto.delivery.DeliveryPageDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.command.DeliveryServiceCommand;
+import sejong.coffee.yun.service.query.DeliveryServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -49,7 +50,9 @@ class DeliveryControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    DeliveryServiceCommand deliveryService;
+    DeliveryServiceCommand deliveryServiceCommand;
+    @MockBean
+    DeliveryServiceQuery deliveryServiceQuery;
     @MockBean
     JwtProvider jwtProvider;
     @MockBean
@@ -129,7 +132,7 @@ class DeliveryControllerTest {
     @Test
     void 일반_배달_등록_API() throws Exception {
         // given
-        given(deliveryService.save(anyLong(), any(), any(), any())).willReturn(normalDelivery);
+        given(deliveryServiceCommand.save(anyLong(), any(), any(), any())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
         String toJson = toJson(new DeliveryDto.NormalRequest(1L, member.getAddress(), LocalDateTime.now(), DeliveryType.NORMAL));
@@ -149,7 +152,7 @@ class DeliveryControllerTest {
     @Test
     void 예약_배달_등록_API() throws Exception {
         // given
-        given(deliveryService.save(anyLong(), any(), any(), any())).willReturn(reserveDelivery);
+        given(deliveryServiceCommand.save(anyLong(), any(), any(), any())).willReturn(reserveDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
         String toJson = toJson(new DeliveryDto.ReserveRequest(1L, member.getAddress(), LocalDateTime.now(), LocalDateTime.now(), DeliveryType.RESERVE));
@@ -169,7 +172,7 @@ class DeliveryControllerTest {
     @Test
     void 결제가_되어있지_않고_배달_등록을_할_때_400() throws Exception {
         // given
-        given(deliveryService.save(anyLong(), any(), any(), any()))
+        given(deliveryServiceCommand.save(anyLong(), any(), any(), any()))
                 .willThrow(new IllegalArgumentException(DO_NOT_PAID.getMessage()));
 
         String toJson = toJson(new DeliveryDto.NormalRequest(1L, member.getAddress(), LocalDateTime.now(), DeliveryType.NORMAL));
@@ -189,7 +192,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_주소_변경_API() throws Exception {
         // given
-        given(deliveryService.updateAddress(anyLong(), any(), any())).willReturn(normalDelivery);
+        given(deliveryServiceCommand.updateAddress(anyLong(), any(), any())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
         String toJson = toJson(new DeliveryDto.UpdateAddressRequest(1L, member.getAddress(), LocalDateTime.now()));
@@ -209,7 +212,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_주소_변경_배달_내역을_찾을_수_없을_때_404() throws Exception {
         // given
-        given(deliveryService.updateAddress(anyLong(), any(), any())).willThrow(NOT_FOUND_DELIVERY.notFoundException());
+        given(deliveryServiceCommand.updateAddress(anyLong(), any(), any())).willThrow(NOT_FOUND_DELIVERY.notFoundException());
 
         String toJson = toJson(new DeliveryDto.UpdateAddressRequest(1L, member.getAddress(), LocalDateTime.now()));
 
@@ -227,7 +230,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_API() throws Exception {
         // given
-        given(deliveryService.normalDelivery(anyLong())).willReturn(normalDelivery);
+        given(deliveryServiceCommand.normalDelivery(anyLong())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -242,7 +245,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_API_예외_준비_상태가_아닐경우_500() throws Exception {
         // given
-        given(deliveryService.normalDelivery(anyLong())).willThrow(new RuntimeException(DELIVERY_EXCEPTION.getMessage()));
+        given(deliveryServiceCommand.normalDelivery(anyLong())).willThrow(new RuntimeException(DELIVERY_EXCEPTION.getMessage()));
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/deliveries/{deliveryId}", 1L)
@@ -255,7 +258,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_취소_API() throws Exception {
         // given
-        given(deliveryService.cancel(anyLong())).willReturn(normalDelivery);
+        given(deliveryServiceCommand.cancel(anyLong())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -270,7 +273,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_취소_API_예외_준비_상태가_아닐경우_500() throws Exception {
         // given
-        given(deliveryService.cancel(anyLong())).willThrow(new RuntimeException(DELIVERY_CANCEL_EXCEPTION.getMessage()));
+        given(deliveryServiceCommand.cancel(anyLong())).willThrow(new RuntimeException(DELIVERY_CANCEL_EXCEPTION.getMessage()));
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/deliveries/{deliveryId}/cancel", 1L)
@@ -283,7 +286,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_완료_API() throws Exception {
         // given
-        given(deliveryService.complete(anyLong())).willReturn(normalDelivery);
+        given(deliveryServiceCommand.complete(anyLong())).willReturn(normalDelivery);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -298,7 +301,7 @@ class DeliveryControllerTest {
     @Test
     void 배달_완료_API_예외_배송_상태가_아닐경우_500() throws Exception {
         // given
-        given(deliveryService.complete(anyLong())).willThrow(new RuntimeException(DELIVERY_COMPLETE_EXCEPTION.getMessage()));
+        given(deliveryServiceCommand.complete(anyLong())).willThrow(new RuntimeException(DELIVERY_COMPLETE_EXCEPTION.getMessage()));
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/deliveries/{deliveryId}/complete", 1L)
@@ -311,7 +314,7 @@ class DeliveryControllerTest {
     @Test
     void 유저의_배달_내역() throws Exception {
         // given
-        given(deliveryService.findAllByMemberId(any(), anyLong())).willReturn(deliveryPage);
+        given(deliveryServiceQuery.findAllByMemberId(any(), anyLong())).willReturn(deliveryPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
@@ -326,7 +329,7 @@ class DeliveryControllerTest {
     @Test
     void 유저의_배달_내역_조건_타입() throws Exception {
         // given
-        given(deliveryService.findDeliveryTypeAllByMemberId(any(), anyLong(), any())).willReturn(deliveryPage);
+        given(deliveryServiceQuery.findDeliveryTypeAllByMemberId(any(), anyLong(), any())).willReturn(deliveryPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
@@ -342,7 +345,7 @@ class DeliveryControllerTest {
     @Test
     void 유저의_배달_내역_조건_상태() throws Exception {
         // given
-        given(deliveryService.findDeliveryStatusAllByMemberId(any(), anyLong(), any())).willReturn(deliveryPage);
+        given(deliveryServiceQuery.findDeliveryStatusAllByMemberId(any(), anyLong(), any())).willReturn(deliveryPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when

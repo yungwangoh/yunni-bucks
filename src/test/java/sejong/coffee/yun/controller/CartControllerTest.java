@@ -21,6 +21,7 @@ import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.query.CartServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,7 +46,9 @@ class CartControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    CartServiceCommand cartService;
+    CartServiceCommand cartServiceCommand;
+    @MockBean
+    CartServiceQuery cartServiceQuery;
     @MockBean
     JwtProvider jwtProvider;
     @MockBean
@@ -103,7 +106,7 @@ class CartControllerTest {
     @Test
     void 카트_생성() throws Exception {
         // given
-        given(cartService.createCart(anyLong())).willReturn(cart);
+        given(cartServiceCommand.createCart(anyLong())).willReturn(cart);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -118,7 +121,7 @@ class CartControllerTest {
     @Test
     void 카트_조회() throws Exception {
         // given
-        given(cartService.findCartByMember(anyLong())).willReturn(cart);
+        given(cartServiceQuery.findCartByMember(anyLong())).willReturn(cart);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -145,7 +148,7 @@ class CartControllerTest {
     @Test
     void 메뉴_추가() throws Exception {
         // given
-        given(cartService.addMenu(anyLong(), anyLong())).willReturn(cart);
+        given(cartServiceCommand.addMenu(anyLong(), anyLong())).willReturn(cart);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -161,7 +164,7 @@ class CartControllerTest {
     @Test
     void 메뉴_삭제() throws Exception {
         // given
-        given(cartService.removeMenu(anyLong(), anyInt())).willReturn(cart);
+        given(cartServiceCommand.removeMenu(anyLong(), anyInt())).willReturn(cart);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -177,7 +180,7 @@ class CartControllerTest {
     @Test
     void 카트에서_메뉴_꺼내기() throws Exception {
         // given
-        given(cartService.getMenu(anyLong(), anyInt())).willReturn(menu);
+        given(cartServiceQuery.getMenu(anyLong(), anyInt())).willReturn(menu);
         given(customMapper.map(any(), any())).willReturn(menuResponse);
 
         // when
@@ -193,7 +196,7 @@ class CartControllerTest {
     @Test
     void 카트가_생성되지_않았는데_메뉴를_추가_할_경우() throws Exception {
         // given
-        given(cartService.addMenu(anyLong(), anyLong())).willThrow(NOT_FOUND_CART.notFoundException());
+        given(cartServiceCommand.addMenu(anyLong(), anyLong())).willThrow(NOT_FOUND_CART.notFoundException());
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/carts/menu")
@@ -207,7 +210,7 @@ class CartControllerTest {
     @Test
     void 카트가_비어있는_상태에서_메뉴를_삭제할_경우() throws Exception {
         // given
-        given(cartService.removeMenu(anyLong(), anyInt())).willThrow(NOT_FOUND_MENU.notFoundException());
+        given(cartServiceCommand.removeMenu(anyLong(), anyInt())).willThrow(NOT_FOUND_MENU.notFoundException());
 
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/carts/menu")
@@ -221,7 +224,7 @@ class CartControllerTest {
     @Test
     void 카트가_비어있는_상태에서_메뉴를_가져올_경우() throws Exception {
         // given
-        given(cartService.getMenu(anyLong(), anyInt())).willThrow(NOT_FOUND_MENU.notFoundException());
+        given(cartServiceQuery.getMenu(anyLong(), anyInt())).willThrow(NOT_FOUND_MENU.notFoundException());
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/carts/menu")
@@ -235,7 +238,7 @@ class CartControllerTest {
     @Test
     void 카트는_메뉴를_담을때_10개를_초과할_수_없다() throws Exception {
         // given
-        given(cartService.addMenu(anyLong(), anyLong()))
+        given(cartServiceCommand.addMenu(anyLong(), anyLong()))
                 .willThrow(new RuntimeException("카트는 메뉴를 " + SIZE.getSize() + "개만 담을 수 있습니다."));
 
         // when

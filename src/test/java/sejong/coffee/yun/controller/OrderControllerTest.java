@@ -29,6 +29,8 @@ import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.command.CartServiceCommand;
 import sejong.coffee.yun.service.command.OrderServiceCommand;
+import sejong.coffee.yun.service.query.CartServiceQuery;
+import sejong.coffee.yun.service.query.OrderServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -50,9 +52,13 @@ class OrderControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    OrderServiceCommand orderService;
+    OrderServiceCommand orderServiceCommand;
     @MockBean
-    CartServiceCommand cartService;
+    OrderServiceQuery orderServiceQuery;
+    @MockBean
+    CartServiceCommand cartServiceCommand;
+    @MockBean
+    CartServiceQuery cartServiceQuery;
     @MockBean
     CustomMapper customMapper;
     @MockBean
@@ -126,8 +132,8 @@ class OrderControllerTest {
     @Test
     void 주문() throws Exception {
         // given
-        given(cartService.findCartByMember(anyLong())).willReturn(cart);
-        given(orderService.order(anyLong(), any())).willReturn(order);
+        given(cartServiceQuery.findCartByMember(anyLong())).willReturn(cart);
+        given(orderServiceCommand.order(anyLong(), any())).willReturn(order);
         given(customMapper.map(any(), any())).willReturn(response);
 
         // when
@@ -154,7 +160,7 @@ class OrderControllerTest {
     @Test
     void 유저의_주문내역() throws Exception {
         // given
-        given(orderService.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
+        given(orderServiceQuery.findAllByMemberId(any(), anyLong())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
@@ -169,7 +175,7 @@ class OrderControllerTest {
     @Test
     void 유저의_주문내역_주문상태() throws Exception {
         // given
-        given(orderService.findAllByMemberIdAndOrderStatus(any(), anyLong(), any())).willReturn(orderPage);
+        given(orderServiceQuery.findAllByMemberIdAndOrderStatus(any(), anyLong(), any())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when
@@ -185,7 +191,7 @@ class OrderControllerTest {
     @Test
     void 유저의_주문상태_결제상태() throws Exception {
         // given
-        given(orderService.findAllByMemberIdAndPayStatus(any(), anyLong(), any())).willReturn(orderPage);
+        given(orderServiceQuery.findAllByMemberIdAndPayStatus(any(), anyLong(), any())).willReturn(orderPage);
         given(customMapper.map(any(), any())).willReturn(pageResponse);
 
         // when

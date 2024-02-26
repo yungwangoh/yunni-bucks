@@ -28,7 +28,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_등록() throws Exception {
         // given
-        given(userService.signUp(any(), any(), any(), any())).willReturn(member);
+        given(userServiceCommand.signUp(any(), any(), any(), any())).willReturn(member);
         given(customMapper.map(any(), any())).willReturn(response);
 
         String s = objectMapper.writeValueAsString(request);
@@ -74,7 +74,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_등록_이메일_중복_실패() throws Exception {
         // given
-        given(userService.signUp(any(), any(), any(), any())).willThrow(DUPLICATE_USER_EMAIL.duplicatedEmailException());
+        given(userServiceCommand.signUp(any(), any(), any(), any())).willThrow(DUPLICATE_USER_EMAIL.duplicatedEmailException());
 
         String s = objectMapper.writeValueAsString(request);
 
@@ -93,7 +93,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_등록_이름_중복_실패() throws Exception {
         // given
-        given(userService.signUp(any(), any(), any(), any())).willThrow(DUPLICATE_USER_NAME.duplicatedNameException());
+        given(userServiceCommand.signUp(any(), any(), any(), any())).willThrow(DUPLICATE_USER_NAME.duplicatedNameException());
 
         String s = objectMapper.writeValueAsString(request);
 
@@ -112,7 +112,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_리스트() throws Exception {
         // given
-        given(userService.findAll()).willReturn(List.of(member));
+        given(userServiceQuery.findAll()).willReturn(List.of(member));
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/members/list")
@@ -125,7 +125,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_찾기() throws Exception {
         // given
-        given(userService.findMember(any())).willReturn(member);
+        given(userServiceQuery.findMember(any())).willReturn(member);
         given(customMapper.map(any(), any())).willReturn(new UserDto.Response(member));
 
         // when
@@ -147,7 +147,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_찾기_실패() throws Exception {
         // given
-        given(userService.findMember(any())).willThrow(NOT_FOUND_USER.notFoundException());
+        given(userServiceQuery.findMember(any())).willThrow(NOT_FOUND_USER.notFoundException());
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/members")
@@ -172,7 +172,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_삭제_실패() throws Exception {
         // given
-        willThrow(NOT_FOUND_USER.notFoundException()).given(userService).deleteMember(any());
+        willThrow(NOT_FOUND_USER.notFoundException()).given(userServiceCommand).deleteMember(any());
 
         // when
         ResultActions resultActions = mockMvc.perform(delete("/api/members")
@@ -187,7 +187,7 @@ class UserControllerTest extends BaseUserControllerTest {
         // given
         String updateEmail = "asdf1234@naver.com";
 
-        given(userService.updateEmail(any(), any())).willReturn(member);
+        given(userServiceCommand.updateEmail(any(), any())).willReturn(member);
         given(customMapper.map(any(), any())).willReturn(new UserDto.Response(updateEmailMember));
 
         String s = objectMapper.writeValueAsString(new UserDto.Update.Email.Request(updateEmail));
@@ -209,7 +209,7 @@ class UserControllerTest extends BaseUserControllerTest {
         // given
         String updateName = "홍홍길동";
 
-        given(userService.updateEmail(any(), any())).willReturn(member);
+        given(userServiceCommand.updateEmail(any(), any())).willReturn(member);
         given(customMapper.map(any(), any())).willReturn(new UserDto.Response(updateNameMember));
 
         String s = objectMapper.writeValueAsString(new UserDto.Update.Name.Request(updateName));
@@ -231,7 +231,7 @@ class UserControllerTest extends BaseUserControllerTest {
         // given
         String accessToken = "token";
 
-        given(userService.signIn(anyString(), anyString())).willReturn(accessToken);
+        given(userServiceCommand.signIn(anyString(), anyString())).willReturn(accessToken);
         given(customMapper.map(any(), any())).willReturn(new UserDto.Sign.In.Response(accessToken));
 
         String s = objectMapper.writeValueAsString(
@@ -253,7 +253,7 @@ class UserControllerTest extends BaseUserControllerTest {
     void 로그인_아이디_비밀번호가_다를_경우_실패() throws Exception {
         // given
 
-        given(userService.signIn(anyString(), anyString())).willThrow(NOT_MATCH_USER.notMatchUserException());
+        given(userServiceCommand.signIn(anyString(), anyString())).willThrow(NOT_MATCH_USER.notMatchUserException());
 
         String s = objectMapper.writeValueAsString(
                 new UserDto.Sign.In.Request(member.getEmail(), member.getPassword()));
@@ -287,7 +287,7 @@ class UserControllerTest extends BaseUserControllerTest {
         // given
         String accessToken = "token";
 
-        given(userService.signOut(anyString(), any())).willThrow(TOKEN_EXPIRED.tokenExpiredException());
+        given(userServiceCommand.signOut(anyString(), any())).willThrow(TOKEN_EXPIRED.tokenExpiredException());
 
         // when
         ResultActions resultActions = mockMvc.perform(post("/api/members/sign-out")
@@ -301,7 +301,7 @@ class UserControllerTest extends BaseUserControllerTest {
     void 회원_이메일_중복() throws Exception {
         // given
         String email = "qwer1234@naver.com";
-        given(userService.duplicateEmail(anyString())).willReturn(SUCCESS_DUPLICATE_EMAIL.getMessage());
+        given(userServiceQuery.duplicateEmail(anyString())).willReturn(SUCCESS_DUPLICATE_EMAIL.getMessage());
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/members/duplication/email")
@@ -316,7 +316,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_이메일_중복_검증_실패() throws Exception {
         String email = "qwer1234@naver.com";
-        given(userService.duplicateEmail(anyString())).willThrow(DUPLICATE_USER_EMAIL.duplicatedEmailException());
+        given(userServiceQuery.duplicateEmail(anyString())).willThrow(DUPLICATE_USER_EMAIL.duplicatedEmailException());
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/members/duplication/email")
@@ -330,7 +330,7 @@ class UserControllerTest extends BaseUserControllerTest {
     void 회원_이름_중복() throws Exception {
         // given
         String name = "홍길동";
-        given(userService.duplicateName(anyString())).willReturn(SUCCESS_DUPLICATE_NAME.getMessage());
+        given(userServiceQuery.duplicateName(anyString())).willReturn(SUCCESS_DUPLICATE_NAME.getMessage());
 
         // when
         ResultActions resultActions = mockMvc.perform(get("/api/members/duplication/name")
@@ -344,7 +344,7 @@ class UserControllerTest extends BaseUserControllerTest {
     @Test
     void 회원_이름_중복_검증_실패() throws Exception {
         String name = "홍길동";
-        given(userService.duplicateName(anyString())).willThrow(DUPLICATE_USER_NAME.duplicatedNameException());
+        given(userServiceQuery.duplicateName(anyString())).willThrow(DUPLICATE_USER_NAME.duplicatedNameException());
 
         // when
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/members/duplication/name")
@@ -353,6 +353,7 @@ class UserControllerTest extends BaseUserControllerTest {
         // then
         resultActions.andExpect(status().isBadRequest());
     }
+
     private String toJson(Object o) throws JsonProcessingException {
         return objectMapper.writeValueAsString(o);
     }

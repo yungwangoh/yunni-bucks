@@ -19,6 +19,7 @@ import sejong.coffee.yun.dto.thumbnail.ThumbNailDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.command.MenuThumbNailServiceCommand;
+import sejong.coffee.yun.service.query.MenuThumbNailServiceQuery;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;
@@ -45,7 +46,9 @@ class MenuThumbNailControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private MenuThumbNailServiceCommand menuThumbNailService;
+    private MenuThumbNailServiceCommand menuThumbNailServiceCommand;
+    @MockBean
+    private MenuThumbNailServiceQuery menuThumbNailServiceQuery;
     @MockBean
     private JwtProvider jwtProvider;
     @MockBean
@@ -85,7 +88,7 @@ class MenuThumbNailControllerTest {
     @Test
     void 썸네일_저장_업로드_201() throws Exception {
         // given
-        given(menuThumbNailService.create(any(), anyLong(), any())).willReturn(menuThumbnail);
+        given(menuThumbNailServiceCommand.create(any(), anyLong(), any())).willReturn(menuThumbnail);
 
         // when
         ResultActions resultActions = mockMvc.perform(multipart("/api/{menuId}/thumbnails-upload", 1L)
@@ -106,7 +109,7 @@ class MenuThumbNailControllerTest {
                 "test".getBytes(StandardCharsets.UTF_8)
         );
 
-        given(menuThumbNailService.create(any(), anyLong(), any())).willReturn(menuThumbnail);
+        given(menuThumbNailServiceCommand.create(any(), anyLong(), any())).willReturn(menuThumbnail);
 
         // when
         ResultActions resultActions = mockMvc.perform(multipart("/api/{menuId}/thumbnails-upload", 1L)
@@ -120,7 +123,7 @@ class MenuThumbNailControllerTest {
     @Test
     void 썸네일_찾기_다운로드_200() throws Exception {
         // given
-        given(menuThumbNailService.findByMenuId(anyLong())).willReturn(menuThumbnail);
+        given(menuThumbNailServiceQuery.findByMenuId(anyLong())).willReturn(menuThumbnail);
         byte[] bytes = Files.readAllBytes(Paths.get(PATH.getPath() + menuThumbnail.getOriginFileName()));
 
         // when

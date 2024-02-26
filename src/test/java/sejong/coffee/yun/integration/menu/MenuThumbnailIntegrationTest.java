@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private MenuThumbNailServiceCommand menuThumbNailService;
+    private MenuThumbNailServiceCommand menuThumbNailServiceCommand;
     @Autowired
     private ThumbNailRepository thumbNailRepository;
 
@@ -113,7 +113,7 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
         @Test
         void 메뉴에_업로드_된_이미지_가져오기_200() throws Exception {
             // given
-            menuThumbNailService.create(multipartFile, 1L, LocalDateTime.now());
+            menuThumbNailServiceCommand.create(multipartFile, 1L, LocalDateTime.now());
 
             // when
             ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get(MENU_THUMBNAIL_API_PATH + "/{menuId}/thumbnails", 1L));
@@ -158,7 +158,7 @@ public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
         @Test
         void 메뉴_썸네일_수정_204() throws Exception {
             // given
-            menuThumbNailService.create(multipartFile, 1L, LocalDateTime.now());
+            menuThumbNailServiceCommand.create(multipartFile, 1L, LocalDateTime.now());
 
             // when
             ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.multipart(MENU_THUMBNAIL_API_PATH + "/{menuId}/thumbnails-edit", 1L)

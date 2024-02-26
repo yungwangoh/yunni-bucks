@@ -25,8 +25,9 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.CartService;
-import sejong.coffee.yun.service.DeliveryService;
+import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.command.DeliveryServiceCommand;
+import sejong.coffee.yun.service.query.DeliveryServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,9 +53,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DeliveryIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private DeliveryService deliveryService;
+    private DeliveryServiceCommand deliveryServiceCommand;
     @Autowired
-    private CartService cartService;
+    private DeliveryServiceQuery deliveryServiceQuery;
+    @Autowired
+    private CartServiceCommand cartService;
     @Autowired
     private DeliveryRepository deliveryRepository;
     @Autowired
@@ -184,7 +187,7 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달_주소를_수정한다_200() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
             List<String> address = List.of("강릉시", "강릉군", "401 강릉로", "100-100");
@@ -222,7 +225,7 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달을_시작한다_200() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
             // when
@@ -247,10 +250,10 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달을_시작할때_READY_상태가_아닌경우_500() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
-            deliveryService.normalDelivery(delivery.getId());
+            deliveryServiceCommand.normalDelivery(delivery.getId());
 
             // when
             ResultActions resultActions = mockMvc.perform(get(DELIVERY_API_PATH + "/{deliveryId}", delivery.getId())
@@ -273,7 +276,7 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달을_취소한다_200() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
             // when
@@ -298,10 +301,10 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달을_취소할때_READY_상태가_아닌경우_500() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
-            deliveryService.normalDelivery(delivery.getId());
+            deliveryServiceCommand.normalDelivery(delivery.getId());
 
             // when
             ResultActions resultActions = mockMvc.perform(get(DELIVERY_API_PATH + "/{delivery}/cancel", delivery.getId())
@@ -324,10 +327,10 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달을_완료한다_200() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
-            deliveryService.normalDelivery(delivery.getId());
+            deliveryServiceCommand.normalDelivery(delivery.getId());
 
             // when
             ResultActions resultActions = mockMvc.perform(get(DELIVERY_API_PATH + "/{deliveryId}/complete", delivery.getId())
@@ -351,10 +354,10 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
         @Test
         void 배달을_완료할떄_DELIVERY_상태가_아닌경우_500() throws Exception {
             // given
-            Delivery delivery = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
+            Delivery delivery = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(),
                     LocalDateTime.now(), DeliveryType.NORMAL);
 
-            deliveryService.cancel(delivery.getId());
+            deliveryServiceCommand.cancel(delivery.getId());
 
             // when
             ResultActions resultActions = mockMvc.perform(get(DELIVERY_API_PATH + "/{deliveryId}/complete", delivery.getId())
@@ -510,7 +513,7 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
 
             // when
             stopWatch.start();
-            Long delivery = deliveryService.reserveDelivery(reserve);
+            Long delivery = deliveryServiceCommand.reserveDelivery(reserve);
             stopWatch.stop();
 
             // then
@@ -554,7 +557,7 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
                 CompletableFuture<Long> future = CompletableFuture.supplyAsync(() -> {
                     Page<Long> deliveries = deliveryRepository.findDeliveryIds(
                             PageRequest.of(currentPage, MAX / 10));
-                    return deliveryService.reserveDeliveryInUpdate(deliveries.getContent(), reserve);
+                    return deliveryServiceCommand.reserveDeliveryInUpdate(deliveries.getContent(), reserve);
                 });
                 futures.add(future);
             }

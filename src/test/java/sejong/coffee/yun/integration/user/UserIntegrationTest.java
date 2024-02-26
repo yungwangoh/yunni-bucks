@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private UserServiceCommand userService;
+    private UserServiceCommand userServiceCommand;
     @Autowired
     private CartRepository cartRepository;
     @Autowired
@@ -621,7 +621,7 @@ public class UserIntegrationTest extends MainIntegrationTest {
 
             // when
             stopWatch.start();
-            userService.updateAllUserRank();
+            userServiceCommand.updateAllUserRank();
             stopWatch.stop();
 
             // then

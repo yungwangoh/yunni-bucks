@@ -16,6 +16,7 @@ import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
 import sejong.coffee.yun.service.command.UserServiceCommand;
+import sejong.coffee.yun.service.query.UserServiceQuery;
 
 @WebMvcTest(UserController.class)
 @Disabled
@@ -32,7 +33,9 @@ public class BaseUserControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
-    UserServiceCommand userService;
+    UserServiceCommand userServiceCommand;
+    @MockBean
+    UserServiceQuery userServiceQuery;
 
     static Member member;
     static UserDto.Sign.Up.Request request;
