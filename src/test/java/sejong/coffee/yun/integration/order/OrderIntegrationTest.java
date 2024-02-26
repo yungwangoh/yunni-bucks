@@ -14,7 +14,7 @@ import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
 
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class OrderIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private OrderService orderService;
+    private OrderServiceCommand orderService;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired

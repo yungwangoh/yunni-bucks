@@ -14,7 +14,7 @@ import sejong.coffee.yun.dto.review.menu.MenuReviewDto;
 import sejong.coffee.yun.dto.review.menu.MenuReviewPageDto;
 import sejong.coffee.yun.dto.review.menu.MenuReviewPageWrapperDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.command.MenuReviewService;
+import sejong.coffee.yun.service.MenuReviewService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;

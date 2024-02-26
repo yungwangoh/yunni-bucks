@@ -11,7 +11,7 @@ import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.dto.cart.CartDto;
 import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.command.CartServiceCommand;
+import sejong.coffee.yun.service.CartService;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ import sejong.coffee.yun.service.command.CartServiceCommand;
 @Validated
 public class CartController {
 
-    private final CartServiceCommand cartService;
+    private final CartService cartService;
     private final CustomMapper customMapper;
 
     @PostMapping("")

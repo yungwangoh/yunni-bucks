@@ -20,7 +20,7 @@ import sejong.coffee.yun.mock.repository.FakeMenuReviewRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.MenuReviewService;
+import sejong.coffee.yun.service.command.MenuReviewServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,7 +33,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
-        MenuReviewService.class,
+        MenuReviewServiceCommand.class,
         FakeMenuRepository.class,
         FakeUserRepository.class,
         FakeMenuReviewRepository.class,
@@ -48,7 +48,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 public class MenuReviewServiceTest {
 
     @Autowired
-    private MenuReviewService menuReviewService;
+    private MenuReviewServiceCommand menuReviewService;
     @Autowired
     private UserRepository userRepository;
     @Autowired

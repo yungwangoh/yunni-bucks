@@ -19,7 +19,7 @@ import sejong.coffee.yun.mock.repository.FakeMenuRepository;
 import sejong.coffee.yun.mock.repository.FakeMeuThumbNeilRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
-import sejong.coffee.yun.service.command.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailServiceCommand;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;
@@ -33,7 +33,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
-        MenuThumbNailService.class,
+        MenuThumbNailServiceCommand.class,
         FakeMeuThumbNeilRepository.class,
         FakeMenuRepository.class,
         JwtProvider.class,
@@ -48,7 +48,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 class MenuThumbNailServiceTest {
 
     @Autowired
-    private MenuThumbNailService menuThumbNailService;
+    private MenuThumbNailServiceCommand menuThumbNailService;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired

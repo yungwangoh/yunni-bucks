@@ -1,4 +1,4 @@
-package sejong.coffee.yun.service.query;
+package sejong.coffee.yun.service.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,31 +6,46 @@ import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
+import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
+import sejong.coffee.yun.service.MenuThumbNailService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static sejong.coffee.yun.util.path.PathControl.PATH;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
-public class MenuThumbNailService {
+@Transactional
+public class MenuThumbNailServiceCommand implements MenuThumbNailService {
     private final ThumbNailRepository thumbNailRepository;
+    private final MenuRepository menuRepository;
 
-    public List<MenuThumbnail> findAllByMenuId(Long menuId) {
-        return thumbNailRepository.findAllByMenuId(menuId);
-    }
+    public MenuThumbnail create(MultipartFile multipartFile, Long menuId, LocalDateTime now) {
 
-    public MenuThumbnail findById(Long thumbNailId) {
-        return thumbNailRepository.findById(thumbNailId);
-    }
+        File file = new File(PATH.getPath());
 
-    public MenuThumbnail findByMenuId(Long menuId) {
-        return thumbNailRepository.findByMenuId(menuId);
+        checkImageFileFormat(multipartFile);
+
+        mkdir(file);
+
+        String originFileName = Objects.requireNonNull(multipartFile.getOriginalFilename(), "file is null!!");
+        String storedFilename = PATH.getPath() + UUID.randomUUID() + getFileExtension(originFileName);
+
+        uploadFile(multipartFile, storedFilename);
+
+        Menu menu = menuRepository.findById(menuId);
+
+        MenuThumbnail menuThumbnail = MenuThumbnail.create(menu, originFileName, storedFilename, now);
+
+        return thumbNailRepository.save(menuThumbnail);
     }
 
     public void updateThumbnail(MultipartFile multipartFile, Long menuId, LocalDateTime updateAt) {
@@ -39,6 +54,14 @@ public class MenuThumbNailService {
         uploadFile(multipartFile, menuThumbnail.getStoredFileName());
 
         menuThumbnail.setUpdateAt(updateAt);
+    }
+
+    public void delete(Long thumbNailId) {
+        thumbNailRepository.delete(thumbNailId);
+    }
+
+    public void deleteByMenuId(Long menuId) {
+        thumbNailRepository.deleteByMenuId(menuId);
     }
 
     private void uploadFile(MultipartFile multipartFile, String uploadFilePath) {

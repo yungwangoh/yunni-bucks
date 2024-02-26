@@ -22,7 +22,7 @@ import sejong.coffee.yun.domain.order.menu.Nutrients;
 import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.command.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,7 +44,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
 class DeliveryServiceTest {
 
     @InjectMocks
-    DeliveryService deliveryService;
+    DeliveryServiceCommand deliveryService;
     @Mock
     DeliveryRepository deliveryRepository;
     @Mock

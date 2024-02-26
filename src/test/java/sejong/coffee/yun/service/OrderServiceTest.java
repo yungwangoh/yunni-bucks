@@ -24,7 +24,7 @@ import sejong.coffee.yun.domain.user.*;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,7 +41,7 @@ import static org.mockito.BDDMockito.given;
 class OrderServiceTest {
 
     @InjectMocks
-    private OrderService orderService;
+    private OrderServiceCommand orderService;
     @Mock
     private Calculator calculator;
     @Mock

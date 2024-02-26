@@ -16,7 +16,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.UserService;
+import sejong.coffee.yun.service.command.UserServiceCommand;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceCommand userService;
     @Autowired
     private CartRepository cartRepository;
     @Autowired

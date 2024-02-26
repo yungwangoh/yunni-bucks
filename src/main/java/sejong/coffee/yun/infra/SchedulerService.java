@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import sejong.coffee.yun.service.command.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryServiceCommand;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @EnableScheduling
 public class SchedulerService {
 
-    private final DeliveryService deliveryService;
+    private final DeliveryServiceCommand deliveryService;
 
     @Scheduled(cron = "${schedules.cron.product}")
     public void processReserveScheduler() {

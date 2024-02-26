@@ -29,7 +29,7 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -47,7 +47,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
-        DeliveryService.class,
+        DeliveryServiceCommand.class,
         FakeUserRepository.class,
         FakeOrderRepository.class,
         FakeDeliveryRepository.class,
@@ -67,7 +67,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
 public class DeliveryServiceTest {
 
     @Autowired
-    private DeliveryService deliveryService;
+    private DeliveryServiceCommand deliveryService;
     @Autowired
     private FakeDeliveryRepository fakeDeliveryRepository;
     @Autowired

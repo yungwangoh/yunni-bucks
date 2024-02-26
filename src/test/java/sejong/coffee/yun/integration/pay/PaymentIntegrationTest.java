@@ -22,7 +22,7 @@ import sejong.coffee.yun.repository.pay.PayRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.CardService;
 import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
 import sejong.coffee.yun.service.PayService;
 
 import java.time.LocalDateTime;
@@ -57,7 +57,7 @@ class PaymentIntegrationTest extends SubIntegrationTest {
     @Autowired
     public CartServiceCommand cartService;
     @Autowired
-    public OrderService orderService;
+    public OrderServiceCommand orderService;
     @Autowired
     public UserRepository userRepository;
     @Autowired

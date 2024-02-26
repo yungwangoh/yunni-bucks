@@ -17,7 +17,7 @@ import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.MenuReviewService;
+import sejong.coffee.yun.service.command.MenuReviewServiceCommand;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MenuReviewIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private MenuReviewService menuReviewService;
+    private MenuReviewServiceCommand menuReviewService;
     @Autowired
     private MenuReviewRepository menuReviewRepository;
     @Autowired

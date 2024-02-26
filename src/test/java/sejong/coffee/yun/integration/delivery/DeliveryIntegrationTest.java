@@ -25,8 +25,8 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.DeliveryService;
+import sejong.coffee.yun.service.CartService;
+import sejong.coffee.yun.service.DeliveryService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -54,7 +54,7 @@ public class DeliveryIntegrationTest extends MainIntegrationTest {
     @Autowired
     private DeliveryService deliveryService;
     @Autowired
-    private CartServiceCommand cartService;
+    private CartService cartService;
     @Autowired
     private DeliveryRepository deliveryRepository;
     @Autowired

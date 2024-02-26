@@ -55,7 +55,7 @@ public class CartServiceTest {
     @Autowired
     private CartServiceQuery cartServiceQuery;
     @Autowired
-    private CartServiceCommand cartService;
+    private CartServiceCommand cartServiceCommand;
     @Autowired
     private FakeCartRepository fakeCartRepository;
     @Autowired
@@ -147,7 +147,7 @@ public class CartServiceTest {
         Member save = userRepository.save(member);
 
         // when
-        Cart saveCart = cartService.createCart(save.getId());
+        Cart saveCart = cartServiceCommand.createCart(save.getId());
 
         // then
         assertThat(saveCart).isNotNull();
@@ -160,10 +160,10 @@ public class CartServiceTest {
         Member save = userRepository.save(member);
 
         // when
-        cartService.createCart(save.getId());
+        cartServiceCommand.createCart(save.getId());
 
         // then
-        assertThatThrownBy(() -> cartService.createCart(save.getId()))
+        assertThatThrownBy(() -> cartServiceCommand.createCart(save.getId()))
                 .isInstanceOf(DuplicatedException.class);
     }
 
@@ -175,7 +175,7 @@ public class CartServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> cartService.createCart(invalidUser))
+        assertThatThrownBy(() -> cartServiceCommand.createCart(invalidUser))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -186,10 +186,10 @@ public class CartServiceTest {
 
         Menu menu = menuRepository.save(menu1);
 
-        cartService.createCart(save.getId());
+        cartServiceCommand.createCart(save.getId());
 
         // when
-        Cart cart = cartService.addMenu(save.getId(), menu.getId());
+        Cart cart = cartServiceCommand.addMenu(save.getId(), menu.getId());
 
         // then
         assertThat(cart.getCartItems().get(0).getMenu()).isEqualTo(menu);
@@ -202,13 +202,13 @@ public class CartServiceTest {
 
         Menu menu = menuRepository.save(menu1);
 
-        cartService.createCart(save.getId());
+        cartServiceCommand.createCart(save.getId());
 
         // when
-        IntStream.range(0, 10).forEach(i -> cartService.addMenu(save.getId(), menu.getId()));
+        IntStream.range(0, 10).forEach(i -> cartServiceCommand.addMenu(save.getId(), menu.getId()));
 
         // then
-        assertThatThrownBy(() -> cartService.addMenu(save.getId(), menu.getId()))
+        assertThatThrownBy(() -> cartServiceCommand.addMenu(save.getId(), menu.getId()))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -226,12 +226,12 @@ public class CartServiceTest {
 
         Menu menu = menuRepository.save(menu1);
 
-        cartService.createCart(save.getId());
+        cartServiceCommand.createCart(save.getId());
 
-        cartService.addMenu(save.getId(), menu.getId());
+        cartServiceCommand.addMenu(save.getId(), menu.getId());
 
         // when
-        Menu getMenu = cartService.getMenu(save.getId(), 0);
+        Menu getMenu = cartServiceCommand.getMenu(save.getId(), 0);
 
         // then
         assertThat(getMenu).isEqualTo(menu);
@@ -244,12 +244,12 @@ public class CartServiceTest {
 
         Menu menu = menuRepository.save(menu1);
 
-        cartService.createCart(save.getId());
+        cartServiceCommand.createCart(save.getId());
 
-        cartService.addMenu(save.getId(), menu.getId());
+        cartServiceCommand.addMenu(save.getId(), menu.getId());
 
         // when
-        Cart cart = cartService.removeMenu(save.getId(), 0);
+        Cart cart = cartServiceCommand.removeMenu(save.getId(), 0);
 
         // then
         assertThat(cart.getCartItems()).isEqualTo(List.of());
@@ -263,7 +263,7 @@ public class CartServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> cartService.addMenu(save.getId(), 1L))
+        assertThatThrownBy(() -> cartServiceCommand.addMenu(save.getId(), 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU.getMessage());
     }

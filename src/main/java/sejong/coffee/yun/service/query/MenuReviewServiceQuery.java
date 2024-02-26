@@ -8,20 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.menu.MenuReview;
 import sejong.coffee.yun.dto.review.menu.MenuReviewPageWrapperDto;
-import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
-import sejong.coffee.yun.repository.user.UserRepository;
+import sejong.coffee.yun.service.MenuReviewService;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MenuReviewService {
+public class MenuReviewServiceQuery implements MenuReviewService {
 
-    private final UserRepository userRepository;
     private final MenuReviewRepository menuReviewRepository;
-    private final MenuRepository menuRepository;
 
     public MenuReview findReview(Long reviewId) {
         return menuReviewRepository.findById(reviewId);

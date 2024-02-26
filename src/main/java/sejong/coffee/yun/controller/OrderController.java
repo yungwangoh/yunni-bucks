@@ -14,7 +14,7 @@ import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.dto.order.OrderPageDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.OrderService;
 
 import java.time.LocalDateTime;
 

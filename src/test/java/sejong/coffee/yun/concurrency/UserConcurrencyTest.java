@@ -13,9 +13,9 @@ import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.CouponService;
-import sejong.coffee.yun.service.command.OrderService;
-import sejong.coffee.yun.service.command.UserService;
+import sejong.coffee.yun.service.command.CouponServiceCommand;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
+import sejong.coffee.yun.service.command.UserServiceCommand;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,13 +30,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UserConcurrencyTest extends MainIntegrationTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceCommand userService;
     @Autowired
     private OrderServiceFacade orderServiceFacade;
     @Autowired
-    private CouponService couponService;
+    private CouponServiceCommand couponService;
     @Autowired
-    private OrderService orderService;
+    private OrderServiceCommand orderService;
     @Autowired
     private CartServiceCommand cartService;
     @Autowired

@@ -19,7 +19,8 @@ import sejong.coffee.yun.mock.repository.FakeNoSqlRepository;
 import sejong.coffee.yun.mock.repository.FakeOrderRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.redis.NoSqlRepository;
-import sejong.coffee.yun.service.command.UserService;
+import sejong.coffee.yun.service.command.UserServiceCommand;
+import sejong.coffee.yun.service.query.UserServiceQuery;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_SIGN_OUT;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
-        UserService.class,
+        UserServiceQuery.class,
+        UserServiceCommand.class,
         FakeUserRepository.class,
         JwtProvider.class,
         FakeNoSqlRepository.class,
@@ -49,7 +51,9 @@ import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_SIGN_OUT;
 public class UserServiceTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceQuery userServiceQuery;
+    @Autowired
+    private UserServiceCommand userServiceCommand;
     @Autowired
     private JwtProvider jwtProvider;
     @Autowired
@@ -80,7 +84,7 @@ public class UserServiceTest {
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
         // when
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userServiceCommand.signUp(name, email, pwd, address);
 
         // then
         assertThat(signUp.getName()).isEqualTo(name);
@@ -96,10 +100,10 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userServiceCommand.signUp(name, email, pwd, address);
 
         // when
-        Member member = userService.findMember(signUp.getId());
+        Member member = userServiceQuery.findMember(signUp.getId());
 
         // then
         assertThat(member).isEqualTo(signUp);
@@ -113,10 +117,10 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        List<Member> members = List.of(userService.signUp(name, email, pwd, address));
+        List<Member> members = List.of(userServiceCommand.signUp(name, email, pwd, address));
 
         // when
-        List<Member> list = userService.findAll();
+        List<Member> list = userServiceQuery.findAll();
 
         // then
         assertThat(list).isEqualTo(members);
@@ -130,10 +134,10 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member sign = userService.signUp(name, email, pwd, address);
+        Member sign = userServiceCommand.signUp(name, email, pwd, address);
 
         // when
-        String token = userService.signIn(email, pwd);
+        String token = userServiceCommand.signIn(email, pwd);
 
         // then
         assertThat(jwtProvider.mapTokenToId("bearer " + token)).isEqualTo(sign.getId());
@@ -148,7 +152,7 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        userService.signUp(name, email, pwd, address);
+        userServiceCommand.signUp(name, email, pwd, address);
 
         String wrongEmail = "asdfqwer1234@naver.com";
         String wrongPwd = "trewttrgfg@A";
@@ -156,7 +160,7 @@ public class UserServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> userService.signIn(wrongEmail, wrongPwd))
+        assertThatThrownBy(() -> userServiceCommand.signIn(wrongEmail, wrongPwd))
                 .isInstanceOf(NotMatchUserException.class)
                 .hasMessageContaining(NOT_MATCH_USER.getMessage());
     }
@@ -169,11 +173,11 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member member = userService.signUp(name, email, pwd, address);
-        String token = userService.signIn(email, pwd);
+        Member member = userServiceCommand.signUp(name, email, pwd, address);
+        String token = userServiceCommand.signIn(email, pwd);
 
         // when
-        String signOut = userService.signOut("bearer " + token, member.getId());
+        String signOut = userServiceCommand.signOut("bearer " + token, member.getId());
 
         // then
         assertThat(signOut).isEqualTo(SUCCESS_SIGN_OUT.getMessage());
@@ -188,12 +192,12 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userServiceCommand.signUp(name, email, pwd, address);
 
         String updateName = "홍홍길동";
 
         // when
-        Member member = userService.updateName(signUp.getId(), updateName);
+        Member member = userServiceCommand.updateName(signUp.getId(), updateName);
 
         // then
         assertThat(member.getName()).isEqualTo(updateName);
@@ -207,12 +211,12 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userServiceCommand.signUp(name, email, pwd, address);
 
         String updateEmail = "asdf1234@daum.net";
 
         // when
-        Member member = userService.updateEmail(signUp.getId(), updateEmail);
+        Member member = userServiceCommand.updateEmail(signUp.getId(), updateEmail);
 
         // then
         assertThat(member.getEmail()).isEqualTo(updateEmail);
@@ -226,12 +230,12 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member member = userService.signUp(name, email, pwd, address);
+        Member member = userServiceCommand.signUp(name, email, pwd, address);
 
         String updatePwd = "asdf1234@A";
 
         // when
-        Member updatePassword = userService.updatePassword(member.getId(), updatePwd);
+        Member updatePassword = userServiceCommand.updatePassword(member.getId(), updatePwd);
 
         // then
         assertTrue(PasswordUtil.match(updatePassword.getPassword(), updatePwd));
@@ -241,7 +245,7 @@ public class UserServiceTest {
     void 회원_변경_할때_다른_id를_넣은_경우() {
         String updateName = "홍홍홍길동";
 
-        assertThatThrownBy(() -> userService.updateEmail(100L, updateName))
+        assertThatThrownBy(() -> userServiceCommand.updateEmail(100L, updateName))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }
@@ -254,13 +258,13 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member sign = userService.signUp(name, email, pwd, address);
+        Member sign = userServiceCommand.signUp(name, email, pwd, address);
 
         // when
         String expireToken = "bearer gfjsghjkfsdhgjs";
 
         // then
-        assertThatThrownBy(() -> userService.signOut(expireToken, sign.getId()))
+        assertThatThrownBy(() -> userServiceCommand.signOut(expireToken, sign.getId()))
                 .isInstanceOf(JwtException.class)
                 .hasMessageContaining(TOKEN_EXPIRED.getMessage());
     }
@@ -273,13 +277,13 @@ public class UserServiceTest {
         String pwd = "qwer1234@A";
         Address address = new Address("서울시", "광진구", "능동로 141", "100-100");
 
-        Member signUp = userService.signUp(name, email, pwd, address);
+        Member signUp = userServiceCommand.signUp(name, email, pwd, address);
 
         // when
-        userService.deleteMember(signUp.getId());
+        userServiceCommand.deleteMember(signUp.getId());
 
         // then
-        assertThatThrownBy(() -> userService.findMember(signUp.getId()))
+        assertThatThrownBy(() -> userServiceQuery.findMember(signUp.getId()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }

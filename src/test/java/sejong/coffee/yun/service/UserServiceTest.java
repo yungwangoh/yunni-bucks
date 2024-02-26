@@ -19,7 +19,6 @@ import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.redis.RedisRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.UserService;
 import sejong.coffee.yun.util.password.PasswordUtil;
 
 import java.util.List;

@@ -25,7 +25,7 @@ import sejong.coffee.yun.dto.delivery.DeliveryDto;
 import sejong.coffee.yun.dto.delivery.DeliveryPageDto;
 import sejong.coffee.yun.jwt.JwtProvider;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.command.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -49,7 +49,7 @@ class DeliveryControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    DeliveryService deliveryService;
+    DeliveryServiceCommand deliveryService;
     @MockBean
     JwtProvider jwtProvider;
     @MockBean

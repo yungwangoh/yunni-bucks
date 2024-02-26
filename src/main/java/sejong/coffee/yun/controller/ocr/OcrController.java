@@ -13,7 +13,7 @@ import sejong.coffee.yun.dto.card.CardDto;
 import sejong.coffee.yun.infra.ApiService;
 import sejong.coffee.yun.infra.port.UuidHolder;
 import sejong.coffee.yun.service.CardService;
-import sejong.coffee.yun.service.command.UserService;
+import sejong.coffee.yun.service.UserService;
 
 import java.io.IOException;
 

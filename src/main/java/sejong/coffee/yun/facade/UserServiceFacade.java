@@ -7,13 +7,13 @@ import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.domain.user.Cart;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.UserService;
+import sejong.coffee.yun.service.command.UserServiceCommand;
 
 @Component
 @RequiredArgsConstructor
 public class UserServiceFacade {
 
-    private final UserService userService;
+    private final UserServiceCommand userService;
     private final CartServiceCommand cartService;
 
     @Transactional

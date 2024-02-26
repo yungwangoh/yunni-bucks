@@ -35,7 +35,7 @@ import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
         CartServiceCommand.class,
-        OrderService.class,
+        OrderServiceCommand.class,
         FakeUserRepository.class,
         FakeOrderRepository.class,
         JwtProvider.class,
@@ -69,7 +69,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrderServiceTest {
 
     @Autowired
-    private OrderService orderService;
+    private OrderServiceCommand orderService;
     @Autowired
     private UserRepository userRepository;
     @Autowired

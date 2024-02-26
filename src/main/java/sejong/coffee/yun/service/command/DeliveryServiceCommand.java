@@ -2,8 +2,6 @@ package sejong.coffee.yun.service.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.delivery.*;
@@ -11,6 +9,7 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
+import sejong.coffee.yun.service.DeliveryService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,12 +17,13 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DeliveryService {
+@Transactional
+public class DeliveryServiceCommand implements DeliveryService {
 
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
 
-    @Transactional
+    @Override
     public Delivery save(Long orderId, Address address, LocalDateTime now, DeliveryType type) {
 
         Order order = orderRepository.findById(orderId);
@@ -35,7 +35,7 @@ public class DeliveryService {
         return deliveryRepository.save(delivery);
     }
 
-    @Transactional
+    @Override
     public Delivery save(Long orderId, Address address, LocalDateTime now,
                          LocalDateTime reserveDate, DeliveryType type) {
 
@@ -48,7 +48,7 @@ public class DeliveryService {
         return deliveryRepository.save(delivery);
     }
 
-    @Transactional
+    @Override
     public Delivery cancel(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
@@ -57,17 +57,17 @@ public class DeliveryService {
         return delivery;
     }
 
-    @Transactional
+    @Override
     public Long reserveDelivery(LocalDateTime reserveAt) {
         return deliveryRepository.bulkUpdate(reserveAt);
     }
 
-    @Transactional
+    @Override
     public Long reserveDeliveryInUpdate(List<Long> ids, LocalDateTime reserveAt) {
         return deliveryRepository.bulkInUpdate(ids, reserveAt);
     }
 
-    @Transactional
+    @Override
     public Delivery normalDelivery(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
@@ -76,7 +76,7 @@ public class DeliveryService {
         return delivery;
     }
 
-    @Transactional
+    @Override
     public Delivery complete(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
@@ -85,27 +85,12 @@ public class DeliveryService {
         return delivery;
     }
 
-    @Transactional
+    @Override
     public Delivery updateAddress(Long deliveryId, Address address, LocalDateTime now) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
         delivery.updateAddress(address, now);
 
         return delivery;
-    }
-
-    @Deprecated
-    public Page<Delivery> findAllByMemberId(Pageable pageable, Long memberId) {
-        return deliveryRepository.findByMemberId(pageable, memberId);
-    }
-
-    @Deprecated
-    public Page<Delivery> findDeliveryTypeAllByMemberId(Pageable pageable, Long memberId, DeliveryType type) {
-        return deliveryRepository.findDeliveryTypeByMemberId(pageable, memberId, type);
-    }
-
-    @Deprecated
-    public Page<Delivery> findDeliveryStatusAllByMemberId(Pageable pageable, Long memberId, DeliveryStatus status) {
-        return deliveryRepository.findDeliveryStatusByMemberId(pageable, memberId, status);
     }
 }

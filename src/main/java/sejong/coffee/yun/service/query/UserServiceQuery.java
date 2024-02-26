@@ -19,7 +19,7 @@ import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_DUPLICATE_N
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class UserService {
+public class UserServiceQuery {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;

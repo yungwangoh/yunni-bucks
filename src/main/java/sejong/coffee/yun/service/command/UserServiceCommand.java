@@ -19,18 +19,18 @@ import java.util.List;
 
 import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_MATCH_USER;
 import static sejong.coffee.yun.domain.exception.ExceptionControl.TOKEN_EXPIRED;
-import static sejong.coffee.yun.message.SuccessOrFailMessage.*;
+import static sejong.coffee.yun.message.SuccessOrFailMessage.SUCCESS_SIGN_OUT;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+@Transactional
+public class UserServiceCommand {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final NoSqlRepository noSqlRepository;
 
-    @Transactional
     public Member signUp(String name, String email, String password, Address address) {
 
         userRepository.duplicateEmail(email);
@@ -49,12 +49,6 @@ public class UserService {
         return userRepository.save(member);
     }
 
-    @Deprecated
-    public Member findMember(Long memberId) {
-        return userRepository.findById(memberId);
-    }
-
-    @Transactional
     public Member updateName(Long memberId, String updateName) {
 
         userRepository.duplicateName(updateName);
@@ -66,7 +60,6 @@ public class UserService {
         return member;
     }
 
-    @Transactional
     public Member updateEmail(Long memberId, String updateEmail) {
 
         userRepository.duplicateEmail(updateEmail);
@@ -78,7 +71,6 @@ public class UserService {
         return member;
     }
 
-    @Transactional
     public Member updatePassword(Long memberId, String updatePassword) {
         Member member = userRepository.findById(memberId);
 
@@ -87,17 +79,10 @@ public class UserService {
         return member;
     }
 
-    @Deprecated
-    public List<Member> findAll() {
-        return userRepository.findAll();
-    }
-
-    @Transactional
     public void deleteMember(Long memberId) {
         userRepository.delete(memberId);
     }
 
-    @Transactional
     public String signIn(String email, String password) {
 
         String accessToken;
@@ -120,7 +105,7 @@ public class UserService {
     private void upgradeUserRank(Member member) {
         member.upgradeUserRank(member.getOrderCount());
     }
-    @Transactional
+
     public String signOut(String accessToken, Long memberId) {
 
         String token = JwtUtil.getFormatToken(accessToken);
@@ -139,20 +124,6 @@ public class UserService {
         }
     }
 
-    @Deprecated
-    public String duplicateName(String name) {
-        userRepository.duplicateName(name);
-
-        return SUCCESS_DUPLICATE_NAME.getMessage();
-    }
-
-    @Deprecated
-    public String duplicateEmail(String email) {
-        userRepository.duplicateEmail(email);
-
-        return SUCCESS_DUPLICATE_EMAIL.getMessage();
-    }
-
     private String userCheck(String password, Member member) {
         String accessToken;
 
@@ -166,7 +137,6 @@ public class UserService {
         return accessToken;
     }
 
-    @Transactional
     public List<Member> updateAllUserRank() {
 
         List<Member> members = userRepository.findAll();

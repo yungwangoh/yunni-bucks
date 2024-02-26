@@ -13,7 +13,8 @@ import sejong.coffee.yun.mock.repository.FakeCouponRepository;
 import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.command.CouponService;
+import sejong.coffee.yun.service.command.CouponServiceCommand;
+import sejong.coffee.yun.service.query.CouponServiceQuery;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +24,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
-        CouponService.class,
+        CouponServiceQuery.class,
+        CouponServiceCommand.class,
         FakeCouponRepository.class,
         FakeUserRepository.class,
         JwtProvider.class,
@@ -38,7 +40,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class CouponServiceTest {
 
     @Autowired
-    private CouponService couponService;
+    private CouponServiceCommand couponService;
+    @Autowired
+    private CouponServiceQuery couponServiceQuery;
     @Autowired
     private CouponRepository couponRepository;
     @Autowired

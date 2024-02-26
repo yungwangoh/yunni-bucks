@@ -9,7 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.ResultActions;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
-import sejong.coffee.yun.service.command.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailServiceCommand;
 
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class MenuThumbnailIntegrationTest extends MainIntegrationTest {
 
     @Autowired
-    private MenuThumbNailService menuThumbNailService;
+    private MenuThumbNailServiceCommand menuThumbNailService;
     @Autowired
     private ThumbNailRepository thumbNailRepository;
 

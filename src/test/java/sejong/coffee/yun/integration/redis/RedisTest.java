@@ -9,8 +9,8 @@ import sejong.coffee.yun.dto.menu.MenuDto;
 import sejong.coffee.yun.integration.MainIntegrationTest;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.CartServiceCommand;
-import sejong.coffee.yun.service.command.MenuService;
-import sejong.coffee.yun.service.command.OrderService;
+import sejong.coffee.yun.service.command.MenuServiceCommand;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,11 +23,11 @@ public class RedisTest extends MainIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private OrderService orderService;
+    private OrderServiceCommand orderService;
     @Autowired
     private CartServiceCommand cartService;
     @Autowired
-    private MenuService menuService;
+    private MenuServiceCommand menuService;
 
     private Member member;
 
