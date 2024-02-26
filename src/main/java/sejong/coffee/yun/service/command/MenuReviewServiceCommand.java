@@ -11,14 +11,13 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.review.menu.MenuReviewRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.MenuReviewService;
 
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MenuReviewServiceCommand implements MenuReviewService {
+public class MenuReviewServiceCommand {
 
     private final UserRepository userRepository;
     private final MenuReviewRepository menuReviewRepository;

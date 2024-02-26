@@ -15,7 +15,8 @@ import sejong.coffee.yun.domain.delivery.DeliveryType;
 import sejong.coffee.yun.dto.delivery.DeliveryDto;
 import sejong.coffee.yun.dto.delivery.DeliveryPageDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.DeliveryService;
+import sejong.coffee.yun.service.command.DeliveryServiceCommand;
+import sejong.coffee.yun.service.query.DeliveryServiceQuery;
 
 import javax.validation.Valid;
 
@@ -26,13 +27,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/deliveries")
 public class DeliveryController {
 
-    private final DeliveryService deliveryService;
+    private final DeliveryServiceCommand deliveryServiceCommand;
+    private final DeliveryServiceQuery deliveryServiceQuery;
     private final CustomMapper customMapper;
 
     @PostMapping("/reserve")
     ResponseEntity<DeliveryDto.Response> reserveDelivery(@RequestBody @Valid DeliveryDto.ReserveRequest request) {
 
-        Delivery save = deliveryService.save(
+        Delivery save = deliveryServiceCommand.save(
                 request.orderId(),
                 request.address(),
                 request.now(),
@@ -48,7 +50,7 @@ public class DeliveryController {
     @PostMapping("")
     ResponseEntity<DeliveryDto.Response> normalDelivery(@RequestBody @Valid DeliveryDto.NormalRequest request) {
 
-        Delivery delivery = deliveryService.save(
+        Delivery delivery = deliveryServiceCommand.save(
                 request.orderId(),
                 request.address(),
                 request.now(),
@@ -63,7 +65,7 @@ public class DeliveryController {
     @PatchMapping("/address")
     ResponseEntity<DeliveryDto.Response> updateAddress(@RequestBody @Valid DeliveryDto.UpdateAddressRequest request) {
 
-        Delivery updateAddress = deliveryService
+        Delivery updateAddress = deliveryServiceCommand
                 .updateAddress(request.deliveryId(), request.address(), request.now());
 
         DeliveryDto.Response response = customMapper.map(updateAddress, DeliveryDto.Response.class);
@@ -73,7 +75,7 @@ public class DeliveryController {
 
     @GetMapping("/{deliveryId}")
     ResponseEntity<DeliveryDto.Response> delivery(@PathVariable Long deliveryId) {
-        Delivery delivery = deliveryService.normalDelivery(deliveryId);
+        Delivery delivery = deliveryServiceCommand.normalDelivery(deliveryId);
 
         DeliveryDto.Response response = customMapper.map(delivery, DeliveryDto.Response.class);
 
@@ -82,7 +84,7 @@ public class DeliveryController {
 
     @GetMapping("/{deliveryId}/cancel")
     ResponseEntity<DeliveryDto.Response> cancel(@PathVariable Long deliveryId) {
-        Delivery delivery = deliveryService.cancel(deliveryId);
+        Delivery delivery = deliveryServiceCommand.cancel(deliveryId);
 
         DeliveryDto.Response response = customMapper.map(delivery, DeliveryDto.Response.class);
 
@@ -91,7 +93,7 @@ public class DeliveryController {
 
     @GetMapping("/{deliveryId}/complete")
     ResponseEntity<DeliveryDto.Response> complete(@PathVariable Long deliveryId) {
-        Delivery delivery = deliveryService.complete(deliveryId);
+        Delivery delivery = deliveryServiceCommand.complete(deliveryId);
 
         DeliveryDto.Response response = customMapper.map(delivery, DeliveryDto.Response.class);
 
@@ -101,7 +103,7 @@ public class DeliveryController {
     @GetMapping("/page/{pageNum}")
     ResponseEntity<DeliveryPageDto.Response> findAllByMemberId(@PathVariable int pageNum, @MemberId Long memberId) {
         PageRequest pr = PageRequest.of(pageNum, 10);
-        Page<Delivery> deliveryPage = deliveryService.findAllByMemberId(pr, memberId);
+        Page<Delivery> deliveryPage = deliveryServiceQuery.findAllByMemberId(pr, memberId);
 
         DeliveryPageDto.Response response = customMapper.map(deliveryPage, DeliveryPageDto.Response.class);
 
@@ -113,7 +115,7 @@ public class DeliveryController {
                                                                            @MemberId Long memberId,
                                                                            @RequestParam("type") DeliveryType type) {
        PageRequest pr = PageRequest.of(pageNum, 10);
-       Page<Delivery> deliveryPage = deliveryService.findDeliveryTypeAllByMemberId(pr, memberId, type);
+       Page<Delivery> deliveryPage = deliveryServiceQuery.findDeliveryTypeAllByMemberId(pr, memberId, type);
 
         DeliveryPageDto.Response response = customMapper.map(deliveryPage, DeliveryPageDto.Response.class);
 
@@ -125,7 +127,7 @@ public class DeliveryController {
                                                                              @MemberId Long memberId,
                                                                              @RequestParam("status") DeliveryStatus status) {
         PageRequest pr = PageRequest.of(pageNum, 10);
-        Page<Delivery> deliveryPage = deliveryService.findDeliveryStatusAllByMemberId(pr, memberId, status);
+        Page<Delivery> deliveryPage = deliveryServiceQuery.findDeliveryStatusAllByMemberId(pr, memberId, status);
 
         DeliveryPageDto.Response response = customMapper.map(deliveryPage, DeliveryPageDto.Response.class);
 

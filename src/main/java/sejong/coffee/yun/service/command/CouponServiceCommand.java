@@ -10,7 +10,6 @@ import sejong.coffee.yun.domain.user.CouponUse;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.repository.coupon.CouponRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CouponService;
 
 import java.time.LocalDateTime;
 
@@ -20,12 +19,11 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.ALREADY_EXIST_
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class CouponServiceCommand implements CouponService {
+public class CouponServiceCommand {
 
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
 
-    @Override
     public Coupon save(String name, String identityNumber, LocalDateTime createAt,
                        LocalDateTime expireAt, double discountRate, int quantity) {
 
@@ -42,7 +40,6 @@ public class CouponServiceCommand implements CouponService {
         return couponRepository.save(coupon);
     }
 
-    @Override
     public Coupon couponRegistry(Long couponId, Long memberId, LocalDateTime localDateTime) {
 
         Coupon coupon = couponRepository.findById(couponId);
@@ -57,12 +54,10 @@ public class CouponServiceCommand implements CouponService {
         return coupon;
     }
 
-    @Override
     public void deleteCoupon(Coupon coupon) {
         couponRepository.delete(coupon);
     }
 
-    @Override
     public void deleteCoupon(Long couponId) {
         couponRepository.deleteById(couponId);
     }

@@ -36,6 +36,7 @@ import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.CartServiceCommand;
 import sejong.coffee.yun.service.command.OrderServiceCommand;
+import sejong.coffee.yun.service.query.OrderServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,6 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
         CartServiceCommand.class,
+        OrderServiceQuery.class,
         OrderServiceCommand.class,
         FakeUserRepository.class,
         FakeOrderRepository.class,
@@ -69,7 +71,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrderServiceTest {
 
     @Autowired
-    private OrderServiceCommand orderService;
+    private OrderServiceCommand orderServiceCommand;
+    @Autowired
+    private OrderServiceQuery orderServiceQuery;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -148,7 +152,7 @@ public class OrderServiceTest {
         Member save = getMember();
 
         // when
-        Order order = orderService.order(save.getId(), LocalDateTime.now());
+        Order order = orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
         int sum = menuList.stream().mapToInt(menu -> menu.getMenu().getPrice().mapToInt()).sum();
 
@@ -166,7 +170,7 @@ public class OrderServiceTest {
         LocalDateTime orderTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
         // when
-        Order order = orderService.order(save.getId(), orderTime);
+        Order order = orderServiceCommand.order(save.getId(), orderTime);
 
         // then
         assertThat(order.getCreateAt()).isEqualTo(orderTime);
@@ -177,10 +181,10 @@ public class OrderServiceTest {
         // given
         Member save = getMember();
 
-        Order order = orderService.order(save.getId(), LocalDateTime.now());
+        Order order = orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
         // when
-        Order findOrder = orderService.findOrder(order.getId());
+        Order findOrder = orderServiceQuery.findOrder(order.getId());
 
         // then
         assertThat(findOrder).isEqualTo(order);
@@ -192,10 +196,10 @@ public class OrderServiceTest {
         int size = 10;
         Member save = getMember();
 
-        IntStream.range(0, size).forEach(i -> orderService.order(save.getId(), LocalDateTime.now()));
+        IntStream.range(0, size).forEach(i -> orderServiceCommand.order(save.getId(), LocalDateTime.now()));
 
         // when
-        List<Order> orders = orderService.findAll();
+        List<Order> orders = orderServiceQuery.findAll();
 
         // then
         assertThat(orders.size()).isEqualTo(size);
@@ -207,7 +211,7 @@ public class OrderServiceTest {
         Member save = getMember();
 
         LocalDateTime initTime = LocalDateTime.now();
-        Order order = orderService.order(save.getId(), initTime);
+        Order order = orderServiceCommand.order(save.getId(), initTime);
 
         LocalDateTime updateTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
@@ -224,7 +228,7 @@ public class OrderServiceTest {
         Member save = getMember();
 
         // when
-        Order order = orderService.order(save.getId(), LocalDateTime.now());
+        Order order = orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(order.fetchTotalOrderPrice()).isEqualTo(menuList.get(0).getMenu().getPrice().getTotalPrice());
@@ -236,7 +240,7 @@ public class OrderServiceTest {
         Member save = getMember();
 
         // when
-        Order order = orderService.order(save.getId(), LocalDateTime.now());
+        Order order = orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(order.getName()).isEqualTo(menuList.get(0).getMenu().getTitle() + " 외 " + menuList.size() + "개");
@@ -248,7 +252,7 @@ public class OrderServiceTest {
         Member save = getMember();
 
         // when
-        orderService.order(save.getId(), LocalDateTime.now());
+        orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
         // then
         assertThat(save.getOrderCount()).isEqualTo(1);
@@ -259,15 +263,15 @@ public class OrderServiceTest {
         // given
         Member save = getMember();
 
-        orderService.order(save.getId(), LocalDateTime.now());
+        orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
         PageRequest pr = PageRequest.of(0,10);
 
         // when
-        Page<Order> orderPage = orderService.findAllByMemberId(pr, save.getId());
+        Page<Order> orderPage = orderServiceQuery.findAllByMemberId(pr, save.getId());
 
         // then
-        assertThat(orderPage.getContent()).isEqualTo(orderService.findAll());
+        assertThat(orderPage.getContent()).isEqualTo(orderServiceQuery.findAll());
         assertThat(orderPage.getTotalPages()).isEqualTo(1);
         assertThat(orderPage.getTotalElements()).isEqualTo(1);
     }
@@ -280,19 +284,19 @@ public class OrderServiceTest {
         Member save = getMember();
 
         IntStream.range(0, statusCount).forEach(i -> {
-            Order order = orderService.order(save.getId(), LocalDateTime.now());
+            Order order = orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
             order.cancel();
         });
 
         IntStream.range(0, statusCount).forEach(i -> {
-            orderService.order(save.getId(), LocalDateTime.now());
+            orderServiceCommand.order(save.getId(), LocalDateTime.now());
         });
 
         PageRequest pr = PageRequest.of(0, 10);
 
         // when
-        Page<Order> orderPage = orderService.findAllByMemberIdAndOrderStatus(pr, save.getId(), status);
+        Page<Order> orderPage = orderServiceQuery.findAllByMemberIdAndOrderStatus(pr, save.getId(), status);
 
         // then
         assertThat(orderPage.getTotalElements()).isEqualTo(statusCount);
@@ -306,19 +310,19 @@ public class OrderServiceTest {
         Member save = getMember();
 
         IntStream.range(0, statusCount).forEach(i -> {
-            Order order = orderService.order(save.getId(), LocalDateTime.now());
+            Order order = orderServiceCommand.order(save.getId(), LocalDateTime.now());
 
             order.completePayment();
         });
 
         IntStream.range(0, statusCount).forEach(i -> {
-            orderService.order(save.getId(), LocalDateTime.now());
+            orderServiceCommand.order(save.getId(), LocalDateTime.now());
         });
 
         PageRequest pr = PageRequest.of(0, 10);
 
         // when
-        Page<Order> orderPage = orderService.findAllByMemberIdAndPayStatus(pr, save.getId(), status);
+        Page<Order> orderPage = orderServiceQuery.findAllByMemberIdAndPayStatus(pr, save.getId(), status);
 
         // then
         assertThat(orderPage.getTotalElements()).isEqualTo(statusCount);

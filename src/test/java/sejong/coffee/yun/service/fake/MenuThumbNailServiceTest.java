@@ -20,6 +20,7 @@ import sejong.coffee.yun.mock.repository.FakeMeuThumbNeilRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
 import sejong.coffee.yun.service.command.MenuThumbNailServiceCommand;
+import sejong.coffee.yun.service.query.MenuThumbNailServiceQuery;
 
 import java.io.FileInputStream;
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
+        MenuThumbNailServiceQuery.class,
         MenuThumbNailServiceCommand.class,
         FakeMeuThumbNeilRepository.class,
         FakeMenuRepository.class,
@@ -48,7 +50,9 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_MENU
 class MenuThumbNailServiceTest {
 
     @Autowired
-    private MenuThumbNailServiceCommand menuThumbNailService;
+    private MenuThumbNailServiceCommand menuThumbNailServiceCommand;
+    @Autowired
+    private MenuThumbNailServiceQuery menuThumbNailServiceQuery;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
@@ -97,7 +101,7 @@ class MenuThumbNailServiceTest {
                 new FileInputStream(fileUrl));
 
         // when
-        MenuThumbnail menuThumbnail = menuThumbNailService.create(multipartFile, saveMenu.getId(), LocalDateTime.now());
+        MenuThumbnail menuThumbnail = menuThumbNailServiceCommand.create(multipartFile, saveMenu.getId(), LocalDateTime.now());
 
         // then
         assertThat(menuThumbnail.getOriginFileName()).isEqualTo(originalFileName);
@@ -105,7 +109,7 @@ class MenuThumbNailServiceTest {
 
     @Test
     void 썸네일_저장_NPE() {
-        assertThatThrownBy(() -> menuThumbNailService.create(null, saveMenu.getId(), LocalDateTime.now()))
+        assertThatThrownBy(() -> menuThumbNailServiceCommand.create(null, saveMenu.getId(), LocalDateTime.now()))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -121,7 +125,7 @@ class MenuThumbNailServiceTest {
         MultipartFile multipartFile = new MockMultipartFile(name, originalFileName, contentType, new FileInputStream(fileUrl));
 
         // when
-        MenuThumbnail menuThumbnail = menuThumbNailService.create(multipartFile, saveMenu.getId(), createAt);
+        MenuThumbnail menuThumbnail = menuThumbNailServiceCommand.create(multipartFile, saveMenu.getId(), createAt);
 
         // then
         assertThat(menuThumbnail.getCreateAt()).isEqualTo(createAt);
@@ -137,7 +141,7 @@ class MenuThumbNailServiceTest {
         MenuThumbnail saveThumbNail = thumbNailRepository.save(menuThumbnail);
 
         // when
-        List<MenuThumbnail> thumbnails = menuThumbNailService.findAllByMenuId(saveMenu.getId());
+        List<MenuThumbnail> thumbnails = menuThumbNailServiceQuery.findAllByMenuId(saveMenu.getId());
 
         // then
         assertThat(thumbnails.get(0)).isEqualTo(saveThumbNail);
@@ -155,7 +159,7 @@ class MenuThumbNailServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> menuThumbNailService.findById(100L))
+        assertThatThrownBy(() -> menuThumbNailServiceQuery.findById(100L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU_THUMBNAIL.getMessage());
     }
@@ -170,10 +174,10 @@ class MenuThumbNailServiceTest {
         MenuThumbnail saveThumbNail = thumbNailRepository.save(menuThumbnail);
 
         // when
-        menuThumbNailService.delete(saveThumbNail.getId());
+        menuThumbNailServiceCommand.delete(saveThumbNail.getId());
 
         // then
-        assertThatThrownBy(() -> menuThumbNailService.findById(saveThumbNail.getId()))
+        assertThatThrownBy(() -> menuThumbNailServiceQuery.findById(saveThumbNail.getId()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU_THUMBNAIL.getMessage());
     }
@@ -190,7 +194,7 @@ class MenuThumbNailServiceTest {
         List<MenuThumbnail> menuThumbnails = List.of(saveThumbNail);
 
         // when
-        List<MenuThumbnail> thumbnails = menuThumbNailService.findAllByMenuId(saveMenu.getId());
+        List<MenuThumbnail> thumbnails = menuThumbNailServiceQuery.findAllByMenuId(saveMenu.getId());
 
         // then
         assertThat(thumbnails).isEqualTo(menuThumbnails);

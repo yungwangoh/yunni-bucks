@@ -11,7 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
-import sejong.coffee.yun.service.MenuThumbNailService;
+import sejong.coffee.yun.service.command.MenuThumbNailServiceCommand;
+import sejong.coffee.yun.service.query.MenuThumbNailServiceQuery;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,12 +27,13 @@ import static sejong.coffee.yun.util.path.PathControl.PATH;
 @RequestMapping("/api")
 public class MenuThumbNailController {
 
-    private final MenuThumbNailService menuThumbNailService;
+    private final MenuThumbNailServiceCommand menuThumbNailServiceCommand;
+    private final MenuThumbNailServiceQuery menuThumbNailServiceQuery;
 
     @PostMapping("/{menuId}/thumbnails-upload")
     ResponseEntity<Void> upload(@RequestPart("image") MultipartFile multipartFile, @PathVariable Long menuId) {
 
-        menuThumbNailService.create(multipartFile, menuId, LocalDateTime.now());
+        menuThumbNailServiceCommand.create(multipartFile, menuId, LocalDateTime.now());
 
         return ResponseEntity.noContent().build();
     }
@@ -39,7 +41,7 @@ public class MenuThumbNailController {
     @GetMapping("/{menuId}/thumbnails")
     ResponseEntity<Resource> findThumbNailByMenuId(@PathVariable Long menuId) throws FileNotFoundException {
 
-        MenuThumbnail menuThumbnails = menuThumbNailService.findByMenuId(menuId);
+        MenuThumbnail menuThumbnails = menuThumbNailServiceQuery.findByMenuId(menuId);
 
         Resource resource = new InputStreamResource(new FileInputStream(PATH.getPath() + menuThumbnails.getOriginFileName()));
 
@@ -51,21 +53,21 @@ public class MenuThumbNailController {
     @PostMapping("/{menuId}/thumbnails-edit")
     ResponseEntity<Void> updateMenuThumbnail(@RequestPart("image") MultipartFile multipartFile, @PathVariable Long menuId) {
 
-        menuThumbNailService.updateThumbnail(multipartFile, menuId, LocalDateTime.now());
+        menuThumbNailServiceCommand.updateThumbnail(multipartFile, menuId, LocalDateTime.now());
 
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/thumbnails/{thumbnailId}")
     ResponseEntity<Void> delete(@PathVariable Long thumbnailId) {
-        menuThumbNailService.delete(thumbnailId);
+        menuThumbNailServiceCommand.delete(thumbnailId);
 
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{menuId}/thumbnails")
     ResponseEntity<Void> deleteByMenuId(@PathVariable Long menuId) {
-        menuThumbNailService.deleteByMenuId(menuId);
+        menuThumbNailServiceCommand.deleteByMenuId(menuId);
 
         return ResponseEntity.noContent().build();
     }

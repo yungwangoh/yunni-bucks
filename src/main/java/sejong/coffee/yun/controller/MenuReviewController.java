@@ -14,7 +14,8 @@ import sejong.coffee.yun.dto.review.menu.MenuReviewDto;
 import sejong.coffee.yun.dto.review.menu.MenuReviewPageDto;
 import sejong.coffee.yun.dto.review.menu.MenuReviewPageWrapperDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.MenuReviewService;
+import sejong.coffee.yun.service.command.MenuReviewServiceCommand;
+import sejong.coffee.yun.service.query.MenuReviewServiceQuery;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -27,7 +28,8 @@ import java.util.List;
 @Slf4j
 public class MenuReviewController {
 
-    private final MenuReviewService menuReviewService;
+    private final MenuReviewServiceCommand menuReviewServiceCommand;
+    private final MenuReviewServiceQuery menuReviewServiceQuery;
     private final CustomMapper customMapper;
 
     @PostMapping("/{menuId}/reviews")
@@ -35,7 +37,7 @@ public class MenuReviewController {
                                                             @MemberId Long memberId,
                                                             @PathVariable Long menuId) {
 
-        MenuReview menuReview = menuReviewService.create(memberId, menuId, request.comment(), LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.create(memberId, menuId, request.comment(), LocalDateTime.now());
 
         MenuReviewDto.Response response = customMapper.map(menuReview, MenuReviewDto.Response.class);
 
@@ -45,7 +47,7 @@ public class MenuReviewController {
     @GetMapping("/reviews/{reviewId}")
     ResponseEntity<MenuReviewDto.Response> findMenuReview(@PathVariable Long reviewId) {
 
-        MenuReview menuReview = menuReviewService.findReview(reviewId);
+        MenuReview menuReview = menuReviewServiceQuery.findReview(reviewId);
 
         MenuReviewDto.Response response = customMapper.map(menuReview, MenuReviewDto.Response.class);
 
@@ -57,7 +59,7 @@ public class MenuReviewController {
                                                                 @RequestBody @Valid MenuReviewDto.Request request,
                                                                 @MemberId Long memberId) {
 
-        MenuReview menuReview = menuReviewService.updateComment(memberId, reviewId, request.comment(), LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.updateComment(memberId, reviewId, request.comment(), LocalDateTime.now());
 
         MenuReviewDto.Update.Response response = customMapper.map(menuReview, MenuReviewDto.Update.Response.class);
 
@@ -68,7 +70,7 @@ public class MenuReviewController {
     ResponseEntity<Void> menuReviewDelete(@MemberId Long memberId,
                                           @PathVariable Long reviewId) {
 
-        menuReviewService.delete(memberId, reviewId);
+        menuReviewServiceCommand.delete(memberId, reviewId);
 
         return ResponseEntity.noContent().build();
     }
@@ -78,7 +80,7 @@ public class MenuReviewController {
                                                                  @PathVariable int pageNum) {
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        Page<MenuReview> menuReviewPage = menuReviewService.findAllByMemberId(pr, memberId);
+        Page<MenuReview> menuReviewPage = menuReviewServiceQuery.findAllByMemberId(pr, memberId);
 
         MenuReviewPageDto.Response response = customMapper.map(menuReviewPage, MenuReviewPageDto.Response.class);
 
@@ -91,14 +93,14 @@ public class MenuReviewController {
 
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        MenuReviewPageWrapperDto.PageResponse pageResponse = menuReviewService.findAllByMenuId(pr, menuId);
+        MenuReviewPageWrapperDto.PageResponse pageResponse = menuReviewServiceQuery.findAllByMenuId(pr, menuId);
 
         return ResponseEntity.ok(pageResponse);
     }
 
     @GetMapping("/reviews")
     ResponseEntity<List<MenuReviewDto.Response>> findAll() {
-        List<MenuReview> menuReviewList = menuReviewService.findAll();
+        List<MenuReview> menuReviewList = menuReviewServiceQuery.findAll();
 
         List<MenuReviewDto.Response> responses = menuReviewList.stream().map(MenuReviewDto.Response::new).toList();
 

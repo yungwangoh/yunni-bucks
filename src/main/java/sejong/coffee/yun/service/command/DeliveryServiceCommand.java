@@ -9,7 +9,6 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.user.Address;
 import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.DeliveryService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,12 +17,11 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class DeliveryServiceCommand implements DeliveryService {
+public class DeliveryServiceCommand {
 
     private final OrderRepository orderRepository;
     private final DeliveryRepository deliveryRepository;
 
-    @Override
     public Delivery save(Long orderId, Address address, LocalDateTime now, DeliveryType type) {
 
         Order order = orderRepository.findById(orderId);
@@ -35,7 +33,6 @@ public class DeliveryServiceCommand implements DeliveryService {
         return deliveryRepository.save(delivery);
     }
 
-    @Override
     public Delivery save(Long orderId, Address address, LocalDateTime now,
                          LocalDateTime reserveDate, DeliveryType type) {
 
@@ -48,7 +45,6 @@ public class DeliveryServiceCommand implements DeliveryService {
         return deliveryRepository.save(delivery);
     }
 
-    @Override
     public Delivery cancel(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
@@ -57,17 +53,14 @@ public class DeliveryServiceCommand implements DeliveryService {
         return delivery;
     }
 
-    @Override
     public Long reserveDelivery(LocalDateTime reserveAt) {
         return deliveryRepository.bulkUpdate(reserveAt);
     }
 
-    @Override
     public Long reserveDeliveryInUpdate(List<Long> ids, LocalDateTime reserveAt) {
         return deliveryRepository.bulkInUpdate(ids, reserveAt);
     }
 
-    @Override
     public Delivery normalDelivery(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
@@ -76,7 +69,6 @@ public class DeliveryServiceCommand implements DeliveryService {
         return delivery;
     }
 
-    @Override
     public Delivery complete(Long deliveryId) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 
@@ -85,7 +77,6 @@ public class DeliveryServiceCommand implements DeliveryService {
         return delivery;
     }
 
-    @Override
     public Delivery updateAddress(Long deliveryId, Address address, LocalDateTime now) {
         Delivery delivery = deliveryRepository.findOne(deliveryId);
 

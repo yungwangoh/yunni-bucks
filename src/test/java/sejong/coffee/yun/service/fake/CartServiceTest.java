@@ -231,7 +231,7 @@ public class CartServiceTest {
         cartServiceCommand.addMenu(save.getId(), menu.getId());
 
         // when
-        Menu getMenu = cartServiceCommand.getMenu(save.getId(), 0);
+        Menu getMenu = cartServiceQuery.getMenu(save.getId(), 0);
 
         // then
         assertThat(getMenu).isEqualTo(menu);

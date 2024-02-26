@@ -13,7 +13,6 @@ import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
-import sejong.coffee.yun.service.CartService;
 
 import java.util.ArrayList;
 
@@ -23,14 +22,13 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.DUPLICATE;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class CartServiceCommand implements CartService {
+public class CartServiceCommand {
 
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
     private final MenuRepository menuRepository;
     private final CartItemRepository cartItemRepository;
 
-    @Override
     public Cart createCart(Long memberId) {
 
         if(cartRepository.existByMemberId(memberId)) throw DUPLICATE.duplicatedException();
@@ -45,7 +43,6 @@ public class CartServiceCommand implements CartService {
         return cartRepository.save(cart);
     }
 
-    @Override
     public Cart addMenu(Long memberId, Long menuId) {
         Menu menu = menuRepository.findById(menuId);
         Cart cart = cartRepository.findByMember(memberId);
@@ -64,14 +61,12 @@ public class CartServiceCommand implements CartService {
         return cart;
     }
 
-    @Override
     public void clearCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId);
 
         cart.clearCartItems();
     }
 
-    @Override
     public Cart removeMenu(Long memberId, int idx) {
         Cart cart = cartRepository.findByMember(memberId);
 
@@ -80,7 +75,6 @@ public class CartServiceCommand implements CartService {
         return cart;
     }
 
-    @Override
     public void removeCart(Long memberId) {
         try {
             Cart cart = cartRepository.findByMember(memberId);

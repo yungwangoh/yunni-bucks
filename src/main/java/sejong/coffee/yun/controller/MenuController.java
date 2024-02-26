@@ -10,7 +10,8 @@ import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Bread;
 import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.dto.menu.MenuDto;
-import sejong.coffee.yun.service.MenuService;
+import sejong.coffee.yun.service.command.MenuServiceCommand;
+import sejong.coffee.yun.service.query.MenuServiceQuery;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -23,7 +24,8 @@ import java.util.List;
 @Slf4j
 public class MenuController {
 
-    private final MenuService menuService;
+    private final MenuServiceCommand menuServiceCommand;
+    private final MenuServiceQuery menuServiceQuery;
 
     @PostMapping("/bread")
     public ResponseEntity<MenuDto.Response> breadCreate(@RequestBody @Valid MenuDto.Request request) {
@@ -38,7 +40,7 @@ public class MenuController {
                 .now(LocalDateTime.now())
                 .build();
 
-        Menu createMenu = menuService.create(menu);
+        Menu createMenu = menuServiceCommand.create(menu);
 
         return new ResponseEntity<>(new MenuDto.Response(createMenu), HttpStatus.CREATED);
     }
@@ -56,14 +58,15 @@ public class MenuController {
                 .now(LocalDateTime.now())
                 .build();
 
-        Menu createMenu = menuService.create(menu);
+        Menu createMenu = menuServiceCommand.create(menu);
 
         return new ResponseEntity<>(new MenuDto.Response(createMenu), HttpStatus.CREATED);
     }
 
     @GetMapping("/{menuId}")
     public ResponseEntity<MenuDto.Response> findMenu(@PathVariable Long menuId) {
-        MenuDto.Response response = menuService.findById(menuId);
+
+        MenuDto.Response response = menuServiceQuery.findById(menuId);
 
         return ResponseEntity.ok(response);
     }
@@ -71,7 +74,7 @@ public class MenuController {
     @GetMapping("")
     public ResponseEntity<List<MenuDto.Response>> findAllMenu() {
 
-        List<MenuDto.Response> responses = menuService.findAll().responses();
+        List<MenuDto.Response> responses = menuServiceQuery.findAll().responses();
 
         return ResponseEntity.ok(responses);
     }
@@ -79,7 +82,7 @@ public class MenuController {
     @GetMapping("/popular")
     public ResponseEntity<List<MenuDto.Response>> searchPopularMenus() {
 
-        List<MenuDto.Response> responses = menuService.searchPopularMenus();
+        List<MenuDto.Response> responses = menuServiceQuery.searchPopularMenus();
 
         return ResponseEntity.ok(responses);
     }
@@ -87,7 +90,7 @@ public class MenuController {
     @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
 
-        menuService.delete(menuId);
+        menuServiceCommand.delete(menuId);
 
         return ResponseEntity.noContent().build();
     }

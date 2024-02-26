@@ -11,7 +11,8 @@ import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.dto.user.UserDto;
 import sejong.coffee.yun.facade.UserServiceFacade;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.UserService;
+import sejong.coffee.yun.service.command.UserServiceCommand;
+import sejong.coffee.yun.service.query.UserServiceQuery;
 import sejong.coffee.yun.util.jwt.JwtUtil;
 
 import javax.validation.Valid;
@@ -27,7 +28,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class UserController {
 
     private final UserServiceFacade userServiceFacade;
-    private final UserService userService;
+    private final UserServiceCommand userServiceCommand;
+    private final UserServiceQuery userServiceQuery;
     private final CustomMapper customMapper;
 
     @PostMapping("")
@@ -52,7 +54,7 @@ public class UserController {
 
     @PostMapping("/sign-in")
     ResponseEntity<Void> signIn(@RequestBody @Valid UserDto.Sign.In.Request request) {
-        String accessToken = userService.signIn(request.email(), request.password());
+        String accessToken = userServiceCommand.signIn(request.email(), request.password());
 
         UserDto.Sign.In.Response response = customMapper.map(accessToken, UserDto.Sign.In.Response.class);
 
@@ -65,14 +67,14 @@ public class UserController {
     ResponseEntity<String> signOut(@RequestHeader(AUTHORIZATION) String accessToken, @MemberId Long memberId) {
         log.info("log out = {} {}", accessToken, memberId);
 
-        String s = userService.signOut(accessToken, memberId);
+        String s = userServiceCommand.signOut(accessToken, memberId);
 
         return ResponseEntity.ok(s);
     }
 
     @GetMapping("")
     ResponseEntity<UserDto.Response> findById(@MemberId Long memberId) {
-        Member member = userService.findMember(memberId);
+        Member member = userServiceQuery.findMember(memberId);
 
         UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
@@ -81,7 +83,7 @@ public class UserController {
 
     @GetMapping("/list")
     ResponseEntity<List<UserDto.Response>> findAll() {
-        List<Member> members = userService.findAll();
+        List<Member> members = userServiceQuery.findAll();
 
         List<UserDto.Response> collect = members.stream()
                 .map(UserDto.Response::new)
@@ -101,7 +103,7 @@ public class UserController {
     ResponseEntity<UserDto.Response> updateEmail(@MemberId Long memberId,
                                                         @RequestBody @Valid UserDto.Update.Email.Request request) {
 
-        Member member = userService.updateEmail(memberId, request.updateEmail());
+        Member member = userServiceCommand.updateEmail(memberId, request.updateEmail());
 
         UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
@@ -112,7 +114,7 @@ public class UserController {
     ResponseEntity<UserDto.Response> updateName(@MemberId Long memberId,
                                                        @RequestBody @Valid UserDto.Update.Name.Request request) {
 
-        Member member = userService.updateName(memberId, request.updateName());
+        Member member = userServiceCommand.updateName(memberId, request.updateName());
 
         UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
@@ -123,7 +125,7 @@ public class UserController {
     ResponseEntity<UserDto.Response> updatePassword(@MemberId Long memberId,
                                                            @RequestBody @Valid UserDto.Update.Password.Request request) {
 
-        Member member = userService.updatePassword(memberId, request.updatePassword());
+        Member member = userServiceCommand.updatePassword(memberId, request.updatePassword());
 
         UserDto.Response response = customMapper.map(member, UserDto.Response.class);
 
@@ -132,14 +134,14 @@ public class UserController {
 
     @GetMapping(value = "/duplication/name", produces = "application/json;charset=UTF-8")
     ResponseEntity<String> duplicateName(@RequestParam("name") String name) {
-        String s = userService.duplicateName(name);
+        String s = userServiceQuery.duplicateName(name);
 
         return ResponseEntity.ok(s);
     }
 
     @GetMapping(value = "/duplication/email", produces = "application/json;charset=UTF-8")
     ResponseEntity<String> duplicateEmail(@RequestParam("email") String email) {
-        String s = userService.duplicateEmail(email);
+        String s = userServiceQuery.duplicateEmail(email);
 
         return ResponseEntity.ok(s);
     }

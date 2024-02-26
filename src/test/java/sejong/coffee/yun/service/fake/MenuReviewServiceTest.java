@@ -21,6 +21,7 @@ import sejong.coffee.yun.mock.repository.FakeUserRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.MenuReviewServiceCommand;
+import sejong.coffee.yun.service.query.MenuReviewServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +34,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
+        MenuReviewServiceQuery.class,
         MenuReviewServiceCommand.class,
         FakeMenuRepository.class,
         FakeUserRepository.class,
@@ -48,7 +50,9 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.*;
 public class MenuReviewServiceTest {
 
     @Autowired
-    private MenuReviewServiceCommand menuReviewService;
+    private MenuReviewServiceCommand menuReviewServiceCommand;
+    @Autowired
+    private MenuReviewServiceQuery menuReviewServiceQuery;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -101,7 +105,7 @@ public class MenuReviewServiceTest {
         String review = "맛있어요";
 
         // when
-        MenuReview menuReview = menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         // then
         assertThat(menuReview.getComments()).isEqualTo(review);
@@ -114,10 +118,10 @@ public class MenuReviewServiceTest {
         // given
         String review = "맛있어요";
 
-        MenuReview menuReview = menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         // when
-        MenuReview findReview = menuReviewService.findReview(menuReview.getId());
+        MenuReview findReview = menuReviewServiceQuery.findReview(menuReview.getId());
 
         // then
         assertThat(findReview).isEqualTo(menuReview);
@@ -128,13 +132,13 @@ public class MenuReviewServiceTest {
         // given
         String review = "맛있어요";
 
-        MenuReview menuReview = menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         // when
-        menuReviewService.delete(menuReview.getId());
+        menuReviewServiceCommand.delete(menuReview.getId());
 
         // then
-        assertThatThrownBy(() -> menuReviewService.findReview(menuReview.getId()))
+        assertThatThrownBy(() -> menuReviewServiceQuery.findReview(menuReview.getId()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU_REVIEW.getMessage());
     }
@@ -144,12 +148,12 @@ public class MenuReviewServiceTest {
         // given
         String review = "맛있어요";
 
-        MenuReview menuReview = menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         // when
 
         // then
-        assertThatThrownBy(() -> menuReviewService.delete(100L, menuReview.getId()))
+        assertThatThrownBy(() -> menuReviewServiceCommand.delete(100L, menuReview.getId()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU_REVIEW.getMessage());
     }
@@ -159,12 +163,12 @@ public class MenuReviewServiceTest {
         // given
         String review = "맛있어요";
 
-        menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         // when
 
         // then
-        assertThatThrownBy(() -> menuReviewService.delete(saveMember.getId(), 100L))
+        assertThatThrownBy(() -> menuReviewServiceCommand.delete(saveMember.getId(), 100L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU_REVIEW.getMessage());
     }
@@ -175,12 +179,12 @@ public class MenuReviewServiceTest {
         String review = "맛있어요";
         String updateReview = "맛없어";
 
-        MenuReview menuReview = menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        MenuReview menuReview = menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         LocalDateTime updateTime = LocalDateTime.of(2022, 11, 20, 11, 20);
 
         // when
-        MenuReview updateComment = menuReviewService.updateComment(saveMember.getId(), menuReview.getId(), updateReview, updateTime);
+        MenuReview updateComment = menuReviewServiceCommand.updateComment(saveMember.getId(), menuReview.getId(), updateReview, updateTime);
 
         // then
         assertThat(updateComment.getComments()).isEqualTo(updateReview);
@@ -193,12 +197,12 @@ public class MenuReviewServiceTest {
         int size = 10;
         String review = "맛있어요";
 
-        IntStream.range(0, size).forEach(i -> menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now()));
+        IntStream.range(0, size).forEach(i -> menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now()));
 
         PageRequest pr = PageRequest.of(0, 10);
 
         // when
-        Page<MenuReview> reviewPage = menuReviewService.findAllByMemberId(pr, saveMember.getId());
+        Page<MenuReview> reviewPage = menuReviewServiceQuery.findAllByMemberId(pr, saveMember.getId());
 
         // then
         assertThat(reviewPage.getContent().size()).isEqualTo(size);
@@ -211,12 +215,12 @@ public class MenuReviewServiceTest {
         int size = 10;
         String review = "맛있어요";
 
-        IntStream.range(0, size).forEach(i -> menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now()));
+        IntStream.range(0, size).forEach(i -> menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now()));
 
         PageRequest pr = PageRequest.of(0, 10);
 
         // when
-        Page<MenuReview> menuReviewPage = menuReviewService.findAllByMemberId(pr, 100L);
+        Page<MenuReview> menuReviewPage = menuReviewServiceQuery.findAllByMemberId(pr, 100L);
 
         // then
         assertThat(menuReviewPage.getContent()).isEqualTo(List.of());
@@ -227,12 +231,12 @@ public class MenuReviewServiceTest {
         // given
         String review = "맛있어요";
 
-        menuReviewService.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
+        menuReviewServiceCommand.create(saveMember.getId(), saveMenu.getId(), review, LocalDateTime.now());
 
         // when
 
         // then
-        assertThatThrownBy(() -> menuReviewService.findReview(10L))
+        assertThatThrownBy(() -> menuReviewServiceQuery.findReview(10L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU_REVIEW.getMessage());
     }
@@ -245,7 +249,7 @@ public class MenuReviewServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> menuReviewService.create(saveMember.getId(), 10L, review, LocalDateTime.now()))
+        assertThatThrownBy(() -> menuReviewServiceCommand.create(saveMember.getId(), 10L, review, LocalDateTime.now()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_MENU.getMessage());
     }
@@ -258,7 +262,7 @@ public class MenuReviewServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> menuReviewService.create(10L, saveMenu.getId(), review, LocalDateTime.now()))
+        assertThatThrownBy(() -> menuReviewServiceCommand.create(10L, saveMenu.getId(), review, LocalDateTime.now()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_USER.getMessage());
     }

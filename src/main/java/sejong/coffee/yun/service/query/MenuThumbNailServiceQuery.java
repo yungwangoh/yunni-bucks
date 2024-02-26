@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
-import sejong.coffee.yun.service.MenuThumbNailService;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class MenuThumbNailServiceQuery implements MenuThumbNailService {
+public class MenuThumbNailServiceQuery {
     private final ThumbNailRepository thumbNailRepository;
 
     public List<MenuThumbnail> findAllByMenuId(Long menuId) {

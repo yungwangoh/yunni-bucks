@@ -14,7 +14,8 @@ import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.dto.order.OrderDto;
 import sejong.coffee.yun.dto.order.OrderPageDto;
 import sejong.coffee.yun.mapper.CustomMapper;
-import sejong.coffee.yun.service.OrderService;
+import sejong.coffee.yun.service.command.OrderServiceCommand;
+import sejong.coffee.yun.service.query.OrderServiceQuery;
 
 import java.time.LocalDateTime;
 
@@ -23,13 +24,14 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/orders")
 @Validated
 public class OrderController {
-    private final OrderService orderService;
+    private final OrderServiceCommand orderServiceCommand;
+    private final OrderServiceQuery orderServiceQuery;
     private final CustomMapper customMapper;
 
     @PostMapping("")
     ResponseEntity<OrderDto.Response> order(@MemberId Long memberId) {
 
-        Order order = orderService.order(memberId, LocalDateTime.now());
+        Order order = orderServiceCommand.order(memberId, LocalDateTime.now());
 
         OrderDto.Response response = customMapper.map(order, OrderDto.Response.class);
 
@@ -39,7 +41,7 @@ public class OrderController {
     @GetMapping("/cancel")
     ResponseEntity<Void> orderCancel(@RequestParam("orderId") Long orderId) {
 
-        orderService.cancel(orderId);
+        orderServiceCommand.cancel(orderId);
 
         return ResponseEntity.noContent().build();
     }
@@ -49,7 +51,7 @@ public class OrderController {
 
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        Page<Order> orderPage = orderService.findAllByMemberId(pr, memberId);
+        Page<Order> orderPage = orderServiceQuery.findAllByMemberId(pr, memberId);
 
         OrderPageDto.Response response = customMapper.map(orderPage, OrderPageDto.Response.class);
 
@@ -63,7 +65,7 @@ public class OrderController {
 
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        Page<Order> orderPage = orderService.findAllByMemberIdAndOrderStatus(pr, memberId, status);
+        Page<Order> orderPage = orderServiceQuery.findAllByMemberIdAndOrderStatus(pr, memberId, status);
 
         OrderPageDto.Response response = customMapper.map(orderPage, OrderPageDto.Response.class);
 
@@ -77,7 +79,7 @@ public class OrderController {
 
         PageRequest pr = PageRequest.of(pageNum, 10);
 
-        Page<Order> orderPage = orderService.findAllByMemberIdAndPayStatus(pr, memberId, status);
+        Page<Order> orderPage = orderServiceQuery.findAllByMemberIdAndPayStatus(pr, memberId, status);
 
         OrderPageDto.Response response = customMapper.map(orderPage, OrderPageDto.Response.class);
 

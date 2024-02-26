@@ -10,7 +10,6 @@ import sejong.coffee.yun.domain.order.Order;
 import sejong.coffee.yun.domain.order.OrderPayStatus;
 import sejong.coffee.yun.domain.order.OrderStatus;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.OrderService;
 
 import java.util.List;
 
@@ -18,36 +17,30 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class OrderServiceQuery implements OrderService {
+public class OrderServiceQuery {
 
     private final OrderRepository orderRepository;
 
-    @Override
     public Order findOrderByMemberId(Long memberId) {
         return orderRepository.findByMemberId(memberId);
     }
 
-    @Override
     public Order findOrder(Long orderId) {
         return orderRepository.findById(orderId);
     }
 
-    @Override
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
 
-    @Override
     public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
         return orderRepository.findAllByMemberId(pageable, memberId);
     }
 
-    @Override
     public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status) {
         return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId, status);
     }
 
-    @Override
     public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status) {
         return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId, status);
     }

@@ -10,7 +10,6 @@ import sejong.coffee.yun.domain.order.menu.Menu;
 import sejong.coffee.yun.domain.order.menu.MenuThumbnail;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.thumbnail.ThumbNailRepository;
-import sejong.coffee.yun.service.MenuThumbNailService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,7 +23,7 @@ import static sejong.coffee.yun.util.path.PathControl.PATH;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class MenuThumbNailServiceCommand implements MenuThumbNailService {
+public class MenuThumbNailServiceCommand {
     private final ThumbNailRepository thumbNailRepository;
     private final MenuRepository menuRepository;
 

@@ -15,7 +15,6 @@ import sejong.coffee.yun.domain.user.Money;
 import sejong.coffee.yun.repository.cart.CartRepository;
 import sejong.coffee.yun.repository.menu.MenuRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
-import sejong.coffee.yun.service.OrderService;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +22,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class OrderServiceCommand implements OrderService {
+public class OrderServiceCommand {
 
     private final OrderRepository orderRepository;
     private final Calculator calculator;
@@ -32,7 +31,6 @@ public class OrderServiceCommand implements OrderService {
     private final RedisTemplate<String, String> redisTemplate;
     private static final String REDIS_KEY = "rank";
 
-    @Override
     public Order order(Long memberId, LocalDateTime now) {
 
         Cart cart = cartRepository.findByMember(memberId);
@@ -51,7 +49,6 @@ public class OrderServiceCommand implements OrderService {
         return orderRepository.save(order);
     }
 
-    @Override
     public void cancel(Long orderId) {
         Order order = orderRepository.findById(orderId);
 

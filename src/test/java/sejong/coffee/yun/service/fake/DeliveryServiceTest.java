@@ -30,6 +30,7 @@ import sejong.coffee.yun.repository.delivery.DeliveryRepository;
 import sejong.coffee.yun.repository.order.OrderRepository;
 import sejong.coffee.yun.repository.user.UserRepository;
 import sejong.coffee.yun.service.command.DeliveryServiceCommand;
+import sejong.coffee.yun.service.query.DeliveryServiceQuery;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -47,6 +48,7 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringJUnitConfig
 @ContextConfiguration(classes = {
+        DeliveryServiceQuery.class,
         DeliveryServiceCommand.class,
         FakeUserRepository.class,
         FakeOrderRepository.class,
@@ -67,7 +69,9 @@ import static sejong.coffee.yun.domain.exception.ExceptionControl.NOT_FOUND_DELI
 public class DeliveryServiceTest {
 
     @Autowired
-    private DeliveryServiceCommand deliveryService;
+    private DeliveryServiceCommand deliveryServiceCommand;
+    @Autowired
+    private DeliveryServiceQuery deliveryServiceQuery;
     @Autowired
     private FakeDeliveryRepository fakeDeliveryRepository;
     @Autowired
@@ -141,7 +145,7 @@ public class DeliveryServiceTest {
         saveOrder.completePayment();
 
         // when
-        Delivery delivery = deliveryService.save(
+        Delivery delivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -161,7 +165,7 @@ public class DeliveryServiceTest {
         saveOrder.completePayment();
 
         // when
-        Delivery delivery = deliveryService.save(
+        Delivery delivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -180,7 +184,7 @@ public class DeliveryServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL))
+        assertThatThrownBy(() -> deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(DO_NOT_PAID.getMessage());
     }
@@ -192,7 +196,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        Delivery saveDelivery = deliveryService.save(
+        Delivery saveDelivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -200,7 +204,7 @@ public class DeliveryServiceTest {
         );
 
         // when
-        Delivery delivery = deliveryService.cancel(saveDelivery.getId());
+        Delivery delivery = deliveryServiceCommand.cancel(saveDelivery.getId());
 
         // then
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.CANCEL);
@@ -213,7 +217,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        Delivery saveDelivery = deliveryService.save(
+        Delivery saveDelivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -224,7 +228,7 @@ public class DeliveryServiceTest {
         saveDelivery.delivery();
 
         // then
-        assertThatThrownBy(() -> deliveryService.cancel(saveDelivery.getId()))
+        assertThatThrownBy(() -> deliveryServiceCommand.cancel(saveDelivery.getId()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("취소가 불가능합니다.");
     }
@@ -236,7 +240,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        Delivery saveDelivery = deliveryService.save(
+        Delivery saveDelivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -246,7 +250,7 @@ public class DeliveryServiceTest {
         saveDelivery.delivery();
 
         // when
-        Delivery delivery = deliveryService.complete(saveDelivery.getId());
+        Delivery delivery = deliveryServiceCommand.complete(saveDelivery.getId());
 
         // then
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.COMPLETE);
@@ -259,7 +263,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        Delivery saveDelivery = deliveryService.save(
+        Delivery saveDelivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -270,7 +274,7 @@ public class DeliveryServiceTest {
         saveDelivery.cancel();
 
         // then
-        assertThatThrownBy(() -> deliveryService.complete(saveDelivery.getId()))
+        assertThatThrownBy(() -> deliveryServiceCommand.complete(saveDelivery.getId()))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("배송 완료가 불가능합니다.");
     }
@@ -283,10 +287,10 @@ public class DeliveryServiceTest {
         saveOrder.completePayment();
 
         LocalDateTime reserveTime = LocalDateTime.of(2023, 5, 30, 5, 30);
-        deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), reserveTime, DeliveryType.RESERVE);
+        deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), reserveTime, DeliveryType.RESERVE);
 
         // when
-        deliveryService.reserveDelivery(LocalDateTime.now());
+        deliveryServiceCommand.reserveDelivery(LocalDateTime.now());
 
         // then
         assertThat(deliveryRepository.findAll())
@@ -303,7 +307,7 @@ public class DeliveryServiceTest {
 
         // when
         LocalDateTime reserveTime = LocalDateTime.of(2023, 5, 30, 5, 30);
-        deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), reserveTime, DeliveryType.RESERVE);
+        deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), reserveTime, DeliveryType.RESERVE);
 
         // then
         await().atMost(Duration.ofSeconds(5))
@@ -322,7 +326,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        Delivery saveDelivery = deliveryService.save(
+        Delivery saveDelivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -330,7 +334,7 @@ public class DeliveryServiceTest {
         );
 
         // when
-        Delivery delivery = deliveryService.normalDelivery(saveDelivery.getId());
+        Delivery delivery = deliveryServiceCommand.normalDelivery(saveDelivery.getId());
 
         // then
         assertThat(delivery).isEqualTo(saveDelivery);
@@ -343,7 +347,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        Delivery saveDelivery = deliveryService.save(
+        Delivery saveDelivery = deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -354,7 +358,7 @@ public class DeliveryServiceTest {
         Address address = new Address("경기도", "남양주시", "방화동 도산로 111", "110-100");
         LocalDateTime updateAt = LocalDateTime.of(2023, 5, 11, 11, 10);
 
-        Delivery delivery = deliveryService.updateAddress(saveDelivery.getId(), address, updateAt);
+        Delivery delivery = deliveryServiceCommand.updateAddress(saveDelivery.getId(), address, updateAt);
 
         // then
         assertThat(delivery.getAddress()).isEqualTo(address);
@@ -369,7 +373,7 @@ public class DeliveryServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> deliveryService.updateAddress(1L, address, LocalDateTime.now()))
+        assertThatThrownBy(() -> deliveryServiceCommand.updateAddress(1L, address, LocalDateTime.now()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(NOT_FOUND_DELIVERY.getMessage());
     }
@@ -382,7 +386,7 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        IntStream.range(0, count).forEach(i -> deliveryService.save(
+        IntStream.range(0, count).forEach(i -> deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -392,7 +396,7 @@ public class DeliveryServiceTest {
         // when
         PageRequest pr = PageRequest.of(0, 10);
 
-        Page<Delivery> page = deliveryService.findAllByMemberId(pr, saveMember.getId());
+        Page<Delivery> page = deliveryServiceQuery.findAllByMemberId(pr, saveMember.getId());
 
         // then
         assertThat(page.getTotalPages()).isEqualTo(1);
@@ -409,14 +413,14 @@ public class DeliveryServiceTest {
 
         saveOrder.completePayment();
 
-        IntStream.range(0, typeCount).forEach(i -> deliveryService.save(
+        IntStream.range(0, typeCount).forEach(i -> deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
                 DeliveryType.NORMAL
         ));
 
-        IntStream.range(0, typeCount).forEach(i -> deliveryService.save(
+        IntStream.range(0, typeCount).forEach(i -> deliveryServiceCommand.save(
                 saveOrder.getId(),
                 saveOrder.getMember().getAddress(),
                 LocalDateTime.now(),
@@ -426,7 +430,7 @@ public class DeliveryServiceTest {
 
         // when
         PageRequest pr = PageRequest.of(0, 10);
-        Page<Delivery> page = deliveryService.findDeliveryTypeAllByMemberId(pr, saveMember.getId(), type);
+        Page<Delivery> page = deliveryServiceQuery.findDeliveryTypeAllByMemberId(pr, saveMember.getId(), type);
 
         // then
         assertThat(page.getTotalPages()).isEqualTo(1);
@@ -447,7 +451,7 @@ public class DeliveryServiceTest {
 
         // when
         PageRequest pr = PageRequest.of(0, 10);
-        Page<Delivery> page = deliveryService.findDeliveryStatusAllByMemberId(pr, saveMember.getId(), status);
+        Page<Delivery> page = deliveryServiceQuery.findDeliveryStatusAllByMemberId(pr, saveMember.getId(), status);
 
         // then
         assertThat(page.getTotalPages()).isEqualTo(1);
@@ -457,24 +461,24 @@ public class DeliveryServiceTest {
     private void selectDeliveryStatus(DeliveryStatus status, int statusCount, Order saveOrder) {
         switch (status) {
             case READY ->  IntStream.range(0, statusCount).forEach(i ->
-                    deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL)
+                    deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL)
             );
             case CANCEL -> IntStream.range(0, statusCount).forEach(i ->
                 {
-                    Delivery save = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
+                    Delivery save = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
                     save.cancel();
                 }
             );
             case COMPLETE -> IntStream.range(0, statusCount).forEach(i ->
                         {
-                            Delivery save = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
+                            Delivery save = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
                             save.delivery();
                             save.complete();
                         }
                 );
             case DELIVERY -> IntStream.range(0, statusCount).forEach(i ->
                     {
-                        Delivery save = deliveryService.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
+                        Delivery save = deliveryServiceCommand.save(saveOrder.getId(), saveOrder.getMember().getAddress(), LocalDateTime.now(), DeliveryType.NORMAL);
                         save.delivery();
                     }
             );
