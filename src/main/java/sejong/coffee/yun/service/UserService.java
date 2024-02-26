@@ -49,6 +49,7 @@ public class UserService {
         return userRepository.save(member);
     }
 
+    @Deprecated
     public Member findMember(Long memberId) {
         return userRepository.findById(memberId);
     }
@@ -86,6 +87,7 @@ public class UserService {
         return member;
     }
 
+    @Deprecated
     public List<Member> findAll() {
         return userRepository.findAll();
     }
@@ -137,12 +139,14 @@ public class UserService {
         }
     }
 
+    @Deprecated
     public String duplicateName(String name) {
         userRepository.duplicateName(name);
 
         return SUCCESS_DUPLICATE_NAME.getMessage();
     }
 
+    @Deprecated
     public String duplicateEmail(String email) {
         userRepository.duplicateEmail(email);
 

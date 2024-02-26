@@ -230,7 +230,7 @@ public class MenuReviewIntegrationTest extends MainIntegrationTest {
             Member member = userRepository.findById(1L);
 
             List<CompletableFuture<Integer>> completableFutures = IntStream.iterate(0, i -> i + 1)
-                    .limit(10)
+                    .limit(100)
                     .mapToObj(i -> CompletableFuture.supplyAsync(() -> {
                         List<MenuReview> menuReviews = LongStream.rangeClosed(1, MAX / 100)
                                 .mapToObj(id -> MenuReview.from(id + ((long) i * MAX / 100), MenuReview.create(faker.lorem().sentence(), member, menu, LocalDateTime.now())))

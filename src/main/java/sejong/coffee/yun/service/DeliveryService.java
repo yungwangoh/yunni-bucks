@@ -94,14 +94,17 @@ public class DeliveryService {
         return delivery;
     }
 
+    @Deprecated
     public Page<Delivery> findAllByMemberId(Pageable pageable, Long memberId) {
         return deliveryRepository.findByMemberId(pageable, memberId);
     }
 
+    @Deprecated
     public Page<Delivery> findDeliveryTypeAllByMemberId(Pageable pageable, Long memberId, DeliveryType type) {
         return deliveryRepository.findDeliveryTypeByMemberId(pageable, memberId, type);
     }
 
+    @Deprecated
     public Page<Delivery> findDeliveryStatusAllByMemberId(Pageable pageable, Long memberId, DeliveryStatus status) {
         return deliveryRepository.findDeliveryStatusByMemberId(pageable, memberId, status);
     }

@@ -66,22 +66,27 @@ public class OrderService {
         return orderRepository.findByMemberId(memberId);
     }
 
+    @Deprecated
     public Order findOrder(Long orderId) {
         return orderRepository.findById(orderId);
     }
 
+    @Deprecated
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
 
+    @Deprecated
     public Page<Order> findAllByMemberId(Pageable pageable, Long memberId) {
         return orderRepository.findAllByMemberId(pageable, memberId);
     }
 
+    @Deprecated
     public Page<Order> findAllByMemberIdAndOrderStatus(Pageable pageable, Long memberId, OrderStatus status) {
         return orderRepository.findAllByMemberIdAndOrderStatus(pageable, memberId, status);
     }
 
+    @Deprecated
     public Page<Order> findAllByMemberIdAndPayStatus(Pageable pageable, Long memberId, OrderPayStatus status) {
         return orderRepository.findAllByMemberIdAndPayStatus(pageable, memberId, status);
     }

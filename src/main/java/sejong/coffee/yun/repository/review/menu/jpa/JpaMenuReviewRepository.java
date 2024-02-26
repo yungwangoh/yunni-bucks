@@ -16,6 +16,6 @@ public interface JpaMenuReviewRepository extends JpaRepository<MenuReview, Long>
 
     List<MenuReview> findByCommentsContaining(String searchComment);
 
-    @Query(value = "SELECT * FROM menu_review WHERE MATCH (comments) AGAINST (?1 IN BOOLEAN MODE )", nativeQuery = true)
+    @Query(value = "SELECT * FROM menu_review mr WHERE MATCH (mr.comments) AGAINST (?1 IN BOOLEAN MODE )", nativeQuery = true)
     List<MenuReview> searchFullTextComments(String keyword);
 }

@@ -43,6 +43,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    @Deprecated
     public Cart findCartByMember(Long memberId) {
         return cartRepository.findByMember(memberId);
     }
@@ -66,6 +67,7 @@ public class CartService {
         return cart;
     }
 
+    @Deprecated
     public Menu getMenu(Long memberId, int idx) {
         Cart cart = cartRepository.findByMember(memberId);
 

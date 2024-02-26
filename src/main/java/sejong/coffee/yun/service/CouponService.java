@@ -55,6 +55,7 @@ public class CouponService {
         return coupon;
     }
 
+    @Deprecated
     public Coupon findCoupon(Long couponId) {
         return couponRepository.findById(couponId);
     }
