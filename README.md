@@ -23,4 +23,4 @@
 - [회원 등급 업데이트 기능 성능 개선. 단건 업데이트에서 일괄 업데이트로 DB 성능 개선](https://velog.io/@swager253/Yunny-Bucks.-%ED%9A%8C%EC%9B%90-%EB%93%B1%EA%B8%89-%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0-Batch-update)
 - [MySQL Full-Text-Search 기능을 활용하여, 전문 검색 (Full-Text-Search) 성능 개선](https://velog.io/@swager253/Yunny-bucks.-Full-Text-Search-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0)
 - K6, Grafana로 부하 테스트를 진행하여, 상품 재고 증감 기능 DB Lock 병목 성능 개선
-- Mysql DB Scale-out 하여 Write/Read Replication
+- Mysql DB Scale-out 하여 부하 분산
