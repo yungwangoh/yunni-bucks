@@ -9,7 +9,6 @@
 
 ## 아키텍처
 
----
 ### 백엔드 아키텍처
 ![002](https://github.com/yungwangoh/yunni-bucks/assets/37898720/fa56489d-a9f7-442a-a803-c7c6c22b87b7)
 
@@ -17,8 +16,6 @@
 <img width="757" alt="image" src="https://github.com/gkdbssla97/yunni-bucks/assets/55674664/37452648-0c1b-4b6f-aa0a-42a53cbcc9ce">
 
 ## 개선점
-
----
 
 - [Fake Test를 통해 외부 테스트 라이브러리 없이 테스트하여 단위 테스트 격리](https://velog.io/@swager253/Yunny-Bucks.-Test-Fake-Repository)
 - [Lock을 통해 동시성 이슈 해결 (Optimistic Lock vs Pessimistic Lock)](https://velog.io/@swager253/Yuuny-Bucks.-JPA-%EC%97%90%EC%84%9C-%EB%8F%99%EC%8B%9C%EC%84%B1-%EC%9D%B4%EC%8A%88)
