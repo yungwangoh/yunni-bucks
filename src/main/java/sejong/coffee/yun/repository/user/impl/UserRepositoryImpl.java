@@ -3,6 +3,7 @@ package sejong.coffee.yun.repository.user.impl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -30,6 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private final JdbcTemplate jdbcTemplate;
     private final EntityManager em;
+    private static final String ORDER_COUNT_KEY = "order-count:";
 
     @Override
     @Transactional
@@ -199,5 +201,23 @@ public class UserRepositoryImpl implements UserRepository {
 
         em.clear();
         em.flush();
+    }
+
+    @Override
+    public Long increaseOrderCount(RedisOperations<String, String> redisOperations, Long memberId, int menuCount) {
+        String key = createKey(memberId);
+
+        return redisOperations.opsForValue().increment(key, menuCount);
+    }
+
+    @Override
+    public Long decreaseOrderCount(RedisOperations<String, String> redisOperations, Long memberId, int menuCount) {
+        String key = createKey(memberId);
+
+        return redisOperations.opsForValue().decrement(key, menuCount);
+    }
+
+    private String createKey(Long memberId) {
+        return ORDER_COUNT_KEY + memberId;
     }
 }

@@ -1,5 +1,6 @@
 package sejong.coffee.yun.mock.repository;
 
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.order.menu.Beverage;
 import sejong.coffee.yun.domain.order.menu.Bread;
@@ -61,5 +62,35 @@ public class FakeMenuRepository implements MenuRepository {
     @Override
     public void clear() {
         menuList.clear();
+    }
+
+    @Override
+    public Long increaseStock(RedisOperations<String, String> redisOperations, Long menuId, int stockQuantity) {
+        return null;
+    }
+
+    @Override
+    public Long decreaseStock(RedisOperations<String, String> redisOperations, Long menuId, int stockQuantity) {
+        return null;
+    }
+
+    @Override
+    public Long totalIncreaseStock(RedisOperations<String, String> redisOperations, Long menuId, int stockQuantity) {
+        return null;
+    }
+
+    @Override
+    public Long totalDecreaseStock(RedisOperations<String, String> redisOperations, Long menuId, int stockQuantity) {
+        return null;
+    }
+
+    @Override
+    public Long usedTotalUserStockCount(RedisOperations<String, String> redisOperations, Long menuId) {
+        return null;
+    }
+
+    @Override
+    public Long totalStockCount(RedisOperations<String, String> redisOperations, Long menuId) {
+        return null;
     }
 }

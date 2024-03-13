@@ -19,7 +19,7 @@ public class CartItem {
     @JoinColumn(name = "cart_id")
     private Cart cart;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manu_id")
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     @Builder

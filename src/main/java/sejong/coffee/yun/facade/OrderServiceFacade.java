@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import sejong.coffee.yun.service.command.OrderServiceCommand;
+import sejong.coffee.yun.service.query.OrderServiceQuery;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 public class OrderServiceFacade {
 
     private final OrderServiceCommand orderService;
+    private final OrderServiceQuery orderServiceQuery;
 
     public void order(Long memberId, LocalDateTime now) {
 

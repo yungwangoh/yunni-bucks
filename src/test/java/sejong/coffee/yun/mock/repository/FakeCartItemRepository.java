@@ -2,6 +2,7 @@ package sejong.coffee.yun.mock.repository;
 
 import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.user.CartItem;
+import sejong.coffee.yun.dto.cart.CartDto;
 import sejong.coffee.yun.repository.cartitem.CartItemRepository;
 
 import java.util.ArrayList;
@@ -32,5 +33,10 @@ public class FakeCartItemRepository implements CartItemRepository {
     @Override
     public void clear() {
         cartItems.clear();
+    }
+
+    @Override
+    public List<CartDto.StockRecord> stockRecord(Long cartId) {
+        return null;
     }
 }

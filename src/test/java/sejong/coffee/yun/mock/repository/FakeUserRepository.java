@@ -1,5 +1,6 @@
 package sejong.coffee.yun.mock.repository;
 
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.stereotype.Repository;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.repository.user.UserRepository;
@@ -106,5 +107,15 @@ public class FakeUserRepository implements UserRepository {
     @Override
     public void clear() {
         this.members.clear();
+    }
+
+    @Override
+    public Long increaseOrderCount(RedisOperations<String, String> redisOperations, Long memberId, int menuCount) {
+        return null;
+    }
+
+    @Override
+    public Long decreaseOrderCount(RedisOperations<String, String> redisOperations, Long memeberId, int menuCount) {
+        return null;
     }
 }

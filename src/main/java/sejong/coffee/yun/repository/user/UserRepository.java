@@ -1,5 +1,6 @@
 package sejong.coffee.yun.repository.user;
 
+import org.springframework.data.redis.core.RedisOperations;
 import sejong.coffee.yun.domain.user.Member;
 import sejong.coffee.yun.domain.user.UserRank;
 
@@ -7,6 +8,8 @@ import java.util.List;
 
 public interface UserRepository {
 
+    Long increaseOrderCount(RedisOperations<String, String> redisOperations, Long memberId, int menuCount);
+    Long decreaseOrderCount(RedisOperations<String, String> redisOperations, Long memberId, int menuCount);
     Member save(Member member);
     Member findById(Long id);
     List<Member> findAll();
