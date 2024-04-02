@@ -47,6 +47,8 @@ public class OrderServiceCommand {
 
         isCheckOverMenuStock(memberId, stockRecords);
 
+        //addMenuOrderCountAndSubQuantity(memberId);
+
         Money money = calculator.calculateMenus(cart.getMember(), cart.convertToMenus());
 
         Order order = Order.createOrder(cart, money, now);
@@ -78,8 +80,12 @@ public class OrderServiceCommand {
             int totalQuantity = menuRepository.findById(stockRecord.menuId()).getQuantity();
             int totalUserUsedStock = menuRepository.usedTotalUserStockCount(redisOperations, stockRecord.menuId()).intValue();
             if(totalQuantity < totalUserUsedStock) {
-                this.decreaseStock(stockRecord);
-                this.decreaseOrderCount(stockRecord, memberId);
+
+                RedisTransaction.transaction(redisOperations, operations -> {
+                    this.decreaseStock(stockRecord);
+                    this.decreaseOrderCount(stockRecord, memberId);
+                });
+
                 throw ExceptionControl.MENU_NOT_ENOUGH_QUANTITY.throwException();
             }
         });
